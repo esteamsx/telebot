@@ -536,15 +536,8 @@ async function reactToMessage(chatId, messageId) {
     process.env.BOT_TOKEN_4,
     process.env.BOT_TOKEN_5,
     process.env.BOT_TOKEN_6,
-    process.env.BOT_TOKEN_7,
-    process.env.BOT_TOKEN_8,
-    process.env.BOT_TOKEN_9,
-    process.env.BOT_TOKEN_10,
-    process.env.BOT_TOKEN_11,
-    process.env.BOT_TOKEN_12,
-    process.env.BOT_TOKEN_13,
-    process.env.BOT_TOKEN_14,
-    process.env.BOT_TOKEN_15
+    
+    process.env.BOT_TOKEN_16
   ];
 
   for (const token of botTokens) {
