@@ -12005,46 +12005,40 @@ async function processWareact(chatId, channelLink, userId) {
   let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");
 
   const steps = [
-    "▰▰▱▱▱▱▱ (Logging in...)",
-    "▰▰▰▱▱▱▱ (Solving captcha...)",
-    "▰▰▰▰▱▱▱ (Waiting for ad...)",
-    "▰▰▰▰▰▱▱ (Sending request...)",
-    "▰▰▰▰▰▰▱ (Processing reactions...)",
-    "▰▰▰▰▰▰▰ (Completing...)"
+    "▰▰▱▱▱▱▱ Logging in...",
+    "▰▰▰▱▱▱▱ Solving captcha...",
+    "▰▰▰▰▱▱▱ Waiting for ad...",
+    "▰▰▰▰▰▱▱ Sending request...",
+    "▰▰▰▰▰▰▱ Processing reactions...",
+    "▰▰▰▰▰▰▰ Completing..."
   ];
 
   try {
-    for (let i = 0; i < 4; i++) {
-      try {
-        await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {
-          chat_id: chatId,
-          message_id: loading.message_id
-        });
-      } catch (e) {}
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, i === 2 ? 15000 : 500));
       
-      if (i === 2) {
-        await new Promise(r => setTimeout(r, 15000));
-      } else {
-        await new Promise(r => setTimeout(r, 500));
+      if (i < steps.length - 1) {
+        try {
+          await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {
+            chat_id: chatId,
+            message_id: loading.message_id
+          });
+        } catch (e) {
+          // Silently fail if edit fails
+        }
       }
     }
 
     const result = await sendChannelReact(channelLink);
 
-    for (let i = 4; i < steps.length; i++) {
-      try {
-        await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {
-          chat_id: chatId,
-          message_id: loading.message_id
-        });
-      } catch (e) {}
-      await new Promise(r => setTimeout(r, 300));
-    }
-
-    await EsTeams.deleteMessage(chatId, loading.message_id);
+    try {
+      await EsTeams.deleteMessage(chatId, loading.message_id);
+    } catch (e) {}
 
     if (result.success) {
-      userLastWareact.set(userId, Date.now());
+      if (userId) {
+        userLastWareact.set(userId, Date.now());
+      }
 
       const emoji = result.emojisUsed?.length
         ? result.emojisUsed.join(" ")
@@ -12082,7 +12076,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
     
     try {
       await EsTeams.deleteMessage(chatId, loading.message_id);
-    } catch {}
+    } catch (e) {}
 
     await EsTeams.sendPhoto(chatId, botImageUrl, {
       caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,
@@ -12117,14 +12111,10 @@ EsTeams.on("callback_query", async (query) => {
       ]
     );
 
-    return EsTeams.answerCallbackQuery(query.id);
-
+    EsTeams.answerCallbackQuery(query.id);
   } catch (err) {
     console.log(err.message);
-    return EsTeams.sendMessage(
-      chatId,
-      "❌ Failed to create Stars payment."
-    );
+    EsTeams.sendMessage(chatId, "❌ Failed to create Stars payment.");
   }
 });
 
@@ -12137,10 +12127,9 @@ EsTeams.on("successful_payment", async (msg) => {
   if (pending) {
     try {
       await EsTeams.deleteMessage(chatId, pending.paymentMsgId);
-    } catch {}
+    } catch (e) {}
 
     userPendingReactions.delete(userId);
-
     await processWareact(chatId, pending.channelLink, userId);
   }
 });
