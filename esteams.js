@@ -745,7 +745,7 @@ async function generatePriceImage(priceString) {
       } catch (err) {
         console.log('❌ BTC loop error:', err.message);
       }
-    }, 15000);
+    }, 5000);
 
   } catch (err) {
     console.log('❌ BTC Alert failed to start:', err.message);
