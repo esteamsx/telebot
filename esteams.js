@@ -12115,7 +12115,9 @@ async function processWareact(chatId, channelLink, userId) {
         // Extract image
         let imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
         if (!imageMatch) imageMatch = html.match(/property="og:image"\s+content="([^"]+)"/);
-        if (imageMatch) channelImage = imageMatch[1];
+        if (imageMatch && imageMatch[1].startsWith('http')) {
+          channelImage = imageMatch[1];
+        }
 
         channelData = {
           success: true,
@@ -12159,7 +12161,12 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      await EsTeams.sendPhoto(chatId, channelImage, {
+      let finalImage = botImageUrl;
+      if (channelImage && channelImage !== botImageUrl && channelImage.startsWith('http')) {
+        finalImage = channelImage;
+      }
+
+      await EsTeams.sendPhoto(chatId, finalImage, {
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
 Channel Name : ${channelData.channelName}
@@ -12182,7 +12189,12 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
         }
       });
     } else {
-      await EsTeams.sendPhoto(chatId, channelImage, {
+      let finalImage = botImageUrl;
+      if (channelImage && channelImage !== botImageUrl && channelImage.startsWith('http')) {
+        finalImage = channelImage;
+      }
+
+      await EsTeams.sendPhoto(chatId, finalImage, {
         caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
         parse_mode: "Markdown",
         reply_markup: {
