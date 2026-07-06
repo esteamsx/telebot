@@ -565,6 +565,8 @@ async function reactToMessage(chatId, messageId) {
     process.env.BOT_TOKEN_15
   ].filter(token => token);
 
+  console.log(`🔄 Adding reactions with ${botTokens.length} bots...`);
+
   for (const token of botTokens) {
     try {
       const randomEmoji = reactions[Math.floor(Math.random() * reactions.length)];
@@ -582,6 +584,7 @@ async function reactToMessage(chatId, messageId) {
       await new Promise(resolve => setTimeout(resolve, 200));
 
     } catch (err) {
+      // Silent
     }
   }
 }
@@ -603,6 +606,7 @@ async function getBTC() {
 
     return price;
   } catch (err) {
+    console.log('⚠️ BTC fetch failed:', err.message);
     return null;
   }
 }
@@ -634,21 +638,31 @@ async function generatePriceImage(priceString) {
 
     return canvas.toBuffer('image/png');
   } catch (error) {
+    console.log('⚠️ Image generation failed:', error.message);
     return null;
   }
 }
 
 (async function btcAutoAlert() {
   try {
+    console.log('🚀 BTC Alert starting...');
+
     await EsTeams[0].sendPhoto(adminId, botImageUrl, {
       caption: "📡 𝗕𝗧𝗖 𝗔𝗟𝗘𝗥𝗧\n\nInitializing BTC Price Tracker...",
       reply_markup: { inline_keyboard: waButton },
     });
 
+    console.log('✅ BTC Alert initialized');
+
     setInterval(async () => {
       try {
         const price = await getBTC();
-        if (!price) return;
+        if (!price) {
+          console.log('⚠️ No price data');
+          return;
+        }
+
+        console.log(`📊 BTC Price: $${price}`);
 
         global.btcLastPing = Date.now();
 
@@ -656,6 +670,7 @@ async function generatePriceImage(priceString) {
 
         if (lastPrice === null) {
           lastPrice = intervalPrice;
+          console.log(`📌 First price set: $${intervalPrice}`);
           return;
         }
 
@@ -668,11 +683,13 @@ async function generatePriceImage(priceString) {
 
           const formattedPrice = intervalPrice.toLocaleString();
 
+          console.log(`${arrow} Price changed to: $${formattedPrice}`);
+
           const dynamicImageBuffer = await generatePriceImage(formattedPrice);
           const photoToSend = dynamicImageBuffer || botImageUrl;
 
           const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
-            caption: `${arrow} 𝗕𝗧𝗖 : $*${formattedPrice}* @esteams_btc`,
+            caption: `${arrow} 𝗕𝗧𝗖 : $*${formattedPrice}*`,
             parse_mode: "Markdown",
             reply_markup: { inline_keyboard: waButton },
           });
@@ -682,10 +699,12 @@ async function generatePriceImage(priceString) {
           reactionIndex++;
         }
       } catch (err) {
+        console.log('❌ BTC loop error:', err.message);
       }
-    }, 15000); 
+    }, 15000);
 
   } catch (err) {
+    console.log('❌ BTC Alert failed to start:', err.message);
   }
 })();
 
