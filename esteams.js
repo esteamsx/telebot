@@ -12004,7 +12004,7 @@ Thank you for supporting *ES TEAMS* with Telegram Stars ⭐`,
     }
 });
 
-// ------ WA CHANNEL COMMAND -------------- //
+/// ------ WA CHANNEL COMMAND -------------- //
 EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -12086,30 +12086,36 @@ async function processWareact(chatId, channelLink, userId) {
     let channelImage = botImageUrl;
 
     try {
-      const response = await fetch("https://apis.davidcyril.name.ng/endpoints/stalk/?whatsapp-channel-stalk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ channelLink: channelLink })
+      const response = await fetch(channelLink, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
       });
 
-      const data = await response.json();
+      const html = await response.text();
       
-      if (data.success) {
-        let followersDisplay = data.followers;
-        if (data.followersCount >= 1000 && !data.followers.includes('k')) {
-          const k = (data.followersCount / 1000).toFixed(1).replace(/\.0$/, '');
-          followersDisplay = k + 'k followers';
-        }
+      let channelName = 'Unknown';
+      let nameMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
+      if (!nameMatch) nameMatch = html.match(/<title>([^<]+)<\/title>/);
+      if (nameMatch) channelName = nameMatch[1].trim();
 
-        channelData = {
-          success: true,
-          channelName: data.title,
-          followers: followersDisplay
-        };
-        channelImage = data.image;
-      }
+      let followers = 'N/A';
+      let followersMatch = html.match(/(\d+(?:\.\d+)?)\s*(?:k|m)?\s*followers?/i);
+      if (followersMatch) followers = followersMatch[0];
+
+      let imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
+      if (!imageMatch) imageMatch = html.match(/property="og:image"\s+content="([^"]+)"/);
+      if (imageMatch) channelImage = imageMatch[1];
+
+      channelData = {
+        success: true,
+        channelName: channelName,
+        followers: followers || 'N/A'
+      };
+
+      console.log('Scraped:', channelData);
     } catch (err) {
-      console.error('Fetch channel error:', err);
+      console.error('Web scrape error:', err.message);
     }
 
     for (let i = 0; i < steps.length; i++) {
@@ -12144,9 +12150,9 @@ async function processWareact(chatId, channelLink, userId) {
       await EsTeams.sendPhoto(chatId, channelImage, {
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
-*Channel Name:* ${channelData.channelName}
+Channel Name : ${channelData.channelName}
 
-*Channel Followers:* ${channelData.followers}
+Channel Followers : ${channelData.followers}
 
 *Reactions Used:*
 ${emoji}
