@@ -326,7 +326,6 @@ function welcomeCaption(mainText) {
   return `𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗔𝗨𝗧𝗢 𝗧𝗥𝗔𝗗𝗜𝗡𝗚\n\n${mainText}`;
 }
 
-// ------------ WA CHANNEL REQUEST FUNC. ------- //
 async function getToken() {
   if (cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
     return cachedToken;
@@ -391,6 +390,53 @@ async function sendChannelReact(link, emoji = null) {
       success: false,
       message: `❌ Request failed: ${err.message}`
     };
+  }
+}
+
+//================= WAREACT FIREBASE =================//
+async function saveWareactTime(userId) {
+  const wareactRef = doc(db, "wareact_cooldowns", String(userId));
+
+  try {
+    await setDoc(wareactRef, {
+      userId: userId,
+      timestamp: Date.now(),
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000),
+      lastUpdated: new Date().toISOString()
+    });
+
+    console.log(`✅ Wareact cooldown saved for user ${userId}`);
+  } catch (err) {
+    console.error("Error saving wareact time:", err.message);
+  }
+}
+
+async function checkWareactCooldown(userId) {
+  const wareactRef = doc(db, "wareact_cooldowns", String(userId));
+
+  try {
+    const snap = await getDoc(wareactRef);
+
+    if (snap.exists()) {
+      const data = snap.data();
+      const now = Date.now();
+      const expiresAt = data.expiresAt || 0;
+
+      if (now < expiresAt) {
+        const timeLeft = expiresAt - now;
+        return {
+          canUse: false,
+          timeLeft: timeLeft
+        };
+      } else {
+        return { canUse: true, timeLeft: 0 };
+      }
+    }
+
+    return { canUse: true, timeLeft: 0 };
+  } catch (err) {
+    console.error("Error checking wareact cooldown:", err.message);
+    return { canUse: true, timeLeft: 0 };
   }
 }
 
@@ -662,8 +708,6 @@ async function generatePriceImage(priceString) {
           return;
         }
 
-        console.log(`📊 BTC Price: $${price}`);
-
         global.btcLastPing = Date.now();
 
         const intervalPrice = Math.floor(price / 500) * 500;
@@ -689,8 +733,8 @@ async function generatePriceImage(priceString) {
           const photoToSend = dynamicImageBuffer || botImageUrl;
 
           const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
-            caption: `${arrow} 𝗕𝗧𝗖 : $*${formattedPrice}*`,
-            parse_mode: "Markdown",
+            caption: `${arrow} 𝗕𝗧𝗖 : $<b>${formattedPrice}</b> @esteams_btc`,
+            parse_mode: "HTML",
             reply_markup: { inline_keyboard: waButton },
           });
 
@@ -11986,12 +12030,10 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
   }
 
   if (!CONFIG.OWNER_IDS.includes(userId)) {
-    const lastUseTime = userLastWareact.get(userId);
-    const now = Date.now();
-    const twentyFourHours = 24 * 60 * 60 * 1000;
+    const cooldown = await checkWareactCooldown(userId);
 
-    if (lastUseTime && (now - lastUseTime) < twentyFourHours) {
-      const timeLeft = twentyFourHours - (now - lastUseTime);
+    if (!cooldown.canUse) {
+      const timeLeft = cooldown.timeLeft;
       const hours = Math.floor(timeLeft / (60 * 60 * 1000));
       const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
 
@@ -12000,7 +12042,7 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
 
 Your daily free limit has been used.
 
-Pay 1 Star to continue the service.
+Pay *1* Star to continue the service.
 
 ⏰ *Next Free Use In:* ${hours}h ${minutes}m
 
@@ -12063,7 +12105,7 @@ async function processWareact(chatId, channelLink, userId) {
 
     if (result.success) {
       if (userId) {
-        userLastWareact.set(userId, Date.now());
+        await saveWareactTime(userId);
       }
 
       const emoji = result.emojisUsed?.length
@@ -12108,7 +12150,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
       caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
