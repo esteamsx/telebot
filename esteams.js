@@ -733,7 +733,7 @@ async function generatePriceImage(priceString) {
           const photoToSend = dynamicImageBuffer || botImageUrl;
 
           const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
-            caption: `${arrow} 𝗕𝗧𝗖 : $<b>${formattedPrice}</b> @esteams_btc`,
+            caption: `${arrow}  $<b>${formattedPrice}</b> @esteams_btc`,
             parse_mode: "HTML",
             reply_markup: { inline_keyboard: waButton },
           });
