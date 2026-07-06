@@ -12082,55 +12082,6 @@ async function processWareact(chatId, channelLink, userId) {
   ];
 
   try {
-    // Fetch channel data via web scraping
-    let channelData = { success: false, channelName: 'Unknown', followers: 'N/A' };
-    let channelImage = botImageUrl;
-
-    try {
-      // Extract channel ID and build clean channel URL
-      const channelMatch = channelLink.match(/whatsapp\.com\/channel\/([a-zA-Z0-9]+)/);
-      if (channelMatch) {
-        const channelId = channelMatch[1];
-        const cleanChannelLink = `https://whatsapp.com/channel/${channelId}`;
-
-        const response = await fetch(cleanChannelLink, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-          }
-        });
-
-        const html = await response.text();
-        
-        // Extract channel name - multiple patterns
-        let channelName = 'Unknown';
-        let nameMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
-        if (!nameMatch) nameMatch = html.match(/<title>([^<]+)<\/title>/);
-        if (nameMatch) channelName = nameMatch[1].trim();
-
-        // Extract followers - look for multiple patterns
-        let followers = 'N/A';
-        let followersMatch = html.match(/(\d+(?:\.\d+)?)\s*(?:k|m)?\s*followers?/i);
-        if (followersMatch) followers = followersMatch[0];
-
-        // Extract image
-        let imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
-        if (!imageMatch) imageMatch = html.match(/property="og:image"\s+content="([^"]+)"/);
-        if (imageMatch && imageMatch[1].startsWith('http')) {
-          channelImage = imageMatch[1];
-        }
-
-        channelData = {
-          success: true,
-          channelName: channelName,
-          followers: followers || 'N/A'
-        };
-
-        console.log('Scraped:', channelData);
-      }
-    } catch (err) {
-      console.error('Web scrape error:', err.message);
-    }
-
     for (let i = 0; i < steps.length; i++) {
       await new Promise(r => setTimeout(r, i === 2 ? 15000 : 500));
       
@@ -12161,19 +12112,10 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      let finalImage = botImageUrl;
-      if (channelImage && channelImage !== botImageUrl && channelImage.startsWith('http')) {
-        finalImage = channelImage;
-      }
-
-      await EsTeams.sendPhoto(chatId, finalImage, {
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
-Channel Name : ${channelData.channelName}
-
-Channel Followers : ${channelData.followers}
-
-*Reactions Used:*
+😊 *Reactions Used:*
 ${emoji}
 
 💎 *Coins Left:*
@@ -12189,12 +12131,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
         }
       });
     } else {
-      let finalImage = botImageUrl;
-      if (channelImage && channelImage !== botImageUrl && channelImage.startsWith('http')) {
-        finalImage = channelImage;
-      }
-
-      await EsTeams.sendPhoto(chatId, finalImage, {
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
         parse_mode: "Markdown",
         reply_markup: {
