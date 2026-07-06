@@ -582,7 +582,6 @@ async function reactToMessage(chatId, messageId) {
       await new Promise(resolve => setTimeout(resolve, 200));
 
     } catch (err) {
-      // Silent fail
     }
   }
 }
@@ -683,160 +682,10 @@ async function generatePriceImage(priceString) {
           reactionIndex++;
         }
       } catch (err) {
-        // Silent fail
       }
     }, 15000); 
 
   } catch (err) {
-  }
-})();
-
-//============ BTC PRICE CHECK ===============//
-async function reactToMessage(chatId, messageId) {
-  const botTokens = [
-    process.env.BOT_TOKEN,
-    process.env.BOT_TOKEN_1,
-    process.env.BOT_TOKEN_2,
-    process.env.BOT_TOKEN_3,
-    process.env.BOT_TOKEN_4,
-    process.env.BOT_TOKEN_5,
-    process.env.BOT_TOKEN_6,
-    
-    process.env.BOT_TOKEN_16
-  ];
-
-  for (const token of botTokens) {
-    if (!token) continue;
-
-    try {
-      const randomEmoji =
-        reactions[Math.floor(Math.random() * reactions.length)];
-
-      await axios.post(
-        `https://api.telegram.org/bot${token}/setMessageReaction`,
-        {
-          chat_id: chatId,
-          message_id: messageId,
-          reaction: [
-            { type: "emoji", emoji: randomEmoji }
-          ]
-        },
-        {
-          timeout: 5000
-        }
-      );
-
-      // Small delay between bots
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-    } catch (err) {
-      // Ignore individual bot failures
-      // Prevents Railway log flooding
-    }
-  }
-}
-
-async function getBTC() {
-  try {
-    const res = await fetch("https://openapiv1.coinstats.app/coins?coinIds=bitcoin&currency=USD", {
-      headers: {
-        "X-API-KEY": process.env.COINSTATS_API_KEY,
-      },
-    });
-
-    const data = await res.json();
-    const price = Number(data?.result?.[0]?.price);
-
-    if (!price || isNaN(price)) {
-      console.log("Invalid price received:", data);
-      return null;
-    }
-
-    return price;
-  } catch (err) {
-    console.log("Price Fetch Error:", err.message);
-    return null;
-  }
-}
-
-async function generatePriceImage(priceString) {
-  try {
-    const image = await loadImage(myBtcTemplate);
-
-    const canvas = createCanvas(image.width, image.height);
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(image, 0, 0, image.width, image.height);
-
-    const fullPriceText = `$ ${priceString}`;
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '900 82px "Impact", "Arial Black", sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-
-    const centerX = image.width / 2;
-    const centerY = 340;
-
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 12;
-    ctx.strokeText(fullPriceText, centerX, centerY);
-
-    ctx.fillText(fullPriceText, centerX, centerY);
-
-    return canvas.toBuffer('image/png');
-  } catch (error) {
-    console.error("Failed to generate price image:", error.message);
-    return null;
-  }
-}
-
-(async function btcAutoAlert() {
-  try {
-    await EsTeams[0].sendPhoto(adminId, botImageUrl, {
-      caption: "📡 𝗕𝗧𝗖 𝗔𝗟𝗘𝗥𝗧\n\nInitializing BTC Price Tracker...",
-      reply_markup: { inline_keyboard: waButton },
-    });
-
-    setInterval(async () => {
-      const price = await getBTC();
-      if (!price) return;
-
-      global.btcLastPing = Date.now();
-
-      const intervalPrice = Math.floor(price / 500) * 500;
-
-      if (lastPrice === null) {
-        lastPrice = intervalPrice;
-        return;
-      }
-
-      let arrow = "➡️";
-      if (intervalPrice > lastPrice) arrow = "🟢";
-      else if (intervalPrice < lastPrice) arrow = "🔴";
-
-      if (intervalPrice !== lastPrice) {
-        lastPrice = intervalPrice;
-
-        const formattedPrice = intervalPrice.toLocaleString();
-
-        const dynamicImageBuffer = await generatePriceImage(formattedPrice);
-        const photoToSend = dynamicImageBuffer || botImageUrl;
-
-        const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
-          caption: `${arrow} 𝗕𝗧𝗖 : $*${formattedPrice}* @esteams_btc`,
-          parse_mode: "Markdown",
-          reply_markup: { inline_keyboard: waButton },
-        });
-
-        await reactToMessage(channelId, sentMsg.message_id);
-
-        reactionIndex++;
-      }
-    }, 5500);
-
-  } catch (err) {
-    console.error("BTC Alert Initialization Error:", err.message);
   }
 })();
 
