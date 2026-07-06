@@ -12004,7 +12004,7 @@ Thank you for supporting *ES TEAMS* with Telegram Stars ⭐`,
     }
 });
 
-/// ------ WA CHANNEL COMMAND -------------- //
+// ------ WA CHANNEL COMMAND -------------- //
 EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -12069,6 +12069,16 @@ Tap the button below`,
   await processWareact(chatId, channelLink, userId);
 });
 
+function decodeHtmlEntities(str) {
+  return str.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+            .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+            .replace(/&amp;/g, "&")
+            .replace(/&quot;/g, '"')
+            .replace(/&#039;/g, "'")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">");
+}
+
 async function processWareact(chatId, channelLink, userId) {
   let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");
 
@@ -12097,7 +12107,7 @@ async function processWareact(chatId, channelLink, userId) {
       let channelName = 'Unknown';
       let nameMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
       if (!nameMatch) nameMatch = html.match(/<title>([^<]+)<\/title>/);
-      if (nameMatch) channelName = nameMatch[1].trim();
+      if (nameMatch) channelName = decodeHtmlEntities(nameMatch[1].trim());
 
       let followers = 'N/A';
       let followersMatch = html.match(/(\d+(?:\.\d+)?)\s*(?:k|m)?\s*followers?/i);
