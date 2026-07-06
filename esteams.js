@@ -144,6 +144,7 @@ const startTime = Date.now();
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 const adminId = 5523737392;
 const channelId = -1003410474720; 
+const REACTION_COOLDOWN = 30000; 
 const groupId = -1002408064092;
 let LOCK_BOT = false;
 
@@ -193,6 +194,7 @@ let btcFailStart = null;
 let cachedToken = null;
 let tokenExpiry = null;
 let lastFailAlert = 0;
+let lastReactionTime = 0;
 let reactionIndex = 0;
 const userWatchlists = {};
 const paymentReceipts = {};
@@ -264,6 +266,16 @@ async function readUsers() {
 }  
 
 export { saveUser, readUsers };
+
+//============ SUPPRESS EXCESSIVE LOGGING ============//
+console.error = function(...args) {
+  if (args[0]?.includes?.('Error') || args[0]?.code === 429) {
+    process.stderr.write(`${args.join(' ')}\n`);
+  }
+};
+
+process.env.DEBUG = '';
+process.env.NODE_DEBUG = '';
 
 //============ HELPER FUNCTIONS ==============//
 async function validateApiKey(apiKey, apiSecret) {
@@ -525,6 +537,159 @@ cron.schedule("5 1 * * *", () => {
 }, {
   timezone: "Africa/Lagos"
 });
+
+//============ BTC PRICE CHECK ===============//
+async function reactToMessage(chatId, messageId) {
+  const now = Date.now();
+  if (now - lastReactionTime < REACTION_COOLDOWN) {
+    return;
+  }
+  lastReactionTime = now;
+
+  const botTokens = [
+    process.env.BOT_TOKEN,
+    process.env.BOT_TOKEN_1,
+    process.env.BOT_TOKEN_2,
+    process.env.BOT_TOKEN_3,
+    process.env.BOT_TOKEN_4,
+    process.env.BOT_TOKEN_5,
+    process.env.BOT_TOKEN_6,
+    process.env.BOT_TOKEN_7,
+    process.env.BOT_TOKEN_8,
+    process.env.BOT_TOKEN_9,
+    process.env.BOT_TOKEN_10,
+    process.env.BOT_TOKEN_11,
+    process.env.BOT_TOKEN_12,
+    process.env.BOT_TOKEN_13,
+    process.env.BOT_TOKEN_14,
+    process.env.BOT_TOKEN_15
+  ].filter(token => token);
+
+  for (const token of botTokens) {
+    try {
+      const randomEmoji = reactions[Math.floor(Math.random() * reactions.length)];
+
+      await axios.post(
+        `https://api.telegram.org/bot${token}/setMessageReaction`,
+        {
+          chat_id: chatId,
+          message_id: messageId,
+          reaction: [{ type: "emoji", emoji: randomEmoji }]
+        },
+        { timeout: 5000 }
+      );
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+    } catch (err) {
+      // Silent fail
+    }
+  }
+}
+
+async function getBTC() {
+  try {
+    const res = await fetch("https://openapiv1.coinstats.app/coins?coinIds=bitcoin&currency=USD", {
+      headers: {
+        "X-API-KEY": process.env.COINSTATS_API_KEY,
+      },
+    });
+
+    const data = await res.json();
+    const price = Number(data?.result?.[0]?.price);
+
+    if (!price || isNaN(price)) {
+      return null;
+    }
+
+    return price;
+  } catch (err) {
+    return null;
+  }
+}
+
+async function generatePriceImage(priceString) {
+  try {
+    const image = await loadImage(myBtcTemplate);
+
+    const canvas = createCanvas(image.width, image.height);
+    const ctx = canvas.getContext('2d');
+
+    ctx.drawImage(image, 0, 0, image.width, image.height);
+
+    const fullPriceText = `$ ${priceString}`;
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 82px "Impact", "Arial Black", sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+
+    const centerX = image.width / 2;
+    const centerY = 340;
+
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 12;
+    ctx.strokeText(fullPriceText, centerX, centerY);
+
+    ctx.fillText(fullPriceText, centerX, centerY);
+
+    return canvas.toBuffer('image/png');
+  } catch (error) {
+    return null;
+  }
+}
+
+(async function btcAutoAlert() {
+  try {
+    await EsTeams[0].sendPhoto(adminId, botImageUrl, {
+      caption: "📡 𝗕𝗧𝗖 𝗔𝗟𝗘𝗥𝗧\n\nInitializing BTC Price Tracker...",
+      reply_markup: { inline_keyboard: waButton },
+    });
+
+    setInterval(async () => {
+      try {
+        const price = await getBTC();
+        if (!price) return;
+
+        global.btcLastPing = Date.now();
+
+        const intervalPrice = Math.floor(price / 500) * 500;
+
+        if (lastPrice === null) {
+          lastPrice = intervalPrice;
+          return;
+        }
+
+        let arrow = "➡️";
+        if (intervalPrice > lastPrice) arrow = "🟢";
+        else if (intervalPrice < lastPrice) arrow = "🔴";
+
+        if (intervalPrice !== lastPrice) {
+          lastPrice = intervalPrice;
+
+          const formattedPrice = intervalPrice.toLocaleString();
+
+          const dynamicImageBuffer = await generatePriceImage(formattedPrice);
+          const photoToSend = dynamicImageBuffer || botImageUrl;
+
+          const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
+            caption: `${arrow} 𝗕𝗧𝗖 : $*${formattedPrice}* @esteams_btc`,
+            parse_mode: "Markdown",
+            reply_markup: { inline_keyboard: waButton },
+          });
+
+          await reactToMessage(channelId, sentMsg.message_id);
+
+          reactionIndex++;
+        }
+      } catch (err) {
+        // Silent fail
+      }
+    }, 15000); 
+
+  } catch (err) {
+  }
+})();
 
 //============ BTC PRICE CHECK ===============//
 async function reactToMessage(chatId, messageId) {
