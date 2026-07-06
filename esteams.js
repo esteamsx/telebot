@@ -12069,31 +12069,6 @@ Tap the button below`,
   await processWareact(chatId, channelLink, userId);
 });
 
-function decodeHtmlEntities(str) {
-  return str.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
-            .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
-            .replace(/&amp;/g, "&")
-            .replace(/&quot;/g, '"')
-            .replace(/&#039;/g, "'")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">");
-}
-
-// Cleans a scraped title/name string down to just the channel name,
-// stripping any promo text, blank-line breaks, links, and capping length.
-function cleanChannelName(raw, maxLen = 60) {
-  let name = raw
-    .split(/\r?\n\s*\r?\n/)[0]   // drop anything after a blank-line break (e.g. "Limited Slot", links)
-    .split(/https?:\/\//)[0]      // drop anything from an embedded URL onward
-    .replace(/\r?\n/g, ' ')       // collapse any remaining single newlines
-    .trim();
-
-  if (name.length > maxLen) {
-    name = name.slice(0, maxLen).trim() + '…';
-  }
-  return name;
-}
-
 async function processWareact(chatId, channelLink, userId) {
   let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");
 
@@ -12107,47 +12082,9 @@ async function processWareact(chatId, channelLink, userId) {
   ];
 
   try {
-    let channelData = { success: false, channelName: 'Unknown', followers: 'N/A' };
-    let channelImage = botImageUrl;
-
-    try {
-      const response = await fetch(channelLink, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-      });
-
-      const html = await response.text();
-
-      let channelName = 'Unknown';
-      let nameMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
-      if (!nameMatch) nameMatch = html.match(/<title>([^<]+)<\/title>/);
-      if (nameMatch) {
-        channelName = cleanChannelName(decodeHtmlEntities(nameMatch[1].trim()));
-      }
-
-      let followers = 'N/A';
-      let followersMatch = html.match(/(\d+(?:\.\d+)?)\s*(?:k|m)?\s*followers?/i);
-      if (followersMatch) followers = followersMatch[0];
-
-      let imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
-      if (!imageMatch) imageMatch = html.match(/property="og:image"\s+content="([^"]+)"/);
-      if (imageMatch) channelImage = imageMatch[1];
-
-      channelData = {
-        success: true,
-        channelName: channelName,
-        followers: followers || 'N/A'
-      };
-
-      console.log('Scraped:', channelData);
-    } catch (err) {
-      console.error('Web scrape error:', err.message);
-    }
-
     for (let i = 0; i < steps.length; i++) {
       await new Promise(r => setTimeout(r, i === 2 ? 15000 : 500));
-
+      
       if (i < steps.length - 1) {
         try {
           await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {
@@ -12155,6 +12092,7 @@ async function processWareact(chatId, channelLink, userId) {
             message_id: loading.message_id
           });
         } catch (e) {
+          // Silently fail if edit fails
         }
       }
     }
@@ -12174,40 +12112,26 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      // Telegram caption hard limit is 1024 chars — trim status/message defensively too
-      let statusMsg = (result.message || '').toString();
-      if (statusMsg.length > 200) statusMsg = statusMsg.slice(0, 200).trim() + '…';
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
-      let caption = `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
-
-Channel Name : ${channelData.channelName}
-
-Channel Followers : ${channelData.followers}
-
-*Reactions Used:*
+😊 *Reactions Used:*
 ${emoji}
 
 💎 *Coins Left:*
 \`${result.coinsLeft}\`
 
 📌 *Status:*
-${statusMsg}
+${result.message}
 
-_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`;
-
-      if (caption.length > 1024) {
-        caption = caption.slice(0, 1000).trim() + '…';
-      }
-
-      await EsTeams.sendPhoto(chatId, channelImage, {
-        caption: caption,
+_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
         }
       });
     } else {
-      await EsTeams.sendPhoto(chatId, channelImage, {
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
         parse_mode: "Markdown",
         reply_markup: {
@@ -12217,7 +12141,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
     }
   } catch (err) {
     console.error('Command error:', err.message);
-
+    
     try {
       await EsTeams.deleteMessage(chatId, loading.message_id);
     } catch (e) {}
@@ -12226,7 +12150,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
       caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -12265,7 +12189,7 @@ EsTeams.on("callback_query", async (query) => {
 EsTeams.on("successful_payment", async (msg) => {
   const userId = msg.from.id;
   const chatId = msg.chat.id;
-
+  
   const pending = userPendingReactions.get(userId);
 
   if (pending) {
