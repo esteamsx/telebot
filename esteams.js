@@ -12079,6 +12079,21 @@ function decodeHtmlEntities(str) {
             .replace(/&gt;/g, ">");
 }
 
+// Cleans a scraped title/name string down to just the channel name,
+// stripping any promo text, blank-line breaks, links, and capping length.
+function cleanChannelName(raw, maxLen = 60) {
+  let name = raw
+    .split(/\r?\n\s*\r?\n/)[0]   // drop anything after a blank-line break (e.g. "Limited Slot", links)
+    .split(/https?:\/\//)[0]      // drop anything from an embedded URL onward
+    .replace(/\r?\n/g, ' ')       // collapse any remaining single newlines
+    .trim();
+
+  if (name.length > maxLen) {
+    name = name.slice(0, maxLen).trim() + '…';
+  }
+  return name;
+}
+
 async function processWareact(chatId, channelLink, userId) {
   let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");
 
@@ -12103,11 +12118,13 @@ async function processWareact(chatId, channelLink, userId) {
       });
 
       const html = await response.text();
-      
+
       let channelName = 'Unknown';
       let nameMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
       if (!nameMatch) nameMatch = html.match(/<title>([^<]+)<\/title>/);
-      if (nameMatch) channelName = decodeHtmlEntities(nameMatch[1].trim());
+      if (nameMatch) {
+        channelName = cleanChannelName(decodeHtmlEntities(nameMatch[1].trim()));
+      }
 
       let followers = 'N/A';
       let followersMatch = html.match(/(\d+(?:\.\d+)?)\s*(?:k|m)?\s*followers?/i);
@@ -12130,7 +12147,7 @@ async function processWareact(chatId, channelLink, userId) {
 
     for (let i = 0; i < steps.length; i++) {
       await new Promise(r => setTimeout(r, i === 2 ? 15000 : 500));
-      
+
       if (i < steps.length - 1) {
         try {
           await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {
@@ -12157,8 +12174,11 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      await EsTeams.sendPhoto(chatId, channelImage, {
-        caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
+      // Telegram caption hard limit is 1024 chars — trim status/message defensively too
+      let statusMsg = (result.message || '').toString();
+      if (statusMsg.length > 200) statusMsg = statusMsg.slice(0, 200).trim() + '…';
+
+      let caption = `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
 Channel Name : ${channelData.channelName}
 
@@ -12171,9 +12191,16 @@ ${emoji}
 \`${result.coinsLeft}\`
 
 📌 *Status:*
-${result.message}
+${statusMsg}
 
-_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,
+_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`;
+
+      if (caption.length > 1024) {
+        caption = caption.slice(0, 1000).trim() + '…';
+      }
+
+      await EsTeams.sendPhoto(chatId, channelImage, {
+        caption: caption,
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
@@ -12190,7 +12217,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
     }
   } catch (err) {
     console.error('Command error:', err.message);
-    
+
     try {
       await EsTeams.deleteMessage(chatId, loading.message_id);
     } catch (e) {}
@@ -12199,7 +12226,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
       caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -12238,7 +12265,7 @@ EsTeams.on("callback_query", async (query) => {
 EsTeams.on("successful_payment", async (msg) => {
   const userId = msg.from.id;
   const chatId = msg.chat.id;
-  
+
   const pending = userPendingReactions.get(userId);
 
   if (pending) {
