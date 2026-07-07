@@ -326,8 +326,8 @@ function welcomeCaption(mainText) {
   return `𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗔𝗨𝗧𝗢 𝗧𝗥𝗔𝗗𝗜𝗡𝗚\n\n${mainText}`;
 }
 
-async function getToken() {
-  if (cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
+async function getToken(forceRefresh = false) {
+  if (!forceRefresh && cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
     return cachedToken;
   }
 
@@ -339,8 +339,8 @@ async function getToken() {
 
     if (res.data.success) {
       cachedToken = res.data.token;
-      tokenExpiry = Date.now() + (23 * 60 * 60 * 1000); 
-      console.log('✅ Login successful, token cached');
+      tokenExpiry = Date.now() + (12 * 60 * 60 * 1000); 
+      console.log('✅ Login successful, token cached for 12 hours');
       return cachedToken;
     } else {
       throw new Error('Login failed: ' + (res.data.error || 'Unknown error'));
@@ -353,7 +353,7 @@ async function getToken() {
 
 async function sendChannelReact(link, emoji = null) {
   try {
-    const token = await getToken();
+    let token = await getToken();
 
     const payload = {
       link: link,
@@ -363,26 +363,56 @@ async function sendChannelReact(link, emoji = null) {
 
     console.log('📤 Sending request:', payload);
 
-    const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': token
-      },
-      timeout: 30000
-    });
+    try {
+      const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        timeout: 30000
+      });
 
-    if (res.data.success) {
-      return {
-        success: true,
-        message: `✅ Done!`,
-        emojisUsed: res.data.emojisUsed,
-        coinsLeft: res.data.coinsLeft
-      };
-    } else {
-      return {
-        success: false,
-        message: `❌ Error: ${res.data.error}`
-      };
+      if (res.data.success) {
+        return {
+          success: true,
+          message: `✅ Done!`,
+          emojisUsed: res.data.emojisUsed,
+          coinsLeft: res.data.coinsLeft
+        };
+      } else {
+        return {
+          success: false,
+          message: `❌ Error: ${res.data.error}`
+        };
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        console.log('⚠️ Token expired, refreshing...');
+        token = await getToken(true);
+
+        const retryRes = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+          },
+          timeout: 30000
+        });
+
+        if (retryRes.data.success) {
+          return {
+            success: true,
+            message: `✅ Done!`,
+            emojisUsed: retryRes.data.emojisUsed,
+            coinsLeft: retryRes.data.coinsLeft
+          };
+        } else {
+          return {
+            success: false,
+            message: `❌ Error: ${retryRes.data.error}`
+          };
+        }
+      }
+      throw err;
     }
   } catch (err) {
     console.error('❌ Request failed:', err.message);
