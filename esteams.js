@@ -470,6 +470,39 @@ async function checkWareactCooldown(userId) {
   }
 }
 
+//============ SERVER HEALTH CHECK =================//
+async function checkServerHealth() {
+  try {
+    const res = await axios.post(`${SITE_BASE}/api/login`, {
+      username: USERNAME,
+      password: PASSWORD
+    }, { 
+      timeout: 5000,
+      validateStatus: function(status) {
+        return status < 500 || status === 503;
+      }
+    });
+
+    if (res.status === 503) {
+      return {
+        isHealthy: false,
+        reason: "Server unavailable"
+      };
+    }
+
+    return {
+      isHealthy: true,
+      reason: "Server healthy"
+    };
+
+  } catch (err) {
+    return {
+      isHealthy: false,
+      reason: "Network error"
+    };
+  }
+}
+
 // ------------ SIGN IN GET REQUEST ------- //
 function signV5GET(params = {}, secret) {
   const timestamp = params.timestamp ?? Date.now();
@@ -12102,6 +12135,23 @@ Tap the button below`,
 async function processWareact(chatId, channelLink, userId) {
   let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");
 
+  const health = await checkServerHealth();
+
+  if (!health.isHealthy) {
+    try {
+      await EsTeams.deleteMessage(chatId, loading.message_id);
+    } catch (e) {}
+
+    await EsTeams.sendPhoto(chatId, botImageUrl, {
+      caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.`,
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+      }
+    });
+    return;
+  }
+
   const steps = [
     "▰▰▱▱▱▱▱ Logging in...",
     "▰▰▰▱▱▱▱ Solving captcha...",
@@ -12180,7 +12230,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
       caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
