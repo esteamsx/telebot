@@ -4608,7 +4608,7 @@ EsTeams.onText(/\/publish(?:\s+(.+))?/, async (msg, match) => {
   const inlineKeyboard = {
     reply_markup: {
       inline_keyboard: [
-        [{ text: '𝗦𝗜𝗚𝗡𝗔𝗟 𝗚𝗥𝗢𝗨𝗣', url: "https://chat.whatsapp.com/JMfwHpcHz8i2hiGafRbJZb", style: "success" }],
+        [{ text: '𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗚𝗥𝗢𝗨𝗣', url: "https://chat.whatsapp.com/LudULrgRbs8El8TGJXYJ8L", style: "success" }],
          [{ text: '👤 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 𝗢𝗪𝗡𝗘𝗥', url: "https://t.me/examsolutionteam", style: "success" }],
         [{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
       ]
