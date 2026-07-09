@@ -12282,6 +12282,33 @@ EsTeams.on("successful_payment", async (msg) => {
   }
 });
 
+// -------------- STREAM COMMAND -------------- //
+EsTeams.onText(/^\/stream$/, async (msg) => {
+  const chatId = msg.chat.id;
+
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly check back later...", {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+      }
+    });
+  }
+
+  await EsTeams.sendPhoto(chatId, botImageUrl, {
+    caption: `*𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗩*
+
+Click the *LIVE TV* button below to get started!`,
+    parse_mode: "Markdown",
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "▶️ 𝗟𝗜𝗩𝗘 𝗧𝗩", web_app: { url: "https://stream-qgr4.onrender.com/" } }],
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
+      ]
+    }
+  });
+});
+
 // ------ PLAY COMMAND -------------- //
 EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
   const chatId = msg.chat.id;
