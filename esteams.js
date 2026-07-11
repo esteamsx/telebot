@@ -477,10 +477,25 @@ async function getChannelInfo(channelLink) {
       timeout: 5000
     });
 
-    if (res.data && res.data.name && res.data.image) {
+    if (res.data && res.data.name) {
+      if (res.data.image) {
+        try {
+          await axios.head(res.data.image, { timeout: 3000 });
+          return {
+            name: res.data.name,
+            image: res.data.image
+          };
+        } catch (e) {
+          return {
+            name: res.data.name,
+            image: null
+          };
+        }
+      }
+      
       return {
         name: res.data.name,
-        image: res.data.image
+        image: null
       };
     }
 
@@ -493,9 +508,14 @@ async function getChannelInfo(channelLink) {
 
 async function getChannelFollowers(channelLink) {
   try {
-    const res = await fetch(channelLink);
-    const html = await res.text();
+    const res = await axios.get(channelLink, {
+      timeout: 5000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
     
+    const html = res.data;
     const followerMatch = html.match(/followers['":\s]+([0-9KMB.,]+)/i) || 
                          html.match(/members['":\s]+([0-9KMB.,]+)/i) ||
                          html.match(/(\d+(?:[.,]\d{3})*)\s*(?:followers|members)/i);
@@ -12108,7 +12128,7 @@ Thank you for supporting *ES TEAMS* with Telegram Stars ⭐`,
     }
 });
 
-// ------ WA CHANNEL COMMAND -------------- //
+//================= WAREACT COMMAND =================//
 EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -12190,7 +12210,7 @@ async function processWareact(chatId, channelLink, userId) {
       caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.`,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
     return;
@@ -12216,6 +12236,7 @@ async function processWareact(chatId, channelLink, userId) {
             message_id: loading.message_id
           });
         } catch (e) {
+          // Silently fail if edit fails
         }
       }
     }
@@ -12267,7 +12288,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
         caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
         parse_mode: "Markdown",
         reply_markup: {
-          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
         }
       });
     }
