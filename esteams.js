@@ -470,67 +470,6 @@ async function checkWareactCooldown(userId) {
   }
 }
 
-//================= CHANNEL SCRAPER =================//
-async function getChannelInfo(channelLink) {
-  try {
-    const res = await axios.get(`https://flat-king-b0cd.emmyhenz1.workers.dev/?url=${encodeURIComponent(channelLink)}`, {
-      timeout: 5000
-    });
-
-    if (res.data && res.data.name) {
-      if (res.data.image) {
-        try {
-          await axios.head(res.data.image, { timeout: 3000 });
-          return {
-            name: res.data.name,
-            image: res.data.image
-          };
-        } catch (e) {
-          return {
-            name: res.data.name,
-            image: null
-          };
-        }
-      }
-      
-      return {
-        name: res.data.name,
-        image: null
-      };
-    }
-
-    return null;
-  } catch (err) {
-    console.log('⚠️ Channel scraper failed:', err.message);
-    return null;
-  }
-}
-
-async function getChannelFollowers(channelLink) {
-  try {
-    const res = await axios.get(channelLink, {
-      timeout: 5000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    });
-    
-    const html = res.data;
-    const followerMatch = html.match(/followers['":\s]+([0-9KMB.,]+)/i) || 
-                         html.match(/members['":\s]+([0-9KMB.,]+)/i) ||
-                         html.match(/(\d+(?:[.,]\d{3})*)\s*(?:followers|members)/i);
-    
-    if (followerMatch) {
-      return followerMatch[1].trim();
-    }
-
-    return "N/A";
-  } catch (err) {
-    console.log('⚠️ Followers scraper failed:', err.message);
-    return "N/A";
-  }
-}
-
 //============ SERVER HEALTH CHECK =================//
 async function checkServerHealth() {
   try {
@@ -12161,10 +12100,7 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
       const hours = Math.floor(timeLeft / (60 * 60 * 1000));
       const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
 
-      const channelInfo = await getChannelInfo(channelLink);
-      const photoUrl = channelInfo?.image || botImageUrl;
-
-      const paymentMsg = await EsTeams.sendPhoto(chatId, photoUrl, {
+      const paymentMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `*𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*
 
 Your daily free limit has been used.
@@ -12236,7 +12172,6 @@ async function processWareact(chatId, channelLink, userId) {
             message_id: loading.message_id
           });
         } catch (e) {
-          // Silently fail if edit fails
         }
       }
     }
@@ -12252,21 +12187,12 @@ async function processWareact(chatId, channelLink, userId) {
         await saveWareactTime(userId);
       }
 
-      const channelInfo = await getChannelInfo(channelLink);
-      const followers = await getChannelFollowers(channelLink);
-      const photoUrl = channelInfo?.image || botImageUrl;
-      const channelName = channelInfo?.name || "Channel";
-
       const emoji = result.emojisUsed?.length
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      await EsTeams.sendPhoto(chatId, photoUrl, {
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
-
-📢 *Channel:* ${channelName}
-
-👥 *Followers:* ${followers}
 
 😊 *Reactions Used:*
 ${emoji}
