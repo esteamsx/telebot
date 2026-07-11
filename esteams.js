@@ -470,6 +470,47 @@ async function checkWareactCooldown(userId) {
   }
 }
 
+//================= CHANNEL SCRAPER =================//
+async function getChannelInfo(channelLink) {
+  try {
+    const res = await axios.get(`https://flat-king-b0cd.emmyhenz1.workers.dev/?url=${encodeURIComponent(channelLink)}`, {
+      timeout: 5000
+    });
+
+    if (res.data && res.data.name && res.data.image) {
+      return {
+        name: res.data.name,
+        image: res.data.image
+      };
+    }
+
+    return null;
+  } catch (err) {
+    console.log('⚠️ Channel scraper failed:', err.message);
+    return null;
+  }
+}
+
+async function getChannelFollowers(channelLink) {
+  try {
+    const res = await fetch(channelLink);
+    const html = await res.text();
+    
+    const followerMatch = html.match(/followers['":\s]+([0-9KMB.,]+)/i) || 
+                         html.match(/members['":\s]+([0-9KMB.,]+)/i) ||
+                         html.match(/(\d+(?:[.,]\d{3})*)\s*(?:followers|members)/i);
+    
+    if (followerMatch) {
+      return followerMatch[1].trim();
+    }
+
+    return "N/A";
+  } catch (err) {
+    console.log('⚠️ Followers scraper failed:', err.message);
+    return "N/A";
+  }
+}
+
 //============ SERVER HEALTH CHECK =================//
 async function checkServerHealth() {
   try {
@@ -12100,7 +12141,10 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
       const hours = Math.floor(timeLeft / (60 * 60 * 1000));
       const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
 
-      const paymentMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
+      const channelInfo = await getChannelInfo(channelLink);
+      const photoUrl = channelInfo?.image || botImageUrl;
+
+      const paymentMsg = await EsTeams.sendPhoto(chatId, photoUrl, {
         caption: `*𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*
 
 Your daily free limit has been used.
@@ -12146,7 +12190,7 @@ async function processWareact(chatId, channelLink, userId) {
       caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.`,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
     return;
@@ -12172,7 +12216,6 @@ async function processWareact(chatId, channelLink, userId) {
             message_id: loading.message_id
           });
         } catch (e) {
-          // Silently fail if edit fails
         }
       }
     }
@@ -12188,12 +12231,21 @@ async function processWareact(chatId, channelLink, userId) {
         await saveWareactTime(userId);
       }
 
+      const channelInfo = await getChannelInfo(channelLink);
+      const followers = await getChannelFollowers(channelLink);
+      const photoUrl = channelInfo?.image || botImageUrl;
+      const channelName = channelInfo?.name || "Channel";
+
       const emoji = result.emojisUsed?.length
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      await EsTeams.sendPhoto(chatId, botImageUrl, {
+      await EsTeams.sendPhoto(chatId, photoUrl, {
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
+
+📢 *Channel:* ${channelName}
+
+👥 *Followers:* ${followers}
 
 😊 *Reactions Used:*
 ${emoji}
@@ -12215,7 +12267,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
         caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
         parse_mode: "Markdown",
         reply_markup: {
-          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
+          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
         }
       });
     }
