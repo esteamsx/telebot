@@ -3071,35 +3071,58 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
   try {
 
     const response = await axios.get(
-      `https://apis.davidcyril.name.ng/download/tiktokv4?url=${encodeURIComponent(url)}`
+      `https://apis.davidcyril.name.ng/download/tiktokv3?url=${encodeURIComponent(url)}`
     );
 
     const data = response.data;
 
-    if (!data.success || !data.results || !data.results.no_watermark)
+    if (!data.success || !data.video)
       throw new Error('Video download link not found.');
 
-    const thumbnail = data.results.thumbnail;
-    const videoUrl = data.results.no_watermark;
-    const mp3Direct = data.results.audio;
+    const videoUrl = data.video;
+    const audioUrl = data.audio;
+    const author = data.author || "Unknown";
+    const description = data.description || "No description";
 
     for (let step of steps) {
       await new Promise(r => setTimeout(r, 300));
-      await EsTeams.editMessageText(`⏳ Processing...\n${step}`, {
-        chat_id: chatId,
-        message_id: loading.message_id
-      });
+      try {
+        await EsTeams.editMessageText(`⏳ Processing...\n${step}`, {
+          chat_id: chatId,
+          message_id: loading.message_id
+        });
+      } catch (e) {}
     }
 
-    await EsTeams.deleteMessage(chatId, loading.message_id);
+    try {
+      await EsTeams.deleteMessage(chatId, loading.message_id);
+    } catch (e) {}
 
-    await EsTeams.sendPhoto(chatId, thumbnail, {
-      caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗧𝗜𝗞𝗧𝗢𝗞 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥*\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
+    const videoResponse = await axios.get(videoUrl, {
+      responseType: 'arraybuffer',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Referer': 'https://www.tiktok.com/',
+        'Accept': 'video/mp4',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Range': 'bytes=0-'
+      }
+    });
+
+    const videoBuffer = Buffer.from(videoResponse.data);
+
+    await EsTeams.sendVideo(chatId, videoBuffer, {
+      caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗧𝗜𝗞𝗧𝗢𝗞 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥*
+
+👤 *Author:* ${author}
+
+📝 *Description:* ${description}
+
+ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗠𝗣3", url: mp3Direct }],
-          [{ text: "🎬 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗠𝗣4", url: videoUrl }],
+          [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗨𝗗𝗜𝗢", url: audioUrl }],
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
         ]
       }
