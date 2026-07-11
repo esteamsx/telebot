@@ -3098,6 +3098,7 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
       await EsTeams.deleteMessage(chatId, loading.message_id);
     } catch (e) {}
 
+    // Download video with headers to bypass CDN
     const videoResponse = await axios.get(videoUrl, {
       responseType: 'arraybuffer',
       headers: {
@@ -3111,6 +3112,37 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
 
     const videoBuffer = Buffer.from(videoResponse.data);
 
+    // Download audio with headers
+    const audioResponse = await axios.get(audioUrl, {
+      responseType: 'arraybuffer',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Referer': 'https://www.tiktok.com/',
+        'Accept': 'audio/mpeg',
+        'Accept-Language': 'en-US,en;q=0.9'
+      }
+    });
+
+    const audioBuffer = Buffer.from(audioResponse.data);
+
+    // Upload audio to Gofile
+    const form = new FormData();
+    form.append('file', audioBuffer, 'tiktok_audio.mp3');
+
+    const uploadRes = await axios.post('https://upload.gofile.io/uploadfile', form, {
+      headers: { 
+        ...form.getHeaders(), 
+        'User-Agent': 'Mozilla/5.0',
+        'Referer': 'https://gofile.io/',
+        'Accept': '*/*'
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
+
+    const audioDownloadURL = uploadRes.data.data.downloadPage;
+
+    // Send video directly
     await EsTeams.sendVideo(chatId, videoBuffer, {
       caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗧𝗜𝗞𝗧𝗢𝗞 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥*
 
@@ -3122,7 +3154,7 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗨𝗗𝗜𝗢", url: audioUrl }],
+          [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗨𝗗𝗜𝗢", url: audioDownloadURL }],
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
         ]
       }
