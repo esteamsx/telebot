@@ -230,7 +230,7 @@ const movieTempMap = new Map();
 
 //================= BUTTON =================//
 const waButton = [
-  [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary"}]
+  [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary"}]
 ];
 
 //================= UTILS =================//
@@ -620,7 +620,7 @@ async function sendCryptoIndex(channelId, groupId) {
       reply_markup: {
         inline_keyboard: [
           [{ text: `${changeEmoji} ${changeText}`, url: "https://t.me/esteams_btc" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
         ],
       },
     });
@@ -1165,7 +1165,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -1175,7 +1175,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "📂 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗘𝗡𝗨", callback_data: "open_menu", style: "primary" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
                 [{ text: "📺 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://YouTube.com/@esteams", style: "primary" }],
                 [{ text: "💬 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://t.me/esteams_btc", style: "primary" }],
                 [{ text: "⚙️ 𝗚𝗜𝗧𝗛𝗨𝗕 𝗥𝗘𝗣𝗢", url: "https://GitHub.com/paskito002/ES_TEAMS-V1", style: "primary" }],
@@ -1231,7 +1231,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "📂 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗘𝗡𝗨", callback_data: "open_menu", style: "primary" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
                 [{ text: "📺 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://YouTube.com/@esteams", style: "primary" }],
                 [{ text: "💬 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://t.me/esteams_btc", style: "primary" }],
                 [{ text: "⚙️ 𝗚𝗜𝗧𝗛𝗨𝗕 𝗥𝗘𝗣𝗢", url: "https://GitHub.com/paskito002/ES_TEAMS-V1", style: "primary" }],
@@ -1244,7 +1244,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "📂 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗘𝗡𝗨", callback_data: "open_menu", style: "primary" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
                 [{ text: "📺 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://YouTube.com/@esteams", style: "primary" }],
                 [{ text: "💬 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://t.me/esteams_btc", style: "primary" }],
                 [{ text: "⚙️ 𝗚𝗜𝗧𝗛𝗨𝗕 𝗥𝗘𝗣𝗢", url: "https://GitHub.com/paskito002/ES_TEAMS-V1", style: "primary" }],
@@ -1257,7 +1257,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "📂 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗘𝗡𝗨", callback_data: "open_menu", style: "primary" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
                 [{ text: "📺 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://YouTube.com/@esteams", style: "primary" }],
                 [{ text: "💬 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://t.me/esteams_btc", style: "primary" }],
                 [{ text: "⚙️ 𝗚𝗜𝗧𝗛𝗨𝗕 𝗥𝗘𝗣𝗢", url: "https://GitHub.com/paskito002/ES_TEAMS-V1", style: "primary" }],
@@ -1270,7 +1270,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "📂 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗘𝗡𝗨", callback_data: "open_menu", style: "primary" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
                 [{ text: "📺 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://YouTube.com/@esteams", style: "primary" }],
                 [{ text: "💬 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://t.me/esteams_btc", style: "primary" }],
                 [{ text: "⚙️ 𝗚𝗜𝗧𝗛𝗨𝗕 𝗥𝗘𝗣𝗢", url: "https://GitHub.com/paskito002/ES_TEAMS-V1", style: "primary" }],
@@ -1299,7 +1299,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1321,7 +1321,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1343,7 +1343,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1365,7 +1365,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1387,7 +1387,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1409,7 +1409,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1431,7 +1431,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1453,7 +1453,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1475,7 +1475,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1497,7 +1497,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1519,7 +1519,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1541,7 +1541,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1563,7 +1563,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1585,7 +1585,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1607,7 +1607,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1629,7 +1629,7 @@ EsTeams.onText(/\/start/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1655,7 +1655,7 @@ EsTeams.on("callback_query", async (callbackQuery) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -1699,7 +1699,7 @@ EsTeams.on("message", async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1715,7 +1715,7 @@ EsTeams.on("message", async (msg) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://drive.google.com/file/d/18PWTaMb8z9P2QBFoLI48OP3IBP1LI_PE/view?usp=drivesdk" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -1737,7 +1737,7 @@ if (text === "🏢 𝗢𝗡𝗟𝗜𝗡𝗘 𝗝𝗢𝗕") {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1754,7 +1754,7 @@ if (text === "🏢 𝗢𝗡𝗟𝗜𝗡𝗘 𝗝𝗢𝗕") {
       inline_keyboard: [
         [{ text: "🎁 𝗚𝗘𝗧 𝗙𝗥𝗘𝗘 𝗡𝗚𝗡 𝟭𝟲,𝟯𝟬𝟬", callback_data: `get_free:${msg.from.id}` }],
         [{ text: "📸 𝗧𝗘𝗦𝗧𝗜𝗠𝗢𝗡𝗜𝗔𝗟𝗦", url: "https://i.ibb.co/XkZZqNLw/PROVE.jpg" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -1781,7 +1781,7 @@ EsTeams.on("callback_query", async (query) => {
           parse_mode: "Markdown",
           reply_markup: {
             inline_keyboard: [
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           }
         });
@@ -1794,7 +1794,7 @@ EsTeams.on("callback_query", async (query) => {
           inline_keyboard: [
             [{ text: "🔑 𝗟𝗢𝗚𝗜𝗡", url: "https://www.luno.com/invite/48TJQN" }],
             [{ text: "🎥 𝗛𝗢𝗪 𝗧𝗢 𝗨𝗦𝗘", url: "https://drive.google.com/file/d/1KawO7TSp4q-0aL3oCJw0fdMY1ldVRe2b/view?usp=drivesdk" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -1814,7 +1814,7 @@ if (text === "🎁 𝗚𝗜𝗩𝗘𝗔𝗪𝗔𝗬") {
         reply_markup: {
           inline_keyboard: [
             [
-              { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+              { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
             ]
           ]
         }
@@ -1829,7 +1829,7 @@ if (text === "🎁 𝗚𝗜𝗩𝗘𝗔𝗪𝗔𝗬") {
       inline_keyboard: [
         [{ text: "🔗 𝗝𝗢𝗜𝗡 𝗚𝗥𝗢𝗨𝗣", url: "https://t.me/esteams_btc" }],
         [{ text: "✅ 𝗩𝗘𝗥𝗜𝗙𝗬", callback_data: `verify_${msg.from.id}` }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     },
     parse_mode: "Markdown"
@@ -1865,7 +1865,7 @@ EsTeams.on("callback_query", async (query) => {
           reply_markup: {
             inline_keyboard: [
               [{ text: "🎨 𝗝𝗢𝗜𝗡 𝗧𝗘𝗔𝗠", url: "https://www.canva.com/brand/join?token=FSrpCXVTnGVJjyYPy0naTg&referrer=team-invite" }],
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           },
           parse_mode: "Markdown"
@@ -1899,7 +1899,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1914,7 +1914,7 @@ EsTeams.on("callback_query", async (query) => {
         [{ text: "📝 𝗖𝗥𝗘𝗔𝗧𝗘 𝗔 𝗣𝗔𝗡𝗘𝗟", url: "https://dashboard.katabump.com/auth/login#edfb0f" }],
         [{ text: "👤 𝗟𝗢𝗚𝗜𝗡 𝗧𝗢 𝗣𝗔𝗡𝗘𝗟", url: "https://control.katabump.com/" }],
         [{ text: "📚 𝗧𝗨𝗧𝗢𝗥𝗜𝗔𝗟 𝗚𝗨𝗜𝗗𝗘", url: "https://drive.google.com/file/d/1IgWF1ronh0z_YmfVW4b-VHvf1uKB6gaD/view?usp=drivesdk" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     },
     parse_mode: "Markdown"
@@ -1936,7 +1936,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1952,7 +1952,7 @@ EsTeams.on("callback_query", async (query) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://youtube.com/shorts/L9XGX8OsdyE?si=IXMhghVd4IztlZXQ" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -1975,7 +1975,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -1991,7 +1991,7 @@ EsTeams.on("callback_query", async (query) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://sub2unlock.me/fq0MbWz" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -2014,7 +2014,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -2030,7 +2030,7 @@ EsTeams.on("callback_query", async (query) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://youtube.com/shorts/STtcNywjAT4?si=2Kv4JS3iXLxjt69a" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -2053,7 +2053,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -2069,7 +2069,7 @@ EsTeams.on("callback_query", async (query) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://drive.google.com/file/d/1y3tJZFjTnvLlXqTAyiK4VfaXOOSiKdZY/view?usp=drivesdk" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -2092,7 +2092,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -2108,7 +2108,7 @@ EsTeams.on("callback_query", async (query) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://drive.google.com/file/d/1uPRQ-JtNAbN0hNmtwEO1mTO5wS70eR5S/view?usp=drivesdk" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -2131,7 +2131,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -2147,7 +2147,7 @@ EsTeams.on("callback_query", async (query) => {
             { text: "🔍 𝗩𝗜𝗘𝗪 𝗖𝗢𝗨𝗥𝗦𝗘", url: "https://drive.google.com/file/d/1-uDqBk5AQVJ8rAWLvyqX2eEwxGkbKG17/view?usp=drivesdk" }
           ],
           [
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
           ]
         ]
       },
@@ -2170,7 +2170,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -2194,7 +2194,7 @@ if (text === "🏠 𝗛𝗢𝗠𝗘") {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -2236,7 +2236,7 @@ EsTeams.onText(/^\/url$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2247,7 +2247,7 @@ EsTeams.onText(/^\/url$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2289,7 +2289,7 @@ EsTeams.onText(/^\/url$/, async (msg) => {
                     [
                         { 
                             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", 
-                            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", 
+                            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", 
                             style: "primary" 
                         }
                     ]
@@ -2317,7 +2317,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -2328,7 +2328,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             caption: "Reply to an audio or video file to analyze it!",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2343,7 +2343,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             caption: `The ${fileType} file must not exceed ${fileType === "audio" ? "10MB" : "20MB"} for analysis.`,
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2371,7 +2371,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
                 caption: "No match found for this content.",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -2404,7 +2404,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
                 caption: `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗡𝗔𝗟𝗬𝗭𝗘𝗥\n\n${songInfo}`,
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -2413,7 +2413,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
                 caption: `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗡𝗔𝗟𝗬𝗭𝗘𝗥\n\n${songInfo}\𝗻\𝗻 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -2426,7 +2426,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             caption: "An error occurred while processing your request.",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2443,7 +2443,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -2453,7 +2453,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
     const sentMessage = await EsTeams.sendMessage(chatId, "🎥 Fetching Twitter video. Please hold on...", {
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -2469,7 +2469,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
                 message_id: sentMessage.message_id,
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗣𝗥𝗢 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗣𝗥𝗢 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             });
@@ -2486,7 +2486,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
                 message_id: sentMessage.message_id,
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -2501,7 +2501,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2522,7 +2522,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
             message_id: sentMessage.message_id,
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2540,7 +2540,7 @@ EsTeams.onText(/\/lyrics(?:\s(.+))?/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -2616,7 +2616,7 @@ EsTeams.onText(/\/lyrics(?:\s(.+))?/, async (msg, match) => {
 
     const buttons = [
       [{ text: "📄 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗟𝗬𝗥𝗜𝗖𝗦", url: downloadUrl || "https://gofile.io" }],
-      [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+      [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
     ];
 
     return EsTeams.sendPhoto(chatId, botImageUrl, {
@@ -2647,7 +2647,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -2658,7 +2658,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2671,7 +2671,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         const sentMessage = await EsTeams.sendMessage(chatId, "⏳ Processing your request...", {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2695,7 +2695,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             reply_to_message_id: sentMessage.message_id,
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2707,7 +2707,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         EsTeams.sendMessage(chatId, "⚠️ Failed to generate your book image. Try again later.", {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -2744,7 +2744,7 @@ EsTeams.onText(/\/airtime/, async (msg) => {
                 [
                     { 
                         text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                        url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
                         style: "primary"
                     }
                 ]
@@ -2880,7 +2880,7 @@ EsTeams.on("message", async (msg) => {
                 [
                     { 
                         text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                        url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
                         style: "primary"
                     }
                 ]
@@ -2960,7 +2960,7 @@ EsTeams.onText(/\/balance/, async (msg) => {
                     inline_keyboard: [
                         [{ 
                             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", 
-                            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", 
+                            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", 
                             style: "primary" 
                         }]
                     ]
@@ -2992,7 +2992,7 @@ EsTeams.onText(/\/fund/, async (msg) => {
                 inline_keyboard: [
                     [{ 
                         text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", 
-                        url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", 
+                        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", 
                         style: "primary" 
                     }]
                 ]
@@ -3017,7 +3017,7 @@ EsTeams.onText(/\/fund/, async (msg) => {
             [
                 { 
                     text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", 
-                    url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", 
+                    url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", 
                     style: "primary"
                 }
             ]
@@ -3049,7 +3049,7 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3059,7 +3059,7 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, '❌ Invalid input.\nPlease use /tiktok <video link>', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3098,7 +3098,6 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
       await EsTeams.deleteMessage(chatId, loading.message_id);
     } catch (e) {}
 
-    // Download video with headers to bypass CDN
     const videoResponse = await axios.get(videoUrl, {
       responseType: 'arraybuffer',
       headers: {
@@ -3112,7 +3111,6 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
 
     const videoBuffer = Buffer.from(videoResponse.data);
 
-    // Download audio with headers
     const audioResponse = await axios.get(audioUrl, {
       responseType: 'arraybuffer',
       headers: {
@@ -3124,10 +3122,25 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
     });
 
     const audioBuffer = Buffer.from(audioResponse.data);
+    const audioPath = `./temp_audio_${Date.now()}.m4a`;
+    const outputPath = `./tiktok_audio_${Date.now()}.mp3`;
 
-    // Upload audio to Gofile
+    fs.writeFileSync(audioPath, audioBuffer);
+
+    await new Promise((resolve, reject) => {
+      ffmpeg(audioPath)
+        .toFormat('mp3')
+        .audioCodec('libmp3lame')
+        .audioBitrate('128k')
+        .on('end', resolve)
+        .on('error', reject)
+        .save(outputPath);
+    });
+
+    const encodedAudioBuffer = fs.readFileSync(outputPath);
+
     const form = new FormData();
-    form.append('file', audioBuffer, 'tiktok_audio.mp3');
+    form.append('file', encodedAudioBuffer, 'esteams_audio.mp3');
 
     const uploadRes = await axios.post('https://upload.gofile.io/uploadfile', form, {
       headers: { 
@@ -3142,7 +3155,6 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
 
     const audioDownloadURL = uploadRes.data.data.downloadPage;
 
-    // Send video directly
     await EsTeams.sendVideo(chatId, videoBuffer, {
       caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗧𝗜𝗞𝗧𝗢𝗞 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥*
 
@@ -3155,10 +3167,13 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗨𝗗𝗜𝗢", url: audioDownloadURL }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
+
+    fs.unlinkSync(audioPath);
+    fs.unlinkSync(outputPath);
 
   } catch (err) {
     try { await EsTeams.deleteMessage(chatId, loading.message_id); } catch {}
@@ -3166,7 +3181,7 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
     await EsTeams.sendMessage(chatId, `❌ Failed to process TikTok video.\n\n${err.message}`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3183,7 +3198,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3193,7 +3208,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     return EsTeams.sendMessage(chatId, `❌ Invalid Input\n\nPlease use: /flux <your prompt>`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3202,7 +3217,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const waiting = await EsTeams.sendMessage(chatId, `⏳ Processing your image...`, {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -3235,7 +3250,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       caption: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3246,7 +3261,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     await EsTeams.editMessageText(chatId, waiting.message_id, `❌ Failed to generate image. Try again later.`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3265,7 +3280,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3275,7 +3290,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     return EsTeams.sendMessage(chatId, `❌ Invalid Input\n\nPlease use: /ssweb <valid website URL>`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3284,7 +3299,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const processing = await EsTeams.sendMessage(chatId, `🖼️ Processing your screenshot...`, {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -3309,7 +3324,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       caption: `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3334,7 +3349,7 @@ EsTeams.on('channel_post', async (msg) => {
       reply_to_message_id: msg.message_id,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3351,7 +3366,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3361,7 +3376,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     return EsTeams.sendMessage(chatId, `❌ Invalid input\n\nPlease use /jid <group or channel link>`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3382,7 +3397,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     return EsTeams.sendMessage(chatId, `⚠️ Unsupported or invalid link format.`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3394,7 +3409,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     reply_markup: {
       inline_keyboard: [
         [{ text: "📎 𝗖𝗢𝗣𝗬 𝗝𝗜𝗗", callback_data: `copy_${jid}` }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -3421,7 +3436,7 @@ EsTeams.onText(/\/support/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3448,7 +3463,7 @@ EsTeams.onText(/\/support/, async (msg) => {
                 inline_keyboard: [
                     [{ text: "✍️ 𝗖𝗢𝗠𝗣𝗢𝗦𝗘 𝗠𝗘𝗦𝗦𝗔𝗚𝗘", callback_data: "support_compose" }],
                     [{ text: "📤 𝗦𝗘𝗡𝗗 𝗠𝗘𝗦𝗦𝗔𝗚𝗘", callback_data: "support_send" }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -3483,7 +3498,7 @@ EsTeams.on('callback_query', async (callbackQuery) => {
                 parse_mode: 'Markdown',
                 reply_markup: {
                     inline_keyboard: buttons || [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -3501,7 +3516,7 @@ EsTeams.on('callback_query', async (callbackQuery) => {
             [
                 [{ text: "📤 𝗦𝗘𝗡𝗗 𝗠𝗘𝗦𝗦𝗔𝗚𝗘", callback_data: "support_send" }],
                 [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "support_cancel" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         );
 
@@ -3518,7 +3533,7 @@ EsTeams.on('callback_query', async (callbackQuery) => {
         const senderDetails = `👤 𝗡𝗮𝗺𝗲: ${user.first_name}${user.last_name ? " " + user.last_name : ""}\n🆔 𝗜𝗗: ${user.id}${user.username ? `\n🔗 𝗨𝘀𝗲𝗿𝗻𝗮𝗺𝗲: @${user.username}` : ""}`;
 
         let buttons = [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ];
         if (usernameLink) {
             buttons.unshift([{ text: "👤 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 𝗦𝗘𝗡𝗗𝗘𝗥", url: usernameLink }]);
@@ -3564,7 +3579,7 @@ EsTeams.onText(/^\/removebg$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3575,7 +3590,7 @@ EsTeams.onText(/^\/removebg$/, async (msg) => {
       caption: "🖼️ Please reply to a photo with /removebg to remove its background.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3612,7 +3627,7 @@ const waitingMsg = await EsTeams.sendMessage(chatId, "Processing Image. Please h
       caption: "✅ Background Removed Successfully!\n\n𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3624,7 +3639,7 @@ const waitingMsg = await EsTeams.sendMessage(chatId, "Processing Image. Please h
       caption: "❌ Failed to remove background. Please try again later or use a different image.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3644,7 +3659,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3656,7 +3671,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3681,7 +3696,7 @@ const waitingMsg = await EsTeams.sendMessage(chatId, "Processing Qr. Please hold
       caption: "✅ QR CODE CREATED\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3693,7 +3708,7 @@ const waitingMsg = await EsTeams.sendMessage(chatId, "Processing Qr. Please hold
       caption: "❌ Failed to create QR code. Please try again later.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3710,7 +3725,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3722,7 +3737,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3750,7 +3765,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
           [
             { 
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", 
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", 
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", 
               style: "primary"
             }
           ]
@@ -3764,7 +3779,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       caption: "❌ Failed to shorten URL. Please try again later.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3781,7 +3796,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -3792,7 +3807,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       caption: "❗ Please provide a city name.\n\nExample: /weather Lagos",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3825,7 +3840,7 @@ Coordinates: Latitude ${data.coordinates.latitude}, Longitude ${data.coordinates
       caption: weatherReport,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3835,7 +3850,7 @@ Coordinates: Latitude ${data.coordinates.latitude}, Longitude ${data.coordinates
       caption: "❌ Failed to fetch weather info. Make sure the city name is correct.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3855,7 +3870,7 @@ EsTeams.onText(/^\/tempmail(?:\s(.+))?$/, async (msg, match) => {
                     inline_keyboard: [
                         [{
                             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
                             style: "primary"
                         }]
                     ]
@@ -3902,7 +3917,7 @@ EsTeams.onText(/^\/tempmail(?:\s(.+))?$/, async (msg, match) => {
                     [
                         {
                             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
                             style: "primary"
                         }
                     ]
@@ -3919,7 +3934,7 @@ EsTeams.onText(/^\/tempmail(?:\s(.+))?$/, async (msg, match) => {
                 inline_keyboard: [
                     [{
                         text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                        url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
                         style: "primary"
                     }]
                 ]
@@ -3938,7 +3953,7 @@ EsTeams.onText(/^\/checkmail(?:\s(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3949,7 +3964,7 @@ EsTeams.onText(/^\/checkmail(?:\s(.+))?$/, async (msg, match) => {
       caption: "❗ Please provide a Mail Key\n\nExample: /checkmail your-mail-key",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -3968,7 +3983,7 @@ EsTeams.onText(/^\/checkmail(?:\s(.+))?$/, async (msg, match) => {
         caption: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗔𝗜𝗟 𝗜𝗡𝗕𝗢𝗫\n\nInbox is empty or session invalid.\n\n𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -3993,7 +4008,7 @@ Text: ${mail.text}
         reply_markup: {
           inline_keyboard: [
             [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗧𝗧𝗔𝗖𝗛𝗠𝗘𝗡𝗧", url: mail.downloadUrl }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -4005,7 +4020,7 @@ Text: ${mail.text}
       caption: "❌ Failed to check inbox.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4025,7 +4040,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -4038,7 +4053,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 /bible John 3:16`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4061,7 +4076,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 Please check the reference and try again.`,
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -4077,7 +4092,7 @@ ${result.text.trim()}
 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4090,7 +4105,7 @@ ${result.text.trim()}
 Error: ${error.message}`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4107,7 +4122,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -4120,7 +4135,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 /quran 1`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4142,7 +4157,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 Please check the number and try again.`,
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -4164,7 +4179,7 @@ ${surah.tafsir.id}
       reply_markup: {
         inline_keyboard: [
           [{ text: "🎧 𝗠𝗣3 𝗥𝗘𝗖𝗜𝗧𝗔𝗧𝗜𝗢𝗡", url: surah.recitation }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4177,7 +4192,7 @@ ${surah.tafsir.id}
 Error: ${error.message}`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -4197,7 +4212,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -4361,7 +4376,7 @@ EsTeams.on('text', async (msg) => {
     await EsTeams.sendMessage(chatId, '✅ 𝗬𝗼𝘂𝗿 𝗽𝗮𝘆𝗺𝗲𝗻𝘁 𝗿𝗲𝗰𝗲𝗶𝗽𝘁 𝗵𝗮𝘀 𝗯𝗲𝗲𝗻 𝘀𝘂𝗯𝗺𝗶𝘁𝘁𝗲𝗱 𝗳𝗼𝗿 𝗿𝗲𝘃𝗶𝗲𝘄.', {
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -4438,7 +4453,7 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
     reply_markup: {
       inline_keyboard: [
         [{ text: '👤 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 𝗢𝗪𝗡𝗘𝗥', url: "https://t.me/examsolutionteam", style: "success" }],
-        [{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   };
@@ -4585,7 +4600,7 @@ EsTeams.on('message', async (msg) => {
 
   for (const targetId of targets) {
     const buttons = options.map((opt, i) => [{ text: `${opt} 0`, callback_data: `vote_${pollId}_${i}` }]);
-    buttons.push([{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', style: "primary" }]);
+    buttons.push([{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', style: "primary" }]);
 
     const pollMsg = await EsTeams.sendPhoto(targetId, botImageUrl, {
       caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗣𝗢𝗟𝗟*\n\n📊 *${question}*\n\n_Tap a button to vote_\n\n𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1`,
@@ -4617,7 +4632,7 @@ EsTeams.on('callback_query', async (cb) => {
   const counts = poll.options.map((_, i) => Object.values(poll.votes).filter(v => v === i).length);
 
   const updatedButtons = poll.options.map((opt, i) => [{ text: `${opt} ${counts[i]}`, callback_data: `vote_${pollId}_${i}` }]);
-  updatedButtons.push([{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', style: "primary" }]);
+  updatedButtons.push([{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', style: "primary" }]);
 
   for (const msgInfo of poll.messages) {
     try {
@@ -4698,7 +4713,7 @@ EsTeams.onText(/\/publish(?:\s+(.+))?/, async (msg, match) => {
       inline_keyboard: [
         [{ text: '𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗚𝗥𝗢𝗨𝗣', url: "https://chat.whatsapp.com/LudULrgRbs8El8TGJXYJ8L", style: "success" }],
          [{ text: '👤 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 𝗢𝗪𝗡𝗘𝗥', url: "https://t.me/examsolutionteam", style: "success" }],
-        [{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   };
@@ -4800,7 +4815,7 @@ EsTeams.onText(/\/gpt(?:\s+(.+))?/, async (msg, match) => {
     const whatsappButton = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     };
@@ -4859,7 +4874,7 @@ EsTeams.onText(/^\/rentbot(?:\s+(.+))?$/, async (msg, match) => {
     const whatsappButton = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     };
@@ -4869,7 +4884,7 @@ EsTeams.onText(/^\/rentbot(?:\s+(.+))?$/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -4910,7 +4925,7 @@ EsTeams.onText(/^\/rentbot(?:\s+(.+))?$/, async (msg, match) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "🤖 𝗖𝗛𝗔𝗧 𝗬𝗢𝗨𝗥 𝗕𝗢𝗧", url: `https://t.me/${botUsername}` }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -4943,7 +4958,7 @@ EsTeams.on('callback_query', async (query) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -4952,7 +4967,7 @@ EsTeams.on('callback_query', async (query) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -4965,7 +4980,7 @@ EsTeams.on('callback_query', async (query) => {
             await EsTeams.sendMessage(userId, `❌ Your bot did not meet our requirements.\nPlease try again later.`, {
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -4973,7 +4988,7 @@ EsTeams.on('callback_query', async (query) => {
             await EsTeams.sendMessage(adminId, `☑️ Declined bot request for user ID: ${userId}`, {
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -5009,7 +5024,7 @@ EsTeams.onText(/^\/checkrent$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -5055,7 +5070,7 @@ EsTeams.onText(/^\/checkrent$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [...botButtons, [
-                { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+                { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
             ]]
         }
     });
@@ -5119,7 +5134,7 @@ EsTeams.on('callback_query', async (query) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
                     [{ text: "🔙 𝗕𝗔𝗖𝗞", callback_data: "back_to_list" }]
                 ]
             }
@@ -5162,7 +5177,7 @@ EsTeams.on('callback_query', async (query) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [...botButtons, [
-                    { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }
+                    { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }
                 ]]
             }
         });
@@ -5178,7 +5193,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, "⚠️ Invalid Input\n\nPlease use `/facebook <video link>`", {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5187,7 +5202,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
   const waiting = await EsTeams.sendMessage(chatId, "📽️ Fetching your Facebook video. Please hold on...", {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -5203,7 +5218,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
         message_id: waiting.message_id,
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5216,7 +5231,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
         message_id: waiting.message_id,
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5235,7 +5250,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
         caption: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5256,7 +5271,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "📥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗩𝗜𝗗𝗘𝗢", url: downloadLink }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5270,7 +5285,7 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
       message_id: waiting.message_id,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5287,7 +5302,7 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5297,7 +5312,7 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, '❌ Invalid input.\nPlease use /instagram <reel link>', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5306,7 +5321,7 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
   const wait = await EsTeams.sendMessage(chatId, '🔄 Processing your Instagram reel...', {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -5352,7 +5367,7 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
       caption: 'ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ',
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5368,7 +5383,7 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
     await EsTeams.sendMessage(chatId, `❌ Failed to download reel.\n\n${err.message}`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5410,7 +5425,7 @@ EsTeams.onText(/\/users/, async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
               },
             ],
           ],
@@ -5455,7 +5470,7 @@ EsTeams.on("callback_query", async (query) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
               },
             ],
           ],
@@ -5477,7 +5492,7 @@ if (msg.from.id !== adminId) {
     return EsTeams.sendMessage(chatId, 'This command is for the admin only.', {
       reply_markup: {
         inline_keyboard: [[
-          { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', style: "primary" }
+          { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', style: "primary" }
         ]]
       }
     });
@@ -5518,7 +5533,7 @@ if (msg.from.id !== adminId) {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
               },
             ],
           ],
@@ -5576,7 +5591,7 @@ EsTeams.on("callback_query", async (query) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h",
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
               },
             ],
           ],
@@ -5597,7 +5612,7 @@ EsTeams.onText(/\/backup/, async (msg) => {
     return EsTeams.sendMessage(chatId, 'This command is for the admin only.', {
       reply_markup: {
         inline_keyboard: [[
-          { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', style: "primary" }
+          { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', style: "primary" }
         ]]
       }
     });
@@ -5644,7 +5659,7 @@ EsTeams.onText(/\/backup/, async (msg) => {
             [
               { 
                 text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', 
-                url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', 
+                url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', 
                 style: "primary" 
               }
             ]
@@ -5658,7 +5673,7 @@ EsTeams.onText(/\/backup/, async (msg) => {
       await EsTeams.sendMessage(chatId, 'An error occurred during the backup upload.', {
         reply_markup: {
           inline_keyboard: [[
-            { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', style: "primary" }
+            { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', style: "primary" }
           ]]
         }
       });
@@ -5670,7 +5685,7 @@ EsTeams.onText(/\/backup/, async (msg) => {
     EsTeams.sendMessage(chatId, 'An error occurred during the backup process.', {
       reply_markup: {
         inline_keyboard: [[
-          { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h', style: "primary" }
+          { text: '📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟', url: 'https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29', style: "primary" }
         ]]
       }
     });
@@ -5703,7 +5718,7 @@ EsTeams.onText(/^\/scanqr$/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5715,7 +5730,7 @@ EsTeams.onText(/^\/scanqr$/, async (msg) => {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5743,7 +5758,7 @@ EsTeams.onText(/^\/scanqr$/, async (msg) => {
         parse_mode: 'Markdown',
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5754,7 +5769,7 @@ EsTeams.onText(/^\/scanqr$/, async (msg) => {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5767,7 +5782,7 @@ EsTeams.onText(/^\/scanqr$/, async (msg) => {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5786,7 +5801,7 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5800,7 +5815,7 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: '𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠', callback_data: 'pay_5000' }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
         ]
       }
     });
@@ -5811,7 +5826,7 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5829,7 +5844,7 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5850,7 +5865,7 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "▶️ 𝗪𝗔𝗧𝗖𝗛 𝗩𝗜𝗗𝗘𝗢", url: url }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5863,7 +5878,7 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5879,7 +5894,7 @@ EsTeams.onText(/^\/gcid$/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5892,7 +5907,7 @@ EsTeams.onText(/^\/gcid$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5904,7 +5919,7 @@ EsTeams.onText(/^\/gcid$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5913,7 +5928,7 @@ EsTeams.onText(/^\/gcid$/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5924,7 +5939,7 @@ EsTeams.onText(/^\/gcid$/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -5941,7 +5956,7 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5958,7 +5973,7 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
       return EsTeams.sendMessage(chatId, "❌ Failed to fetch Tech News. Please try again later.", {
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -5974,7 +5989,7 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "🌐 𝗩𝗜𝗘𝗪 𝗔𝗥𝗧𝗜𝗖𝗟𝗘", url: link }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       },
       parse_mode: "Markdown"
@@ -5993,7 +6008,7 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
     return EsTeams.sendMessage(chatId, "❌ Failed to fetch Tech News. Please try again later.", {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6010,7 +6025,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -6021,7 +6036,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6040,7 +6055,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -6054,7 +6069,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       reply_markup: {
         inline_keyboard: [
           [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗡𝗢𝗪", url: DownloadLink }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       },
       parse_mode: "Markdown"
@@ -6071,7 +6086,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6091,7 +6106,7 @@ EsTeams.onText(/^\/ccgen$/i, async (msg) => {
     reply_markup: {
       inline_keyboard: [
         [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_ccgen" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6116,7 +6131,7 @@ EsTeams.on("message", async (msg) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_ccgen" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -6131,7 +6146,7 @@ EsTeams.on("message", async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_ccgen" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6163,7 +6178,7 @@ EsTeams.on("message", async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -6174,7 +6189,7 @@ EsTeams.on("message", async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -6202,7 +6217,7 @@ EsTeams.on("callback_query", async (query) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6219,7 +6234,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -6231,7 +6246,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6247,7 +6262,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     parse_mode: "Markdown",
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6279,7 +6294,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6292,7 +6307,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6308,7 +6323,7 @@ EsTeams.onText(/\/wastalk(?: (.+))?/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -6316,14 +6331,14 @@ EsTeams.onText(/\/wastalk(?: (.+))?/, async (msg, match) => {
   if (!url || !url.includes("whatsapp.com/channel/")) {
     return EsTeams.sendMessage(chatId, "❌ Invalid Input\n\nPlease use /wastalk <WhatsApp Channel URL>", {
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
 
   let waitMsg = await EsTeams.sendMessage(chatId, "⏳ Processing info please wait...", {
     reply_markup: {
-      inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+      inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
     }
   });
 
@@ -6358,7 +6373,7 @@ EsTeams.onText(/\/wastalk(?: (.+))?/, async (msg, match) => {
       caption,
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
 
@@ -6369,7 +6384,7 @@ EsTeams.onText(/\/wastalk(?: (.+))?/, async (msg, match) => {
 
     await EsTeams.sendMessage(chatId, "❌ Failed to fetch channel info. Please ensure the link is valid and try again.", {
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -6388,7 +6403,7 @@ EsTeams.onText(/^\/waban$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -6478,7 +6493,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -6492,7 +6507,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       reply_markup: {
         inline_keyboard: [
           [{ text: '𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠', callback_data: 'pay_5000' }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
         ]
       }
     });
@@ -6503,7 +6518,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6512,7 +6527,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   let waitMsg = await EsTeams.sendMessage(chatId, "🧲 Scraping your web page please hold on...", {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6550,7 +6565,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       reply_markup: {
         inline_keyboard: [
           [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗙𝗜𝗟𝗘", url: gofileUrl }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6565,7 +6580,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6582,7 +6597,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -6593,7 +6608,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6602,7 +6617,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   let waitMsg = await EsTeams.sendMessage(chatId, "📄 Generating your PDF from webpage, please hold on...", {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6637,7 +6652,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       reply_markup: {
         inline_keyboard: [
           [{ text: "⬇️ DOWNLOAD PDF", url: gofileUrl }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6651,7 +6666,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6669,7 +6684,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -6681,7 +6696,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6690,7 +6705,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const processing = await EsTeams.sendMessage(chatId, `⛓️ Processing your image...`, {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6747,7 +6762,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       caption: `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6769,7 +6784,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6785,7 +6800,7 @@ EsTeams.onText(/^\/logo$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -6798,7 +6813,7 @@ EsTeams.onText(/^\/logo$/, async (msg) => {
       inline_keyboard: [
         [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_bg" }],
         [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6826,7 +6841,7 @@ EsTeams.on("callback_query", async (query) => {
         inline_keyboard: [
           [{ text: "⏭️ 𝗦𝗞𝗶𝗣", callback_data: "skip_name" }],
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6842,7 +6857,7 @@ EsTeams.on("callback_query", async (query) => {
         inline_keyboard: [
           [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_sub" }],
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6882,7 +6897,7 @@ EsTeams.on("message", async (msg) => {
         inline_keyboard: [
           [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_name" }],
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6897,7 +6912,7 @@ EsTeams.on("message", async (msg) => {
         inline_keyboard: [
           [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_sub" }],
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6917,7 +6932,7 @@ async function processLogo(chatId) {
     caption: "🖼️ Processing your logo, please hold on...",
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -6950,7 +6965,7 @@ async function processLogo(chatId) {
       caption: "✅ 𝗬𝗢𝗨𝗥 𝗟𝗢𝗚𝗢 𝗜𝗦 𝗥𝗘𝗔𝗗𝗬\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6962,7 +6977,7 @@ async function processLogo(chatId) {
     return EsTeams.sendMessage(chatId, "❌ Failed to process the logo. Please try again.", {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -6980,7 +6995,7 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -6993,7 +7008,7 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: '𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠', callback_data: 'pay_5000' }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
         ]
       }
     });
@@ -7004,7 +7019,7 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
       caption: "❌ 𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗖𝗼𝗺𝗺𝗮𝗻𝗱\n\nPlease use:\n`/webdl WEBSITE_URL`",
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -7012,7 +7027,7 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
   const waitMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
     caption: "🔄 Processing your Webpage, please hold on...",
     reply_markup: {
-      inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+      inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
     }
   });
 
@@ -7038,7 +7053,7 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "📥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗨𝗥𝗟", url: downloadUrl }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -7055,7 +7070,7 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
       caption: "❌ Failed to download the webpage. Please check the link and try again.",
       parse_mode: "Markdown",
       reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]]
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -7070,7 +7085,7 @@ EsTeams.onText(/^\/logo2$/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7082,7 +7097,7 @@ EsTeams.onText(/^\/logo2$/, async (msg) => {
     reply_markup: {
       inline_keyboard: [
         [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_logo2" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -7116,7 +7131,7 @@ EsTeams.on("message", async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_logo2" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7149,7 +7164,7 @@ async function processLogo2(chatId) {
     caption: "🖼️ Processing your logo 2, please hold on...",
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -7177,7 +7192,7 @@ async function processLogo2(chatId) {
       caption: "✅ 𝗬𝗢𝗨𝗥 𝗟𝗢𝗚𝗢 𝗜𝗦 𝗥𝗘𝗔𝗗𝗬\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7190,7 +7205,7 @@ async function processLogo2(chatId) {
     return EsTeams.sendMessage(chatId, "❌ Failed to process the logo. Please try again.", {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7206,7 +7221,7 @@ EsTeams.onText(/^\/crypto$/, async (msg) => {
             caption: "❌ 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗\n\nKindly Check back later ...",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -7219,7 +7234,7 @@ EsTeams.onText(/^\/crypto$/, async (msg) => {
         reply_markup: {
             inline_keyboard: [
                 [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "crypto_cancel" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -7239,7 +7254,7 @@ EsTeams.on("message", async (msg) => {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "crypto_cancel" }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -7257,7 +7272,7 @@ async function showSelection(chatId, coin) {
             inline_keyboard: [
                 [{ text: "💸 𝗦𝗣𝗢𝗧", callback_data: `spot2_${coin}` }],
                 [{ text: "📈 𝗙𝗨𝗧𝗨𝗥𝗘𝗦", callback_data: `futures2_${coin}` }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -7338,7 +7353,7 @@ async function sendPrice(chatId, coin, price, type) {
             caption: "❌ Could not find this coin. Check the pair and try again.",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -7358,7 +7373,7 @@ async function sendPrice(chatId, coin, price, type) {
                         callback_data: type === "spot2" ? `futures2_${coin}` : `spot2_${coin}`
                     }
                 ],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -7373,7 +7388,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -7384,7 +7399,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       caption: "❌ You do not have permission to use this command.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7397,7 +7412,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     reply_markup: {
       inline_keyboard: [
         [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "new_cancel" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -7422,7 +7437,7 @@ EsTeams.on("message", async (msg) => {
           parse_mode: "Markdown",
           reply_markup: {
             inline_keyboard: [
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           }
         });
@@ -7433,7 +7448,7 @@ EsTeams.on("message", async (msg) => {
           reply_markup: {
             inline_keyboard: [
               [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "new_cancel" }],
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           }
         });
@@ -7445,7 +7460,7 @@ EsTeams.on("message", async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -7464,7 +7479,7 @@ EsTeams.on("callback_query", async (query) => {
       caption: "❌ Folder creation cancelled.",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7482,7 +7497,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -7892,7 +7907,7 @@ EsTeams.onText(/\/register/, async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -7911,7 +7926,7 @@ EsTeams.onText(/\/register/, async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -7928,7 +7943,7 @@ EsTeams.onText(/\/register/, async (msg) => {
         [
           {
             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
           }
         ]
       ]
@@ -7949,7 +7964,7 @@ EsTeams.onText(/\/register/, async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -7987,7 +8002,7 @@ EsTeams.onText(/\/register/, async (msg) => {
               [
                 {
                   text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                  url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                  url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                 }
               ]
             ]
@@ -8004,7 +8019,7 @@ EsTeams.onText(/\/register/, async (msg) => {
               [
                 {
                   text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                  url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                  url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                 }
               ]
             ]
@@ -8032,7 +8047,7 @@ EsTeams.onText(/^\/watch$/, async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8055,7 +8070,7 @@ async function showWatchMenu(chatId) {
         [
           {
             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
           }
         ]
       ]
@@ -8084,7 +8099,7 @@ EsTeams.on("callback_query", async (query) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8109,7 +8124,7 @@ EsTeams.on("callback_query", async (query) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8129,7 +8144,7 @@ EsTeams.on("callback_query", async (query) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8151,7 +8166,7 @@ EsTeams.on("callback_query", async (query) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8180,7 +8195,7 @@ EsTeams.on("message", async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8203,7 +8218,7 @@ EsTeams.on("message", async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -8222,7 +8237,7 @@ EsTeams.on("message", async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8241,7 +8256,7 @@ EsTeams.on("message", async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -8260,7 +8275,7 @@ EsTeams.on("message", async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8289,7 +8304,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
           [
             {
               text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-              url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+              url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
             }
           ]
         ]
@@ -8307,7 +8322,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
         [
           {
             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
           }
         ]
       ]
@@ -8334,7 +8349,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
               [
                 {
                   text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                  url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                  url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                 }
               ]
             ]
@@ -8356,7 +8371,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
               [
                 {
                   text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                  url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                  url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                 }
               ]
             ]
@@ -8382,7 +8397,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -8406,7 +8421,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
               [
                 {
                   text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                  url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                  url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                 }
               ]
             ]
@@ -8429,7 +8444,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -8468,7 +8483,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -8555,7 +8570,7 @@ EsTeams.onText(/^\/ctimer$/, async (msg) => {
             [
               {
                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
               }
             ]
           ]
@@ -8580,7 +8595,7 @@ EsTeams.onText(/^\/pnl$/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8594,7 +8609,7 @@ EsTeams.onText(/^\/pnl$/, async (msg) => {
     reply_markup: {
       inline_keyboard: [
         [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -8620,7 +8635,7 @@ EsTeams.on("message", async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8639,7 +8654,7 @@ EsTeams.on("message", async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8663,7 +8678,7 @@ EsTeams.on("message", async (msg) => {
           { text: "🔴 𝗙𝗨𝗧𝗨𝗥𝗘𝗦", callback_data: `pnl_futures_${session.coin}` }
         ],
         [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -8680,7 +8695,7 @@ EsTeams.on("message", async (msg) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -8696,7 +8711,7 @@ EsTeams.on("message", async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8712,7 +8727,7 @@ EsTeams.on("message", async (msg) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -8731,7 +8746,7 @@ EsTeams.on("message", async (msg) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -8750,7 +8765,7 @@ EsTeams.on("message", async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -8770,7 +8785,7 @@ EsTeams.on("message", async (msg) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "🔄 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: `pnl_refresh_${session.market}_${session.coin}_${mode}_${leverage}_${session.entryPrice}` }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8804,7 +8819,7 @@ EsTeams.on("callback_query", async (query) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "pnl_cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8829,7 +8844,7 @@ EsTeams.on("callback_query", async (query) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -8850,7 +8865,7 @@ EsTeams.on("callback_query", async (query) => {
       reply_markup: {
         inline_keyboard: [
           [{ text: "🔄 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: `pnl_refresh_${market}_${coin}_${mode}_${leverage}_${entryPrice}` }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8883,7 +8898,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -8895,7 +8910,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8905,7 +8920,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
     parse_mode: "Markdown",
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -8935,7 +8950,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8955,7 +8970,7 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8967,7 +8982,7 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -8977,7 +8992,7 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
     parse_mode: "Markdown",
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -9007,7 +9022,7 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9019,7 +9034,7 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9039,7 +9054,7 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9051,7 +9066,7 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9063,7 +9078,7 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9095,7 +9110,7 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9112,7 +9127,7 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9132,7 +9147,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9145,7 +9160,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       reply_to_message_id: msg.message_id,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9157,7 +9172,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       reply_to_message_id: msg.message_id,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9188,7 +9203,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       reply_markup: {
         inline_keyboard: [
           [{ text: "📩 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 𝗧𝗔𝗥𝗚𝗘𝗧", url: `tg://user?id=${targetId}` }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9198,7 +9213,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       reply_to_message_id: msg.message_id,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -9215,7 +9230,7 @@ EsTeams.onText(/^\/chatbot$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9227,7 +9242,7 @@ EsTeams.onText(/^\/chatbot$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9247,7 +9262,7 @@ EsTeams.onText(/^\/chatbot$/, async (msg) => {
             inline_keyboard: [
                 [{ text: `${chatbotStatus === "on" ? "✅ " : ""}𝗢𝗡`, callback_data: `chatbot:on:${userId}` }],
                 [{ text: `${chatbotStatus === "off" ? "✅ " : ""}𝗢𝗙𝗙`, callback_data: `chatbot:off:${userId}` }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -9276,7 +9291,7 @@ EsTeams.on("callback_query", async (callbackQuery) => {
             inline_keyboard: [
                 [{ text: `${mode === "on" ? "✅ " : ""}𝗢𝗡`, callback_data: `chatbot:on:${userId}` }],
                 [{ text: `${mode === "off" ? "✅ " : ""}𝗢𝗙𝗙`, callback_data: `chatbot:off:${userId}` }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         },
         {
@@ -9334,7 +9349,7 @@ EsTeams.on("message", async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             }
@@ -9346,7 +9361,7 @@ EsTeams.on("message", async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9370,7 +9385,7 @@ EsTeams.onText(/^\/antilink$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -9382,7 +9397,7 @@ EsTeams.onText(/^\/antilink$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9399,7 +9414,7 @@ EsTeams.onText(/^\/antilink$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9411,7 +9426,7 @@ EsTeams.onText(/^\/antilink$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9427,7 +9442,7 @@ EsTeams.onText(/^\/antilink$/, async (msg) => {
                     [{ text: `${currentMode === "kick" ? "✅ " : ""}𝗞𝗜𝗖𝗞`, callback_data: `antilink:kick:${chatId}` }],
                     [{ text: `${currentMode === "warn" ? "✅ " : ""}𝗪𝗔𝗥𝗡`, callback_data: `antilink:warn:${chatId}` }],
                     [{ text: `${currentMode === "off" ? "✅ " : ""}𝗢𝗙𝗙`, callback_data: `antilink:off:${chatId}` }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9471,7 +9486,7 @@ EsTeams.on("callback_query", async (callbackQuery) => {
                     [{ text: `${mode === "kick" ? "✅ " : ""}𝗞𝗜𝗖𝗞`, callback_data: `antilink:kick:${chatId}` }],
                     [{ text: `${mode === "warn" ? "✅ " : ""}𝗪𝗔𝗥𝗡`, callback_data: `antilink:warn:${chatId}` }],
                     [{ text: `${mode === "off" ? "✅ " : ""}𝗢𝗙𝗙`, callback_data: `antilink:off:${chatId}` }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             },
             {
@@ -9512,7 +9527,7 @@ EsTeams.on("message", async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9523,7 +9538,7 @@ EsTeams.on("message", async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9539,7 +9554,7 @@ EsTeams.on("message", async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9550,7 +9565,7 @@ EsTeams.on("message", async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9571,7 +9586,7 @@ EsTeams.onText(/\/info/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9587,7 +9602,7 @@ EsTeams.onText(/\/info/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9599,7 +9614,7 @@ EsTeams.onText(/\/info/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9652,7 +9667,7 @@ EsTeams.onText(/\/info/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9664,7 +9679,7 @@ EsTeams.onText(/\/info/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9683,7 +9698,7 @@ EsTeams.onText(/^\/welcome$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -9693,7 +9708,7 @@ EsTeams.onText(/^\/welcome$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, botImageUrl, {
                 caption: "❌ *This command can only be used in groups.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -9706,7 +9721,7 @@ EsTeams.onText(/^\/welcome$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, botImageUrl, {
                 caption: "⚠️ *I need to be an admin to manage welcome messages!*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -9714,7 +9729,7 @@ EsTeams.onText(/^\/welcome$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, botImageUrl, {
                 caption: "⚠️ *Only admins can enable or disable the welcome message!*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -9728,7 +9743,7 @@ EsTeams.onText(/^\/welcome$/, async (msg) => {
                 inline_keyboard: [
                     [{ text: isEnabled ? "✅ 𝗢𝗡" : "⚪ 𝗢𝗡", callback_data: `welcome_on_${chatId}` }],
                     [{ text: !isEnabled ? "✅ 𝗢𝗙𝗙" : "⚪ 𝗢𝗙𝗙", callback_data: `welcome_off_${chatId}` }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9774,7 +9789,7 @@ EsTeams.on("callback_query", async (callbackQuery) => {
                 inline_keyboard: [
                     [{ text: isEnabled ? "✅ 𝗢𝗡" : "⚪ 𝗢𝗡", callback_data: `welcome_on_${chatId}` }],
                     [{ text: !isEnabled ? "✅ 𝗢𝗙𝗙" : "⚪ 𝗢𝗙𝗙", callback_data: `welcome_off_${chatId}` }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9802,7 +9817,7 @@ EsTeams.on("new_chat_members", async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9824,7 +9839,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -9836,7 +9851,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9850,7 +9865,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9862,7 +9877,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9878,7 +9893,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                         ]
                     }
                 });
@@ -9894,7 +9909,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9906,7 +9921,7 @@ EsTeams.onText(/^\/unban$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9924,7 +9939,7 @@ EsTeams.onText(/^\/gclink$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9936,7 +9951,7 @@ EsTeams.onText(/^\/gclink$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9952,7 +9967,7 @@ EsTeams.onText(/^\/gclink$/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -9966,7 +9981,7 @@ EsTeams.onText(/^\/gclink$/, async (msg) => {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "📌 𝗝𝗢𝗜𝗡 𝗚𝗥𝗢𝗨𝗣", url: inviteLink }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9978,7 +9993,7 @@ EsTeams.onText(/^\/gclink$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -9998,7 +10013,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10010,7 +10025,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10024,7 +10039,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10045,7 +10060,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                         ]
                     }
                 });
@@ -10058,7 +10073,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10071,7 +10086,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10085,7 +10100,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                         ]
                     }
                 });
@@ -10101,7 +10116,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10113,7 +10128,7 @@ EsTeams.onText(/^\/ban(?:\s@(\S+))?$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10133,7 +10148,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10145,7 +10160,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10159,7 +10174,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10173,7 +10188,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10189,7 +10204,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                         ]
                     }
                 });
@@ -10207,7 +10222,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10220,7 +10235,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             });
@@ -10239,7 +10254,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10251,7 +10266,7 @@ EsTeams.onText(/^\/promote(?:\s@(\w+))?$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10271,7 +10286,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10282,7 +10297,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10296,7 +10311,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10317,7 +10332,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                         ]
                     }
                 });
@@ -10330,7 +10345,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10343,7 +10358,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -10362,7 +10377,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10374,7 +10389,7 @@ EsTeams.onText(/^\/demote(?:\s@(\S+))?$/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10391,7 +10406,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10401,7 +10416,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *This command can only be used in groups.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10417,7 +10432,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *I need to be an admin to manage group permissions.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10425,7 +10440,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *Only group admins can use this command.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10434,7 +10449,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *The group is already locked.*\n\nOnly admins can send messages.",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10448,7 +10463,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "✅ *Group has been locked.*\n\nOnly admins can send messages now.",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
 
     } catch (error) {
@@ -10466,7 +10481,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10476,7 +10491,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *This command can only be used in groups.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10492,7 +10507,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *I need to be an admin to manage group permissions.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10500,7 +10515,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *Only group admins can use this command.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10509,7 +10524,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *The group is already unlocked.*\n\nEveryone can send messages.",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10523,7 +10538,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "✅ *Group has been unlocked.*\n\nEveryone can send messages now.",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
 
     } catch (error) {
@@ -10542,7 +10557,7 @@ EsTeams.onText(/^\/setgroup(?:\s+(.+))?$/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10552,7 +10567,7 @@ EsTeams.onText(/^\/setgroup(?:\s+(.+))?$/, async (msg, match) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *This command can only be used in groups.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10560,7 +10575,7 @@ EsTeams.onText(/^\/setgroup(?:\s+(.+))?$/, async (msg, match) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *Invalid Input*\n\nUsage: `/setgroup <new name>`",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10576,7 +10591,7 @@ EsTeams.onText(/^\/setgroup(?:\s+(.+))?$/, async (msg, match) => {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *I need to be an admin to change the group name.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10584,7 +10599,7 @@ EsTeams.onText(/^\/setgroup(?:\s+(.+))?$/, async (msg, match) => {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *Only group admins can use this command.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10592,7 +10607,7 @@ EsTeams.onText(/^\/setgroup(?:\s+(.+))?$/, async (msg, match) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: `✅ *Group name changed to:* ${newTitle}`,
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
 
     } catch (error) {
@@ -10610,7 +10625,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10620,7 +10635,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *This command can only be used in groups.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10628,7 +10643,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *Invalid Input*\n\nPlease reply to an image with `/setgcimage` to change the group picture.",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗣𝗔𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗣𝗔𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]] }
         });
     }
 
@@ -10644,7 +10659,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *I need to be an admin to change the group picture.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10652,7 +10667,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *Only group admins can use this command.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10673,7 +10688,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "✅ *Group picture has been updated successfully.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
 
     } catch (error) {
@@ -10681,7 +10696,7 @@ EsTeams.onText(/^\/setgcimage$/, async (msg) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *An error occurred while changing the group picture. Please try again.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 });
@@ -10697,7 +10712,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10707,7 +10722,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *This command can only be used in groups.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10715,7 +10730,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *Invalid Input*\n\nUsage: `/setgcinfo <new description>`",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10731,7 +10746,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *I need to be an admin to change the group description.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10739,7 +10754,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *Only group admins can use this command.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10747,7 +10762,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: `✅ *Group description updated.*\n\n📝 *New Description:* ${newDescription}`,
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
 
     } catch (error) {
@@ -10764,7 +10779,7 @@ EsTeams.onText(/^\/delete$/, async (msg) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *This command can only be used in groups.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10772,7 +10787,7 @@ EsTeams.onText(/^\/delete$/, async (msg) => {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "⚠️ *Invalid Input*\n\nPlease reply to a message with `/delete` to delete it.",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     }
 
@@ -10788,7 +10803,7 @@ EsTeams.onText(/^\/delete$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *I need to be an admin to delete messages.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10796,7 +10811,7 @@ EsTeams.onText(/^\/delete$/, async (msg) => {
             return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
                 caption: "⚠️ *Only group admins can use this command.*",
                 parse_mode: "Markdown",
-                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+                reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
             });
         }
 
@@ -10805,7 +10820,7 @@ EsTeams.onText(/^\/delete$/, async (msg) => {
         EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption: "✅ *Message deleted successfully.*",
             parse_mode: "Markdown",
-            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]] }
+            reply_markup: { inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]] }
         });
     } catch (error) {
         console.error("Unexpected Error:", error);
@@ -10822,7 +10837,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10833,7 +10848,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10844,7 +10859,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -10881,7 +10896,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10894,7 +10909,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -10915,7 +10930,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -10929,7 +10944,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠", callback_data: "pay_5000" }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -10941,7 +10956,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -10966,7 +10981,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             });
@@ -10976,7 +10991,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -10991,7 +11006,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             });
@@ -11005,7 +11020,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -11018,7 +11033,7 @@ EsTeams.onText(/\/decrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -11040,7 +11055,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -11054,7 +11069,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠", callback_data: "pay_5000" }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -11078,7 +11093,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             });
@@ -11091,7 +11106,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             }
@@ -11106,7 +11121,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                     ]
                 }
             });
@@ -11129,7 +11144,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -11194,7 +11209,7 @@ EsTeams.onText(/\/encrypt/, async (msg) => {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "📎 𝗖𝗢𝗣𝗬 𝗨𝗥𝗟", callback_data: `copyurl_${downloadURL}` }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
                 ]
             }
         });
@@ -11219,7 +11234,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -11230,7 +11245,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11260,7 +11275,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       reply_markup: {
         inline_keyboard: [
           [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗣𝗞", url: download_link }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11273,7 +11288,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11292,7 +11307,7 @@ EsTeams.onText(/\/sticker(?: (.+))?/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11317,7 +11332,7 @@ Reply to a sticker with:
                         [
                             {
                                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary"
+                                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary"
                             }
                         ]
                     ]
@@ -11379,7 +11394,7 @@ Tap below to add your sticker pack.`,
                         [
                             {
                                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary"
+                                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary"
                             }
                         ]
                     ]
@@ -11435,7 +11450,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11448,7 +11463,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11502,7 +11517,7 @@ Date: ${new Date().toLocaleString()}
           inline_keyboard: [
             [{ text: "📋 𝗖𝗢𝗣𝗬 𝗟𝗜𝗡𝗞", copy_text: { text: link } }],
             [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗", url: link }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -11523,7 +11538,7 @@ Date: ${new Date().toLocaleString()}
           inline_keyboard: [
             [{ text: "▶️ 𝗪𝗔𝗧𝗖𝗛 𝗩𝗜𝗗𝗘𝗢", url: link }],
             [{ text: "📋 𝗖𝗢𝗣𝗬 𝗟𝗜𝗡𝗞", copy_text: { text: link } }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -11544,7 +11559,7 @@ Date: ${new Date().toLocaleString()}
         inline_keyboard: [
           [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗙𝗜𝗟𝗘", url: link }],
           [{ text: "📋 𝗖𝗢𝗣𝗬 𝗟𝗜𝗡𝗞", copy_text: { text: link } }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -11559,7 +11574,7 @@ Date: ${new Date().toLocaleString()}
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -12375,7 +12390,7 @@ EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -12388,7 +12403,7 @@ EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       }
@@ -12405,7 +12420,7 @@ EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "✅ 𝗔𝗣𝗣𝗥𝗢𝗩𝗘", url: `https://t.me/${CHANNEL_ID.replace("@", "")}`, style: "success" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -12465,7 +12480,7 @@ EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "🗒️ 𝗚𝗘𝗧 𝗟𝗬𝗥𝗜𝗖𝗦", callback_data: `lyrics_${lyricsId}`, style: "primary" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -12500,7 +12515,7 @@ if (stats.size < 50000) {
         performer: "єѕ τєαмѕ τєϲн",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -12514,7 +12529,7 @@ if (stats.size < 50000) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -12586,7 +12601,7 @@ ${preview}
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -12613,7 +12628,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡Ｅ𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡Ｅ𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -12624,7 +12639,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡Ｅ𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡Ｅ𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -12640,7 +12655,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
                 reply_markup: {
                     inline_keyboard: [
                         [{ text: "✅ 𝗔𝗣𝗣𝗥𝗢𝗩𝗘", url: `https://t.me/${CHANNEL_ID.replace("@", "")}` }],
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡Ｅ𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡Ｅ𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -12735,7 +12750,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
                     message_id: searchMessage.message_id,
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                         ]
                     }
                 }).catch(() => null);
@@ -12775,7 +12790,7 @@ EsTeams.onText(/\/trend/, async (msg) => {
           parse_mode: "Markdown",
           reply_markup: {
             inline_keyboard: [
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           }
         });
@@ -12788,7 +12803,7 @@ EsTeams.onText(/\/trend/, async (msg) => {
           reply_markup: {
             inline_keyboard: [
               [{ text: "🔁 𝗥𝗘𝗧𝗥𝗬", callback_data: "trend_refresh", style: "success" }],
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           }
         });
@@ -12830,7 +12845,7 @@ EsTeams.onText(/\/trend/, async (msg) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "trend_refresh", style: "success" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -12842,7 +12857,7 @@ EsTeams.onText(/\/trend/, async (msg) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "🔁 𝗥𝗘𝗧𝗥𝗬", callback_data: "trend_refresh", style: "success" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -12873,7 +12888,7 @@ EsTeams.on("callback_query", async (query) => {
               reply_markup: {
                 inline_keyboard: [
                   [{ text: "🔁 𝗥𝗘𝗧𝗥𝗬", callback_data: "trend_refresh", style: "success" }],
-                  [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                  [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
               }
             });
@@ -12915,7 +12930,7 @@ EsTeams.on("callback_query", async (query) => {
             reply_markup: {
               inline_keyboard: [
                 [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "trend_refresh", style: "success" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
               ]
             }
           });
@@ -12941,7 +12956,7 @@ EsTeams.onText(/\/decoder/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -13542,7 +13557,7 @@ EsTeams.on("callback_query", async (query) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠", callback_data: "pay_5000" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
           ]
         }
       });
@@ -13579,7 +13594,7 @@ EsTeams.on("callback_query", async (query) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "sysinfo_refresh", style: "success" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -13623,7 +13638,7 @@ EsTeams.on("callback_query", async (query) => {
         reply_markup: {
           inline_keyboard: [
             [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "sysinfo_refresh", style: "success" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
       });
@@ -13666,7 +13681,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -13675,7 +13690,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
   const waitingMsg = await EsTeams.sendMessage(chatId, "⚽ Fetching live scores. Please hold on...", {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
       ],
     },
   });
@@ -13712,7 +13727,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }],
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }],
         ],
       },
     });
@@ -13737,7 +13752,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13748,7 +13763,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13787,7 +13802,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             message_id: searchMessage.message_id,
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13812,7 +13827,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -13822,7 +13837,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         return EsTeams.sendMessage(chatId, "❌ *You are not authorized to use this command.*", { parse_mode: "Markdown",
         reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13833,7 +13848,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13860,7 +13875,7 @@ EsTeams.onText(/\/delowner(?:\s+(\d+))?/, (msg, match) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -13871,7 +13886,7 @@ EsTeams.onText(/\/delowner(?:\s+(\d+))?/, (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13882,7 +13897,7 @@ EsTeams.onText(/\/delowner(?:\s+(\d+))?/, (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13926,7 +13941,7 @@ EsTeams.onText(/\/listowner/, async (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -13937,7 +13952,7 @@ EsTeams.onText(/\/listowner/, async (msg) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -13992,7 +14007,7 @@ EsTeams.onText(/\/unlockbot/, (msg) => {
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
     });
@@ -14004,7 +14019,7 @@ EsTeams.onText(/\/unlockbot/, (msg) => {
         parse_mode: 'Markdown',
         reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
     });
@@ -14022,7 +14037,7 @@ EsTeams.onText(/\/tictac/, async (msg) => {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -14038,7 +14053,7 @@ Please select a mode :`,
       inline_keyboard: [
         [{ text: "🎯 𝗦𝗜𝗡𝗚𝗟𝗘 𝗣𝗟𝗔𝗬𝗘𝗥 𝗠𝗢𝗗𝗘", callback_data: "ttt_single" }],
         [{ text: "👥 𝗠𝗨𝗟𝗧𝗜 𝗣𝗟𝗔𝗬𝗘𝗥 𝗠𝗢𝗗𝗘", callback_data: "ttt_multi" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
       ]
     }
   });
@@ -14078,7 +14093,7 @@ EsTeams.on("callback_query", async (query) => {
           reply_markup: {
             inline_keyboard: [
               [{ text: "➕ 𝗔𝗗𝗗 𝗕𝗢𝗧 𝗧𝗢 𝗚𝗥𝗢𝗨𝗣", url: `https://t.me/${BOT_USERNAME}?startgroup=true` }],
-              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
           }
         }
@@ -14097,7 +14112,7 @@ Waiting for second player…`,
       reply_markup: {
         inline_keyboard: [
           [{ text: "✅ 𝗝𝗢𝗜𝗡 𝗚𝗔𝗠𝗘", callback_data: "ttt_join" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -14520,7 +14535,7 @@ EsTeams.onText(/\/index/, async (msg) => {
                         [
                             {
                                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                             }
                         ]
                     ]
@@ -14581,7 +14596,7 @@ EsTeams.onText(/\/index/, async (msg) => {
                     [
                         {
                             text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                            url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                            url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                         }
                     ]
                 ]
@@ -14604,7 +14619,7 @@ EsTeams.onText(/\/joke/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             }
@@ -14625,7 +14640,7 @@ EsTeams.onText(/\/joke/, async (msg) => {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: "🔄 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "refresh_joke" }],
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -14666,7 +14681,7 @@ EsTeams.on("callback_query", async (query) => {
                 reply_markup: {
                     inline_keyboard: [
                         [{ text: "🔄 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "refresh_joke" }],
-                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                     ]
                 }
             });
@@ -14725,7 +14740,7 @@ EsTeams.onText(/\/runtime/, async (msg) => {
                         [
                             {
                                 text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                                url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h"
+                                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29"
                             }
                         ]
                     ]
@@ -14744,7 +14759,7 @@ EsTeams.onText(/\/runtime/, async (msg) => {
                 [
                     {
                         text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                        url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" 
+                        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" 
                     }
                 ]
             ]
@@ -14778,7 +14793,7 @@ EsTeams.onText(/\/fetchid(?:\s*@(\S+))?/, async (msg, match) => {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -14802,7 +14817,7 @@ EsTeams.onText(/\/fetchid(?:\s*@(\S+))?/, async (msg, match) => {
         return EsTeams.sendMessage(chatId, "❌ Cannot Run Command! You must be an *admin* or *ES TEAMS TECH*.", { parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
         });
@@ -14828,7 +14843,7 @@ EsTeams.onText(/\/fetchid(?:\s*@(\S+))?/, async (msg, match) => {
     EsTeams.sendMessage(chatId, `✅ *User ID:* \`${targetId}\``, { parse_mode: "Markdown",
     reply_markup: {
                 inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VaoYmHz9MF98STZg4w1h", style: "primary" }]
+                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
                 ]
             }
     });
