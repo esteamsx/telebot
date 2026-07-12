@@ -438,6 +438,7 @@ async function initTopupBrowser() {
 
 let topupBrowser = null;
 
+// YOUR ACCOUNT - Get Balance
 async function getAccountBalance() {
   try {
     const browser = await initTopupBrowser();
@@ -445,18 +446,25 @@ async function getAccountBalance() {
     
     await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
     
-    // Login
-    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
-    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
-    await page.click('button:contains("Login"), button[type="submit"]');
+    // Open login modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
+    });
     
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    await page.waitForSelector('#loginUser', { timeout: 5000 });
     
-    // Get balance from dashboard
+    // Login with YOUR account
+    await page.type('#loginUser', 'Esteams');
+    await page.type('#loginPass', 'Password');
+    await page.click('#loginBtn');
+    
+    await page.waitForTimeout(3000);
+    
+    // Get balance
     const balance = await page.evaluate(() => {
       const text = document.body.innerText;
-      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/coins[:\s]+(\d+)/i);
-      return match ? parseInt(match[1]) : 0;
+      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/💎\s*Your balance:\s*([0-9,]+)/);
+      return match ? parseInt(match[1].replace(/,/g, '')) : 0;
     });
     
     await page.close();
@@ -467,6 +475,7 @@ async function getAccountBalance() {
   }
 }
 
+// ADMIN ACCOUNT - Create Code
 async function createTopupCode(coinsAmount) {
   try {
     const browser = await initTopupBrowser();
@@ -474,28 +483,39 @@ async function createTopupCode(coinsAmount) {
     
     await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
     
-    // Login
-    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
-    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
-    await page.click('button:contains("Login"), button[type="submit"]');
+    // Open login modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
+    });
     
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    await page.waitForSelector('#loginUser', { timeout: 5000 });
     
-    // Navigate to create code
-    await page.waitForSelector('a, button', { timeout: 10000 });
-    await page.click('a:contains("Create Code"), button:contains("Create Code")');
+    // Login with ADMIN account
+    await page.type('#loginUser', 'EmmyHenz');
+    await page.type('#loginPass', 'LoveEmmy');
+    await page.click('#loginBtn');
     
-    await page.waitForSelector('select, input', { timeout: 10000 });
+    await page.waitForTimeout(3000);
     
-    // Fill form
+    // Open create code modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'createCode\')"]')?.click();
+    });
+    
+    await page.waitForSelector('#codeType', { timeout: 5000 });
+    
     const autoCode = `TOPUP${Date.now().toString().slice(-6)}`;
     
-    await page.select('select', 'use_coins').catch(() => {});
-    await page.type('input[type="number"]', String(coinsAmount));
-    await page.type('input[placeholder*="code"], input[name*="code"]', autoCode);
+    // Fill form
+    await page.select('#codeType', 'coins');
+    await page.type('#codeValue', String(coinsAmount));
+    await page.type('#codeMaxUses', '1');
+    await page.type('#codeCustom', autoCode);
     
-    // Submit
-    await page.click('button[type="submit"]');
+    // Click create button
+    await page.evaluate(() => {
+      window.A.createCode();
+    });
     
     await page.waitForTimeout(2000);
     
@@ -507,6 +527,7 @@ async function createTopupCode(coinsAmount) {
   }
 }
 
+// YOUR ACCOUNT - Redeem Code
 async function redeemTopupCode(code) {
   try {
     const browser = await initTopupBrowser();
@@ -514,28 +535,40 @@ async function redeemTopupCode(code) {
     
     await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
     
-    // Login
-    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
-    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
-    await page.click('button:contains("Login"), button[type="submit"]');
+    // Open login modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
+    });
     
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    await page.waitForSelector('#loginUser', { timeout: 5000 });
     
-    // Navigate to redeem
-    await page.click('a:contains("Redeem"), button:contains("Redeem")');
-    await page.waitForSelector('input', { timeout: 10000 });
+    // Login with YOUR account
+    await page.type('#loginUser', 'Esteams');
+    await page.type('#loginPass', 'Password');
+    await page.click('#loginBtn');
     
-    // Input code
-    await page.type('input[placeholder*="code"], input[name*="code"]', code);
-    await page.click('button:contains("Redeem")');
+    await page.waitForTimeout(3000);
+    
+    // Open redeem modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'redeemCoin\')"]')?.click();
+    });
+    
+    await page.waitForSelector('#coinRedeemCode', { timeout: 5000 });
+    
+    // Input code and redeem
+    await page.type('#coinRedeemCode', code);
+    await page.evaluate(() => {
+      window.A.redeemCoinCode();
+    });
     
     await page.waitForTimeout(2000);
     
     // Get new balance
     const newBalance = await page.evaluate(() => {
       const text = document.body.innerText;
-      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/coins[:\s]+(\d+)/i);
-      return match ? parseInt(match[1]) : 0;
+      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/💎\s*Your balance:\s*([0-9,]+)/);
+      return match ? parseInt(match[1].replace(/,/g, '')) : 0;
     });
     
     await page.close();
@@ -546,6 +579,7 @@ async function redeemTopupCode(code) {
   }
 }
 
+// ADMIN ACCOUNT - Delete Code
 async function deleteTopupCode(code) {
   try {
     const browser = await initTopupBrowser();
@@ -553,21 +587,31 @@ async function deleteTopupCode(code) {
     
     await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
     
-    // Login
-    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
-    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
-    await page.click('button:contains("Login"), button[type="submit"]');
+    // Open login modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
+    });
     
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    await page.waitForSelector('#loginUser', { timeout: 5000 });
+    
+    // Login with ADMIN account
+    await page.type('#loginUser', 'EmmyHenz');
+    await page.type('#loginPass', 'LoveEmmy');
+    await page.click('#loginBtn');
+    
+    await page.waitForTimeout(3000);
     
     // Find and delete code
     await page.evaluate((codeToDelete) => {
-      const buttons = Array.from(document.querySelectorAll('button'));
-      for (let btn of buttons) {
-        if (btn.textContent.includes(codeToDelete)) {
-          const deleteBtn = btn.parentElement?.querySelector('[class*="delete"], button:last-child');
-          if (deleteBtn) deleteBtn.click();
-          break;
+      const codesList = document.getElementById('codesList');
+      if (codesList) {
+        const rows = codesList.querySelectorAll('[class*="code"]');
+        for (let row of rows) {
+          if (row.textContent.includes(codeToDelete)) {
+            const deleteBtn = row.querySelector('button[class*="delete"], [onclick*="delete"]');
+            if (deleteBtn) deleteBtn.click();
+            break;
+          }
         }
       }
     }, code);
