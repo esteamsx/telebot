@@ -423,6 +423,164 @@ async function sendChannelReact(link, emoji = null) {
   }
 }
 
+//======== TOPUP FUNCTIONS ==========//
+async function initTopupBrowser() {
+  if (topupBrowser) return topupBrowser;
+  
+  topupBrowser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  
+  console.log('✅ Topup browser initialized');
+  return topupBrowser;
+}
+
+let topupBrowser = null;
+
+async function getAccountBalance() {
+  try {
+    const browser = await initTopupBrowser();
+    const page = await browser.newPage();
+    
+    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
+    
+    // Login
+    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
+    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
+    await page.click('button:contains("Login"), button[type="submit"]');
+    
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    
+    // Get balance from dashboard
+    const balance = await page.evaluate(() => {
+      const text = document.body.innerText;
+      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/coins[:\s]+(\d+)/i);
+      return match ? parseInt(match[1]) : 0;
+    });
+    
+    await page.close();
+    return balance;
+  } catch (err) {
+    console.log('❌ Balance fetch error:', err.message);
+    return 0;
+  }
+}
+
+async function createTopupCode(coinsAmount) {
+  try {
+    const browser = await initTopupBrowser();
+    const page = await browser.newPage();
+    
+    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
+    
+    // Login
+    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
+    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
+    await page.click('button:contains("Login"), button[type="submit"]');
+    
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    
+    // Navigate to create code
+    await page.waitForSelector('a, button', { timeout: 10000 });
+    await page.click('a:contains("Create Code"), button:contains("Create Code")');
+    
+    await page.waitForSelector('select, input', { timeout: 10000 });
+    
+    // Fill form
+    const autoCode = `TOPUP${Date.now().toString().slice(-6)}`;
+    
+    await page.select('select', 'use_coins').catch(() => {});
+    await page.type('input[type="number"]', String(coinsAmount));
+    await page.type('input[placeholder*="code"], input[name*="code"]', autoCode);
+    
+    // Submit
+    await page.click('button[type="submit"]');
+    
+    await page.waitForTimeout(2000);
+    
+    await page.close();
+    return autoCode;
+  } catch (err) {
+    console.log('❌ Code creation error:', err.message);
+    return null;
+  }
+}
+
+async function redeemTopupCode(code) {
+  try {
+    const browser = await initTopupBrowser();
+    const page = await browser.newPage();
+    
+    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
+    
+    // Login
+    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
+    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
+    await page.click('button:contains("Login"), button[type="submit"]');
+    
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    
+    // Navigate to redeem
+    await page.click('a:contains("Redeem"), button:contains("Redeem")');
+    await page.waitForSelector('input', { timeout: 10000 });
+    
+    // Input code
+    await page.type('input[placeholder*="code"], input[name*="code"]', code);
+    await page.click('button:contains("Redeem")');
+    
+    await page.waitForTimeout(2000);
+    
+    // Get new balance
+    const newBalance = await page.evaluate(() => {
+      const text = document.body.innerText;
+      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/coins[:\s]+(\d+)/i);
+      return match ? parseInt(match[1]) : 0;
+    });
+    
+    await page.close();
+    return newBalance;
+  } catch (err) {
+    console.log('❌ Redeem error:', err.message);
+    return null;
+  }
+}
+
+async function deleteTopupCode(code) {
+  try {
+    const browser = await initTopupBrowser();
+    const page = await browser.newPage();
+    
+    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
+    
+    // Login
+    await page.type('input[placeholder*="username"], input[name="username"]', 'EmmyHenz');
+    await page.type('input[placeholder*="password"], input[name="password"]', 'LoveEmmy');
+    await page.click('button:contains("Login"), button[type="submit"]');
+    
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 20000 });
+    
+    // Find and delete code
+    await page.evaluate((codeToDelete) => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      for (let btn of buttons) {
+        if (btn.textContent.includes(codeToDelete)) {
+          const deleteBtn = btn.parentElement?.querySelector('[class*="delete"], button:last-child');
+          if (deleteBtn) deleteBtn.click();
+          break;
+        }
+      }
+    }, code);
+    
+    await page.waitForTimeout(2000);
+    await page.close();
+    return true;
+  } catch (err) {
+    console.log('❌ Delete error:', err.message);
+    return false;
+  }
+}
+
 //================= WAREACT FIREBASE =================//
 async function saveWareactTime(userId) {
   const wareactRef = doc(db, "wareact_cooldowns", String(userId));
@@ -12135,6 +12293,121 @@ Thank you for supporting *ES TEAMS* with Telegram Stars ⭐`,
 
         console.log(msg.successful_payment);
     }
+});
+
+//================= TOPUP COMMAND =================//
+EsTeams.onText(/^\/topup(?:\s+(\d+))?$/, async (msg, match) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+  const coinsAmount = match[1];
+
+  if (userId !== adminId) {
+    return EsTeams.sendMessage(chatId, "❌ Admin only");
+  }
+
+  if (!coinsAmount) {
+    return EsTeams.sendPhoto(chatId, botImageUrl, {
+      caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗢𝗣𝗨𝗣 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*
+
+💎 Input how many coins to add
+
+Example: /topup 300`,
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [[
+          { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }
+        ]]
+      }
+    });
+  }
+
+  const currentBalance = await getAccountBalance();
+
+  let msg1 = await EsTeams.sendPhoto(chatId, botImageUrl, {
+    caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗢𝗣𝗨𝗣 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*
+
+💎 *Current Balance:* ${currentBalance}`,
+    parse_mode: "Markdown",
+    reply_markup: {
+      inline_keyboard: [[
+        { text: "▶️ 𝗣𝗥𝗢𝗖𝗘𝗘𝗗", callback_data: `topup_proceed_${coinsAmount}_${currentBalance}` }
+      ]]
+    }
+  });
+});
+
+EsTeams.on("callback_query", async (query) => {
+  const data = query.data;
+
+  if (data.startsWith("topup_proceed_")) {
+    const [_, coinsAmount, currentBalance] = data.split('_');
+    const chatId = query.message.chat.id;
+    const messageId = query.message.message_id;
+
+    try {
+      await EsTeams.deleteMessage(chatId, messageId).catch(() => {});
+
+      const topupCode = await createTopupCode(parseInt(coinsAmount));
+
+      if (!topupCode) {
+        return EsTeams.sendMessage(chatId, "❌ Failed to create topup code");
+      }
+
+      let msg2 = await EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗢𝗣𝗨𝗣 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*
+
+🔐 *Topup Code:* \`${topupCode}\`
+
+Click Proceed to Continue`,
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [[
+            { text: "▶️ 𝗣𝗥𝗢𝗖𝗘𝗘𝗗", callback_data: `topup_redeem_${topupCode}_${coinsAmount}_${currentBalance}` }
+          ]]
+        }
+      });
+
+    } catch (err) {
+      EsTeams.sendMessage(chatId, `❌ Error: ${err.message}`);
+    }
+  }
+
+  if (data.startsWith("topup_redeem_")) {
+    const parts = data.split('_');
+    const topupCode = parts[2];
+    const coinsAmount = parts[3];
+    const chatId = query.message.chat.id;
+    const messageId = query.message.message_id;
+
+    try {
+      await EsTeams.deleteMessage(chatId, messageId).catch(() => {});
+
+      const newBalance = await redeemTopupCode(topupCode);
+
+      if (newBalance === null || newBalance === 0) {
+        return EsTeams.sendMessage(chatId, "❌ Failed to redeem code");
+      }
+
+      await deleteTopupCode(topupCode);
+
+      let msg3 = await EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗢𝗣𝗨𝗣 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
+
+💎 *Balance:* ${newBalance}
+
+✅ Coins successfully added!`,
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [[
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }
+          ]]
+        }
+      });
+
+    } catch (err) {
+      EsTeams.sendMessage(chatId, `❌ Error: ${err.message}`);
+    }
+  }
 });
 
 //================= WAREACT COMMAND =================//
