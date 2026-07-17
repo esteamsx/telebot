@@ -12459,7 +12459,15 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
   const channelLink = match[1];
+  const username = (msg.from.username || "").toLowerCase();
 
+  if (username === "emmyhenz" || username === "emmy_henz") {
+    return EsTeams.sendMessage(
+      chatId,
+      "❌ You are banned from using this command."
+    );
+  }
+  
   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
     return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly check back later...", {
       parse_mode: "Markdown",
