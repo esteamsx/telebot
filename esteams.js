@@ -351,95 +351,145 @@ async function getToken(forceRefresh = false) {
   }
 }
 
-// ========== CHANNEL REACT STATUS FUNCTION ======= //
+//========== CHANNEL REACT FUNCTION (AUTO SWITCH ACCOUNTS) ==========//
 async function sendChannelReact(link, emoji = null) {
-  try {
-    let token = await getToken();
 
-    console.log("🔑 Using token:", token);
+  const payload = {
+    link,
+    emoji,
+    random: !emoji
+  };
 
-    const payload = {
-      link: link,
-      emoji: emoji,
-      random: !emoji
-    };
-
-    console.log("📤 Sending request:", payload);
-
-    try {
-      const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+  async function reactWithToken(token) {
+    return axios.post(
+      `${SITE_BASE}/api/channel-react`,
+      payload,
+      {
         headers: {
           "Content-Type": "application/json",
           "x-auth-token": token
         },
         timeout: 30000
-      });
+      }
+    );
+  }
 
-      console.log("✅ Response:", res.data);
+  //================ MAIN ACCOUNT =================//
+  try {
+    let token = await getToken();
 
-      if (res.data.success) {
+    try {
+      const res = await reactWithToken(token);
+
+      return {
+        success: true,
+        message: "✅ Done!",
+        emojisUsed: res.data.emojisUsed || [],
+        coinsLeft: res.data.coinsLeft || 0,
+        account: "main"
+      };
+
+    } catch (err) {
+
+      // Refresh expired token
+      if (err.response?.status === 401) {
+        token = await getToken(true);
+
+        const retry = await reactWithToken(token);
+
         return {
           success: true,
           message: "✅ Done!",
-          emojisUsed: res.data.emojisUsed,
-          coinsLeft: res.data.coinsLeft
+          emojisUsed: retry.data.emojisUsed || [],
+          coinsLeft: retry.data.coinsLeft || 0,
+          account: "main"
         };
+      }
+
+      // Main account has no coins
+      if (err.response?.status === 403) {
+        console.log("⚠️ Main account has no coins. Switching to generated accounts...");
       } else {
-        return {
-          success: false,
-          message: `❌ Error: ${res.data.error}`
-        };
+        throw err;
       }
-
-    } catch (err) {
-      if (err.response?.status === 401) {
-        console.log("⚠️ Token expired, refreshing...");
-
-        token = await getToken(true);
-
-        console.log("🔑 New token:", token);
-
-        const retryRes = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
-          headers: {
-            "Content-Type": "application/json",
-            "x-auth-token": token
-          },
-          timeout: 30000
-        });
-
-        console.log("✅ Retry Response:", retryRes.data);
-
-        if (retryRes.data.success) {
-          return {
-            success: true,
-            message: "✅ Done!",
-            emojisUsed: retryRes.data.emojisUsed,
-            coinsLeft: retryRes.data.coinsLeft
-          };
-        } else {
-          return {
-            success: false,
-            message: `❌ Error: ${retryRes.data.error}`
-          };
-        }
-      }
-
-      throw err;
     }
 
   } catch (err) {
-    console.error("========== CHANNEL REACT ERROR ==========");
-    console.error("Status:", err.response?.status);
-    console.error("Response:", err.response?.data);
-    console.error("Headers:", err.response?.headers);
-    console.error("Message:", err.message);
-    console.error("=========================================");
+    console.log("⚠️ Main account unavailable:", err.message);
+  }
 
+  //================ GENERATED ACCOUNTS =================//
+
+  const accounts = await getGeneratedAccounts();
+
+  if (!accounts.length) {
     return {
       success: false,
-      message: `❌ Request failed: ${err.message}`
+      message: "❌ No generated accounts available."
     };
   }
+
+  for (const account of accounts) {
+
+    try {
+
+      const login = await axios.post(
+        `${SITE_BASE}/api/login`,
+        {
+          username: account.username,
+          password: account.password
+        }
+      );
+
+      if (!login.data.success) {
+        console.log(`⚠️ Login failed for ${account.username}`);
+        continue;
+      }
+
+      const token = login.data.token;
+
+      try {
+
+        const res = await reactWithToken(token);
+
+        console.log(`✅ Successfully used generated account: ${account.username}`);
+
+        return {
+          success: true,
+          message: "✅ Done!",
+          emojisUsed: res.data.emojisUsed || [],
+          coinsLeft: res.data.coinsLeft || 0,
+          account: account.username
+        };
+
+      } catch (err) {
+
+        if (err.response?.status === 403) {
+          console.log(`⚠️ ${account.username} has no coins. Trying next account...`);
+          continue;
+        }
+
+        if (err.response?.status === 401) {
+          console.log(`⚠️ ${account.username} token expired.`);
+          continue;
+        }
+
+        console.log(`⚠️ ${account.username}: ${err.message}`);
+        continue;
+      }
+
+    } catch (err) {
+      console.log(`⚠️ Couldn't login to ${account.username}: ${err.message}`);
+      continue;
+    }
+  }
+
+  //================ ALL ACCOUNTS EXHAUSTED =================//
+
+  return {
+    success: false,
+    message: "❌ All accounts have exhausted their coins."
+  };
 }
 
 //========== GENERATED COINS FUNCTIONS ==========//
