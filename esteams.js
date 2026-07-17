@@ -424,6 +424,7 @@ async function sendChannelReact(link, emoji = null) {
 }
 
 //========== GENERATED COINS FUNCTIONS ==========//
+
 async function getTotalCoinsFromAllAccounts() {
   try {
     const coinsRef = doc(db, "generatedCoins", "stats");
@@ -434,11 +435,10 @@ async function getTotalCoinsFromAllAccounts() {
         totalCoins: 0,
         updatedAt: Date.now()
       });
-
       return 0;
     }
 
-    return Number(snapshot.data().totalCoins || 0);
+    return Number(snapshot.data().totalCoins) || 0;
   } catch (err) {
     console.error("❌ Error getting total coins:", err.message);
     return 0;
@@ -447,23 +447,28 @@ async function getTotalCoinsFromAllAccounts() {
 
 async function addGeneratedCoins(coins) {
   try {
+    coins = Number(coins) || 0;
+
+    if (coins <= 0) return false;
+
     const coinsRef = doc(db, "generatedCoins", "stats");
     const snapshot = await getDoc(coinsRef);
 
     if (!snapshot.exists()) {
       await setDoc(coinsRef, {
-        totalCoins: Number(coins),
+        totalCoins: coins,
         updatedAt: Date.now()
       });
     } else {
-      const currentCoins = Number(snapshot.data().totalCoins || 0);
+      const currentCoins = Number(snapshot.data().totalCoins) || 0;
 
       await updateDoc(coinsRef, {
-        totalCoins: currentCoins + Number(coins),
+        totalCoins: currentCoins + coins,
         updatedAt: Date.now()
       });
     }
 
+    console.log(`💎 Added ${coins} generated coins`);
     return true;
   } catch (err) {
     console.error("❌ Error updating total coins:", err.message);
@@ -522,33 +527,74 @@ async function getGeneratedAccounts() {
 // ASSUMPTION: registration endpoint is POST /api/register with { username, password }.
 // Adjust the path/payload below if your site uses a different route.
 async function registerNewAccount() {
-  const username = `es_${crypto.randomBytes(4).toString('hex')}`;
-  const password = crypto.randomBytes(6).toString('hex');
+  const username = `es_${crypto.randomBytes(4).toString("hex")}`;
+  const password = crypto.randomBytes(6).toString("hex");
+
+  // Generate a random email
+  const email = `${username}@gmail.com`;
 
   try {
-    const res = await axios.post(`${SITE_BASE}/api/register`, {
-      username,
-      password
-    });
+    const res = await axios.post(
+      `${SITE_BASE}/api/register`,
+      {
+        username,
+        email,
+        password,
+        referralCode: null
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        timeout: 30000
+      }
+    );
 
     if (!res.data.success) {
-      return { success: false, error: res.data.error || 'Registration failed' };
+      return {
+        success: false,
+        error: res.data.error || "Registration failed"
+      };
     }
 
     const ref = doc(db, "generatedAccounts", "list");
     const snapshot = await getDoc(ref);
-    const newAccount = { username, password, createdAt: Date.now() };
+
+    const newAccount = {
+      username,
+      password,
+      email,
+      createdAt: Date.now()
+    };
 
     if (!snapshot.exists()) {
-      await setDoc(ref, { accounts: [newAccount] });
+      await setDoc(ref, {
+        accounts: [newAccount]
+      });
     } else {
-      await updateDoc(ref, { accounts: arrayUnion(newAccount) });
+      await updateDoc(ref, {
+        accounts: arrayUnion(newAccount)
+      });
     }
 
-    return { success: true, username, password };
+    console.log(`✅ Generated account: ${username}`);
+
+    return {
+      success: true,
+      username,
+      password,
+      email
+    };
   } catch (err) {
-    console.error('❌ Error registering new account:', err.message);
-    return { success: false, error: err.message };
+    console.error(
+      "❌ Registration failed:",
+      err.response?.data || err.message
+    );
+
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message
+    };
   }
 }
 
