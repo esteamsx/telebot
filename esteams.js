@@ -12572,235 +12572,225 @@ Click Proceed to Continue`,
 });
 
 //================= WAREACT COMMAND =================//
-EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id;
-  const channelLink = match[1];
-  const username = (msg.from.username || "").toLowerCase();
-
-  if (username === "emmyhenz" || username === "emmy_henz") {
-    return EsTeams.sendMessage(
-      chatId,
-      "❌ You are banned from using this command."
-    );
-  }
-  
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
-    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly check back later...", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-  }
-
-  if (!channelLink) {
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "❌ *Invalid Input*\n\nUsage: `/wareact <channel_link>`\n\nExample:\n`/wareact https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29/5696`",
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-  }
-
-  if (!CONFIG.OWNER_IDS.includes(userId)) {
-    const cooldown = await checkWareactCooldown(userId);
-
-    if (!cooldown.canUse) {
-      const timeLeft = cooldown.timeLeft;
-      const hours = Math.floor(timeLeft / (60 * 60 * 1000));
-      const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-
-      const paymentMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: `*𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*
-
-Your daily free limit has been used.
-
-Pay *1* Star to continue the service.
-
-⏰ *Next Free Use In:* ${hours}h ${minutes}m
-
-Tap the button below`,
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "⭐ 𝗣𝗔𝗬 𝗡𝗢𝗪", callback_data: `wareact_pay_${userId}` }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-
-      userPendingReactions.set(userId, {
-        channelLink: channelLink,
-        chatId: chatId,
-        paymentMsgId: paymentMsg.message_id
-      });
-
-      return;
-    }
-  }
-
-  await processWareact(chatId, channelLink, userId);
-});
-
-async function processWareact(chatId, channelLink, userId) {
-  let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");
-
-  const health = await checkServerHealth();
-
-  if (!health.isHealthy) {
-    try {
-      await EsTeams.deleteMessage(chatId, loading.message_id);
-    } catch (e) {}
-
-    await EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.`,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-    return;
-  }
-
-  const steps = [
-    "▰▰▱▱▱▱▱ Logging in...",
-    "▰▰▰▱▱▱▱ Solving captcha...",
-    "▰▰▰▰▱▱▱ Waiting for ad...",
-    "▰▰▰▰▰▱▱ Sending request...",
-    "▰▰▰▰▰▰▱ Processing reactions...",
-    "▰▰▰▰▰▰▰ Completing..."
-  ];
-
-  try {
-    for (let i = 0; i < steps.length; i++) {
-      await new Promise(r => setTimeout(r, i === 2 ? 15000 : 500));
-      
-      if (i < steps.length - 1) {
-        try {
-          await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {
-            chat_id: chatId,
-            message_id: loading.message_id
-          });
-        } catch (e) {
-        }
-      }
-    }
-
-    const totalGeneratedCoins = await getTotalCoinsFromAllAccounts();
-
-    const result = await sendChannelReact(channelLink);
-
-    try {
-      await EsTeams.deleteMessage(chatId, loading.message_id);
-    } catch (e) {}
-
-    if (result.success) {
-      if (userId) {
-        await saveWareactTime(userId);
-      }
-
-      const emoji = result.emojisUsed?.length
-        ? result.emojisUsed.join(" ")
-        : "👍";
-
-      const mainAccountCoins = Number(result.coinsLeft || 0);
-const totalCoinsAvailable = mainAccountCoins + Number(totalGeneratedCoins || 0);
-
-await EsTeams.sendPhoto(chatId, botImageUrl, {
-  caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
-
-😊 *Reactions Used:*
-${emoji}
-
-💎 *Coins Available:* \`${totalCoinsAvailable}\`
-
-📌 *Status:*
-${result.message}
-
-_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,
-  parse_mode: "Markdown",
-  reply_markup: {
-    inline_keyboard: [[
-      {
-        text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary"
-      }
-    ]]
-  }
-});
-    } else {
-      await EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-        }
-      });
-    }
-  } catch (err) {
-    console.error('Command error:', err.message);
+EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {  
+  const chatId = msg.chat.id;  
+  const userId = msg.from.id;  
+  const channelLink = match[1];  
     
-    try {
-      await EsTeams.deleteMessage(chatId, loading.message_id);
-    } catch (e) {}
-
-    await EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-  }
-}
-
-EsTeams.on("callback_query", async (query) => {
-  const data = query.data;
-  if (!data.startsWith("wareact_pay_")) return;
-
-  const userId = query.from.id;
-  const chatId = query.message.chat.id;
-
-  try {
-    await EsTeams.sendInvoice(
-      chatId,
-      "⭐ 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦",
-      "Unlock ES TEAMS Reactions using Telegram Stars.",
-      `wareact_${userId}_${Date.now()}`,
-      "",
-      "XTR",
-      [
-        {
-          label: "ES TEAMS REACTIONS",
-          amount: 1
-        }
-      ]
-    );
-
-    EsTeams.answerCallbackQuery(query.id);
-  } catch (err) {
-    console.log(err.message);
-    EsTeams.sendMessage(chatId, "❌ Failed to create Stars payment.");
-  }
-});
-
-EsTeams.on("successful_payment", async (msg) => {
-  const userId = msg.from.id;
-  const chatId = msg.chat.id;
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {  
+    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly check back later...", {  
+      parse_mode: "Markdown",  
+      reply_markup: {  
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
+      }  
+    });  
+  }  
   
-  const pending = userPendingReactions.get(userId);
-
-  if (pending) {
-    try {
-      await EsTeams.deleteMessage(chatId, pending.paymentMsgId);
-    } catch (e) {}
-
-    userPendingReactions.delete(userId);
-    await processWareact(chatId, pending.channelLink, userId);
-  }
-});
+  if (!channelLink) {  
+    return EsTeams.sendPhoto(chatId, botImageUrl, {  
+      caption: "❌ *Invalid Input*\n\nUsage: `/wareact <channel_link>`\n\nExample:\n`/wareact https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29/5696`",  
+      parse_mode: "Markdown",  
+      reply_markup: {  
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
+      }  
+    });  
+  }  
+  
+  if (!CONFIG.OWNER_IDS.includes(userId)) {  
+    const cooldown = await checkWareactCooldown(userId);  
+  
+    if (!cooldown.canUse) {  
+      const timeLeft = cooldown.timeLeft;  
+      const hours = Math.floor(timeLeft / (60 * 60 * 1000));  
+      const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));  
+  
+      const paymentMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {  
+        caption: `*𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦*  
+  
+Your daily free limit has been used.  
+  
+Pay *1* Star to continue the service.  
+  
+⏰ *Next Free Use In:* ${hours}h ${minutes}m  
+  
+Tap the button below`,  
+        parse_mode: "Markdown",  
+        reply_markup: {  
+          inline_keyboard: [  
+            [{ text: "⭐ 𝗣𝗔𝗬 𝗡𝗢𝗪", callback_data: `wareact_pay_${userId}` }],  
+            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]  
+          ]  
+        }  
+      });  
+  
+      userPendingReactions.set(userId, {  
+        channelLink: channelLink,  
+        chatId: chatId,  
+        paymentMsgId: paymentMsg.message_id  
+      });  
+  
+      return;  
+    }  
+  }  
+  
+  await processWareact(chatId, channelLink, userId);  
+});  
+  
+async function processWareact(chatId, channelLink, userId) {  
+  let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");  
+  
+  const health = await checkServerHealth();  
+  
+  if (!health.isHealthy) {  
+    try {  
+      await EsTeams.deleteMessage(chatId, loading.message_id);  
+    } catch (e) {}  
+  
+    await EsTeams.sendPhoto(chatId, botImageUrl, {  
+      caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.`,  
+      parse_mode: "Markdown",  
+      reply_markup: {  
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
+      }  
+    });  
+    return;  
+  }  
+  
+  const steps = [  
+    "▰▰▱▱▱▱▱ Logging in...",  
+    "▰▰▰▱▱▱▱ Solving captcha...",  
+    "▰▰▰▰▱▱▱ Waiting for ad...",  
+    "▰▰▰▰▰▱▱ Sending request...",  
+    "▰▰▰▰▰▰▱ Processing reactions...",  
+    "▰▰▰▰▰▰▰ Completing..."  
+  ];  
+  
+  try {  
+    for (let i = 0; i < steps.length; i++) {  
+      await new Promise(r => setTimeout(r, i === 2 ? 15000 : 500));  
+        
+      if (i < steps.length - 1) {  
+        try {  
+          await EsTeams.editMessageText(`⏳ Processing...\n${steps[i]}`, {  
+            chat_id: chatId,  
+            message_id: loading.message_id  
+          });  
+        } catch (e) {  
+        }  
+      }  
+    }  
+  
+    const totalGeneratedCoins = await getTotalCoinsFromAllAccounts();  
+  
+    const result = await sendChannelReact(channelLink);  
+  
+    try {  
+      await EsTeams.deleteMessage(chatId, loading.message_id);  
+    } catch (e) {}  
+  
+    if (result.success) {  
+      if (userId) {  
+        await saveWareactTime(userId);  
+      }  
+  
+      const emoji = result.emojisUsed?.length  
+        ? result.emojisUsed.join(" ")  
+        : "👍";  
+  
+      const mainAccountCoins = result.coinsLeft || 0;  
+      const totalCoinsAvailable = mainAccountCoins + totalGeneratedCoins;  
+  
+      await EsTeams.sendPhoto(chatId, botImageUrl, {  
+        caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*  
+  
+😊 *Reactions Used:*  
+${emoji}  
+  
+💎 *Coins Available:*  
+\`${totalCoinsAvailable}\` (${mainAccountCoins} main + ${totalGeneratedCoins} generated)  
+  
+📌 *Status:*  
+${result.message}  
+  
+🤖 *Generated Accounts:* ${(await getGeneratedAccounts()).length}  
+  
+_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,  
+        parse_mode: "Markdown",  
+        reply_markup: {  
+          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
+        }  
+      });  
+    } else {  
+      await EsTeams.sendPhoto(chatId, botImageUrl, {  
+        caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,  
+        parse_mode: "Markdown",  
+        reply_markup: {  
+          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
+        }  
+      });  
+    }  
+  } catch (err) {  
+    console.error('Command error:', err.message);  
+      
+    try {  
+      await EsTeams.deleteMessage(chatId, loading.message_id);  
+    } catch (e) {}  
+  
+    await EsTeams.sendPhoto(chatId, botImageUrl, {  
+      caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,  
+      parse_mode: "Markdown",  
+      reply_markup: {  
+        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
+      }  
+    });  
+  }  
+}  
+  
+EsTeams.on("callback_query", async (query) => {  
+  const data = query.data;  
+  if (!data.startsWith("wareact_pay_")) return;  
+  
+  const userId = query.from.id;  
+  const chatId = query.message.chat.id;  
+  
+  try {  
+    await EsTeams.sendInvoice(  
+      chatId,  
+      "⭐ 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡𝗦",  
+      "Unlock ES TEAMS Reactions using Telegram Stars.",  
+      `wareact_${userId}_${Date.now()}`,  
+      "",  
+      "XTR",  
+      [  
+        {  
+          label: "ES TEAMS REACTIONS",  
+          amount: 1  
+        }  
+      ]  
+    );  
+  
+    EsTeams.answerCallbackQuery(query.id);  
+  } catch (err) {  
+    console.log(err.message);  
+    EsTeams.sendMessage(chatId, "❌ Failed to create Stars payment.");  
+  }  
+});  
+  
+EsTeams.on("successful_payment", async (msg) => {  
+  const userId = msg.from.id;  
+  const chatId = msg.chat.id;  
+    
+  const pending = userPendingReactions.get(userId);  
+  
+  if (pending) {  
+    try {  
+      await EsTeams.deleteMessage(chatId, pending.paymentMsgId);  
+    } catch (e) {}  
+  
+    userPendingReactions.delete(userId);  
+    await processWareact(chatId, pending.channelLink, userId);  
+  }  
+});  
 
 // ============ CREATE ACC COMMAND ========= //
 EsTeams.onText(/^\/createacc$/, async (msg) => {
