@@ -471,6 +471,188 @@ async function addGeneratedCoins(coins) {
   }
 }
 
+//========== WAREACT COOLDOWN FUNCTIONS ==========//
+const WAREACT_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
+
+async function checkWareactCooldown(userId) {
+  try {
+    const cooldownRef = doc(db, "wareactCooldowns", String(userId));
+    const snapshot = await getDoc(cooldownRef);
+
+    if (!snapshot.exists()) {
+      return { canUse: true };
+    }
+
+    const lastUsed = Number(snapshot.data().lastUsed || 0);
+    const elapsed = Date.now() - lastUsed;
+
+    if (elapsed >= WAREACT_COOLDOWN) {
+      return { canUse: true };
+    }
+
+    return { canUse: false, timeLeft: WAREACT_COOLDOWN - elapsed };
+  } catch (err) {
+    console.error("❌ Error checking wareact cooldown:", err.message);
+    return { canUse: true };
+  }
+}
+
+async function saveWareactTime(userId) {
+  try {
+    const cooldownRef = doc(db, "wareactCooldowns", String(userId));
+    await setDoc(cooldownRef, { lastUsed: Date.now() });
+  } catch (err) {
+    console.error("❌ Error saving wareact time:", err.message);
+  }
+}
+
+//========== GENERATED ACCOUNTS (Firestore-backed) ==========//
+async function getGeneratedAccounts() {
+  try {
+    const ref = doc(db, "generatedAccounts", "list");
+    const snapshot = await getDoc(ref);
+    if (!snapshot.exists()) return [];
+    return snapshot.data().accounts || [];
+  } catch (err) {
+    console.error("❌ Error getting generated accounts:", err.message);
+    return [];
+  }
+}
+
+// ASSUMPTION: registration endpoint is POST /api/register with { username, password }.
+// Adjust the path/payload below if your site uses a different route.
+async function registerNewAccount() {
+  const username = `es_${crypto.randomBytes(4).toString('hex')}`;
+  const password = crypto.randomBytes(6).toString('hex');
+
+  try {
+    const res = await axios.post(`${SITE_BASE}/api/register`, {
+      username,
+      password
+    });
+
+    if (!res.data.success) {
+      return { success: false, error: res.data.error || 'Registration failed' };
+    }
+
+    const ref = doc(db, "generatedAccounts", "list");
+    const snapshot = await getDoc(ref);
+    const newAccount = { username, password, createdAt: Date.now() };
+
+    if (!snapshot.exists()) {
+      await setDoc(ref, { accounts: [newAccount] });
+    } else {
+      await updateDoc(ref, { accounts: arrayUnion(newAccount) });
+    }
+
+    return { success: true, username, password };
+  } catch (err) {
+    console.error('❌ Error registering new account:', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+// ASSUMPTION: coin-claim endpoint is POST /api/claim-coins, returning
+// { success, coinsClaimed }. Adjust if your site's actual route differs.
+async function claimCoinsFromAccount(username, password) {
+  try {
+    const loginRes = await axios.post(`${SITE_BASE}/api/login`, { username, password });
+
+    if (!loginRes.data.success) {
+      return { success: false, error: loginRes.data.error || 'Login failed' };
+    }
+
+    const token = loginRes.data.token;
+
+    const claimRes = await axios.post(`${SITE_BASE}/api/claim-coins`, {}, {
+      headers: { 'x-auth-token': token },
+      timeout: 30000
+    });
+
+    if (claimRes.data.success) {
+      return { success: true, coinsClaimed: claimRes.data.coinsClaimed || 0 };
+    }
+
+    return { success: false, error: claimRes.data.error || 'Claim failed' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+//========== TOPUP / ACCOUNT BALANCE (site API) ==========//
+// ASSUMPTION: the main account exposes GET /api/balance and
+// POST /api/topup/create, /api/topup/redeem, /api/topup/delete.
+// These paths/payloads are not documented anywhere else in this file,
+// so verify them against your actual site API and adjust as needed.
+
+async function getAccountBalance() {
+  try {
+    const token = await getToken();
+    const res = await axios.get(`${SITE_BASE}/api/balance`, {
+      headers: { 'x-auth-token': token },
+      timeout: 30000
+    });
+    return res.data.balance ?? res.data.coins ?? 0;
+  } catch (err) {
+    console.error('❌ Error getting account balance:', err.message);
+    return 0;
+  }
+}
+
+async function createTopupCode(coinsAmount) {
+  try {
+    const token = await getToken();
+    const res = await axios.post(`${SITE_BASE}/api/topup/create`, {
+      amount: coinsAmount
+    }, {
+      headers: { 'x-auth-token': token },
+      timeout: 30000
+    });
+
+    return res.data.code || null;
+  } catch (err) {
+    console.error('❌ Error creating topup code:', err.message);
+    return null;
+  }
+}
+
+async function redeemTopupCode(topupCode) {
+  try {
+    const token = await getToken();
+    const res = await axios.post(`${SITE_BASE}/api/topup/redeem`, {
+      code: topupCode
+    }, {
+      headers: { 'x-auth-token': token },
+      timeout: 30000
+    });
+
+    if (res.data.success) {
+      return res.data.balance ?? res.data.newBalance ?? 0;
+    }
+
+    return null;
+  } catch (err) {
+    console.error('❌ Error redeeming topup code:', err.message);
+    return null;
+  }
+}
+
+async function deleteTopupCode(topupCode) {
+  try {
+    const token = await getToken();
+    await axios.post(`${SITE_BASE}/api/topup/delete`, {
+      code: topupCode
+    }, {
+      headers: { 'x-auth-token': token },
+      timeout: 30000
+    });
+    return true;
+  } catch (err) {
+    console.error('❌ Error deleting topup code:', err.message);
+    return false;
+  }
+}
+
 //================= CRON JOBS FOR AUTOMATION =================//
 
 /**
@@ -7395,6 +7577,13 @@ EsTeams.on("callback_query", async (query) => {
         return sendPrice(chatId, coin, price, "futures2");
     }
 });
+
+// ASSUMPTION: coin symbols map to Bybit-listed pairs (matches getBybitPrice/getBybitFuturesPrice below).
+function buildTradingViewPreviewUrl(coin, type) {
+  const symbol = `${String(coin).toUpperCase()}USDT`;
+  const suffix = type === "spot2" ? "" : ".P";
+  return `https://www.tradingview.com/symbols/BYBIT-${symbol}${suffix}/`;
+}
 
 async function sendPrice(chatId, coin, price, type) {
     if (!price) {
