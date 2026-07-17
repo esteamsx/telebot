@@ -12756,7 +12756,8 @@ async function processWareact(chatId, channelLink, userId) {
 😊 *Reactions Used:*  
 ${emoji}  
   
-💎 *Coins Available:* ${totalCoinsAvailable}  
+💎 *Coins Left:* 
+${totalCoinsAvailable}  
   
 📌 *Status:*  
 ${result.message}  
