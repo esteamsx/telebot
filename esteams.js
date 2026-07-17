@@ -351,31 +351,36 @@ async function getToken(forceRefresh = false) {
   }
 }
 
+// ========== CHANNEL REACT STATUS FUNCTION ======= //
 async function sendChannelReact(link, emoji = null) {
   try {
     let token = await getToken();
 
+    console.log("🔑 Using token:", token);
+
     const payload = {
       link: link,
       emoji: emoji,
-      random: !emoji  
+      random: !emoji
     };
 
-    console.log('📤 Sending request:', payload);
+    console.log("📤 Sending request:", payload);
 
     try {
       const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
         headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
+          "Content-Type": "application/json",
+          "x-auth-token": token
         },
         timeout: 30000
       });
 
+      console.log("✅ Response:", res.data);
+
       if (res.data.success) {
         return {
           success: true,
-          message: `✅ Done!`,
+          message: "✅ Done!",
           emojisUsed: res.data.emojisUsed,
           coinsLeft: res.data.coinsLeft
         };
@@ -385,23 +390,29 @@ async function sendChannelReact(link, emoji = null) {
           message: `❌ Error: ${res.data.error}`
         };
       }
+
     } catch (err) {
       if (err.response?.status === 401) {
-        console.log('⚠️ Token expired, refreshing...');
+        console.log("⚠️ Token expired, refreshing...");
+
         token = await getToken(true);
+
+        console.log("🔑 New token:", token);
 
         const retryRes = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
           headers: {
-            'Content-Type': 'application/json',
-            'x-auth-token': token
+            "Content-Type": "application/json",
+            "x-auth-token": token
           },
           timeout: 30000
         });
 
+        console.log("✅ Retry Response:", retryRes.data);
+
         if (retryRes.data.success) {
           return {
             success: true,
-            message: `✅ Done!`,
+            message: "✅ Done!",
             emojisUsed: retryRes.data.emojisUsed,
             coinsLeft: retryRes.data.coinsLeft
           };
@@ -412,10 +423,18 @@ async function sendChannelReact(link, emoji = null) {
           };
         }
       }
+
       throw err;
     }
+
   } catch (err) {
-    console.error('❌ Request failed:', err.message);
+    console.error("========== CHANNEL REACT ERROR ==========");
+    console.error("Status:", err.response?.status);
+    console.error("Response:", err.response?.data);
+    console.error("Headers:", err.response?.headers);
+    console.error("Message:", err.message);
+    console.error("=========================================");
+
     return {
       success: false,
       message: `❌ Request failed: ${err.message}`
