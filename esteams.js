@@ -423,6 +423,177 @@ async function sendChannelReact(link, emoji = null) {
   }
 }
 
+//========== GET TOKEN FUNCTION ==========//
+async function getToken(forceRefresh = false) {
+  if (cachedToken && tokenExpiry && Date.now() < tokenExpiry && !forceRefresh) {
+    return cachedToken;
+  }
+
+  try {
+    const browser = await initTopupBrowser();
+    const page = await browser.newPage();
+
+    await page.goto(SITE_BASE, { waitUntil: 'networkidle2', timeout: 30000 });
+
+    // Open login modal
+    await page.evaluate(() => {
+      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
+    });
+
+    await page.waitForSelector('#loginUser', { timeout: 5000 });
+
+    // Login
+    await page.type('#loginUser', USERNAME);
+    await page.type('#loginPass', PASSWORD);
+    await page.click('#loginBtn');
+
+    await page.waitForTimeout(3000);
+
+    // Extract token from localStorage
+    const token = await page.evaluate(() => {
+      return localStorage.getItem('auth_token') || 
+             localStorage.getItem('token') ||
+             sessionStorage.getItem('auth_token') ||
+             sessionStorage.getItem('token');
+    });
+
+    await page.close();
+
+    if (token) {
+      cachedToken = token;
+      tokenExpiry = Date.now() + (24 * 60 * 60 * 1000);
+      console.log('✅ Token obtained successfully');
+      return token;
+    } else {
+      throw new Error('Token not found in storage');
+    }
+  } catch (err) {
+    console.error('❌ Token retrieval failed:', err.message);
+    throw err;
+  }
+}
+
+//========== SEND CHANNEL REACT ==========//
+async function sendChannelReact(link, emoji = null) {
+  try {
+    let token = await getToken();
+
+    const payload = {
+      link: link,
+      emoji: emoji,
+      random: !emoji  
+    };
+
+    console.log('📤 Sending request:', payload);
+
+    try {
+      const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        timeout: 30000
+      });
+
+      if (res.data.success) {
+        return {
+          success: true,
+          message: `✅ Done!`,
+          emojisUsed: res.data.emojisUsed,
+          coinsLeft: res.data.coinsLeft
+        };
+      } else {
+        return {
+          success: false,
+          message: `❌ Error: ${res.data.error}`
+        };
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        console.log('⚠️ Token expired, refreshing...');
+        token = await getToken(true);
+
+        const retryRes = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+          },
+          timeout: 30000
+        });
+
+        if (retryRes.data.success) {
+          return {
+            success: true,
+            message: `✅ Done!`,
+            emojisUsed: retryRes.data.emojisUsed,
+            coinsLeft: retryRes.data.coinsLeft
+          };
+        } else {
+          return {
+            success: false,
+            message: `❌ Error: ${retryRes.data.error}`
+          };
+        }
+      }
+      throw err;
+    }
+  } catch (err) {
+    console.error('❌ Request failed:', err.message);
+    return {
+      success: false,
+      message: `❌ Request failed: ${err.message}`
+    };
+  }
+}
+
+//========== GENERATED COINS FUNCTIONS ==========//
+async function getTotalCoinsFromAllAccounts() {
+  try {
+    const coinsRef = doc(db, "generatedCoins", "stats");
+    const snapshot = await getDoc(coinsRef);
+
+    if (!snapshot.exists()) {
+      await setDoc(coinsRef, {
+        totalCoins: 0,
+        updatedAt: Date.now()
+      });
+
+      return 0;
+    }
+
+    return Number(snapshot.data().totalCoins || 0);
+  } catch (err) {
+    console.error("❌ Error getting total coins:", err.message);
+    return 0;
+  }
+}
+
+async function addGeneratedCoins(coins) {
+  try {
+    const coinsRef = doc(db, "generatedCoins", "stats");
+    const snapshot = await getDoc(coinsRef);
+
+    if (!snapshot.exists()) {
+      await setDoc(coinsRef, {
+        totalCoins: Number(coins),
+        updatedAt: Date.now()
+      });
+    } else {
+      const currentCoins = Number(snapshot.data().totalCoins || 0);
+
+      await updateDoc(coinsRef, {
+        totalCoins: currentCoins + Number(coins),
+        updatedAt: Date.now()
+      });
+    }
+
+    return true;
+  } catch (err) {
+    console.error("❌ Error updating total coins:", err.message);
+    return false;
+  }
+}
+
 //================= CRON JOBS FOR AUTOMATION =================//
 
 /**
@@ -454,7 +625,10 @@ cron.schedule('0 0 * * *', async () => {
     for (const account of accounts) {
       const claimResult = await claimCoinsFromAccount(account.username, account.password);
       if (claimResult.success) {
-        console.log(`✅ Claimed ${claimResult.coinsClaimed} coins from ${account.username}`);
+  console.log(`✅ Claimed ${claimResult.coinsClaimed} coins from ${account.username}`);
+
+  await addGeneratedCoins(claimResult.coinsClaimed || 0);
+}
       } else {
         console.log(`⚠️ Could not claim coins from ${account.username}: ${claimResult.error}`);
       }
@@ -12547,28 +12721,36 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
     const totalCoins = await getTotalCoinsFromAllAccounts();
 
     let accountsList = `*📊 Generated Accounts Statistics*\n\n`;
-    accountsList += `Total Accounts: \`${accounts.length}\`\n`;
-    accountsList += `Total Coins Earned: \`${totalCoins}\`\n\n`;
-    accountsList += `*Account Details:*\n\n`;
+    accountsList += `👥 Total Accounts: \`${accounts.length}\`\n`;
+    accountsList += `💎 Total Generated Coins: \`${totalCoins}\`\n\n`;
+    accountsList += `*Generated Accounts:*\n\n`;
 
     if (accounts.length === 0) {
       accountsList += `No accounts generated yet.`;
     } else {
       accounts.slice(0, 10).forEach((acc, idx) => {
-        const createdDate = new Date(acc.createdAt).toLocaleDateString();
+        const createdDate = acc.createdAt
+          ? new Date(acc.createdAt).toLocaleDateString()
+          : "Unknown";
+
         accountsList += `${idx + 1}. ${acc.username}\n`;
-        accountsList += `   💎 Coins: ${acc.totalCoinsClaimed || 0}\n`;
         accountsList += `   📅 Created: ${createdDate}\n\n`;
       });
 
       if (accounts.length > 10) {
-        accountsList += `... and ${accounts.length - 10} more accounts`;
+        accountsList += `...and ${accounts.length - 10} more accounts`;
       }
     }
 
-    return EsTeams.sendMessage(chatId, accountsList, { parse_mode: "Markdown" });
+    await EsTeams.sendMessage(chatId, accountsList, {
+      parse_mode: "Markdown"
+    });
   } catch (err) {
-    EsTeams.sendMessage(chatId, `❌ Error: ${err.message}`, { parse_mode: "Markdown" });
+    console.error("Accstats error:", err.message);
+
+    await EsTeams.sendMessage(chatId, `❌ Error: ${err.message}`, {
+      parse_mode: "Markdown"
+    });
   }
 });
 
@@ -12583,7 +12765,10 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
     return EsTeams.sendMessage(chatId, "❌ Admin command only!");
   }
 
-  const loading = await EsTeams.sendMessage(chatId, "⏳ Claiming coins from all accounts...");
+  const loading = await EsTeams.sendMessage(
+    chatId,
+    "⏳ Claiming coins from all accounts..."
+  );
 
   try {
     const accounts = await getGeneratedAccounts();
@@ -12591,22 +12776,36 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
     let successCount = 0;
 
     for (const account of accounts) {
-      const claimResult = await claimCoinsFromAccount(account.username, account.password);
+      const claimResult = await claimCoinsFromAccount(
+        account.username,
+        account.password
+      );
+
       if (claimResult.success) {
-        totalClaimed += claimResult.coinsClaimed;
+        totalClaimed += Number(claimResult.coinsClaimed || 0);
         successCount++;
+
+        // Save claimed coins to Firebase
+        await addGeneratedCoins(claimResult.coinsClaimed || 0);
       }
-      await new Promise(r => setTimeout(r, 1000));
+
+      await new Promise((r) => setTimeout(r, 1000));
     }
 
     const totalCoins = await getTotalCoinsFromAllAccounts();
 
     await EsTeams.editMessageText(
-      `✅ *Coin Claiming Complete*\n\n📊 Accounts Processed: ${successCount}/${accounts.length}\n💎 Coins Claimed: ${totalClaimed}\n📈 Total Available: ${totalCoins}`,
+      `✅ *Coin Claiming Complete*
+
+📊 Accounts Processed: ${successCount}/${accounts.length}
+
+💰 Coins Claimed This Run: ${totalClaimed}
+
+💎 Total Generated Coins: ${totalCoins}`,
       {
         chat_id: chatId,
         message_id: loading.message_id,
-        parse_mode: "Markdown"
+        parse_mode: "Markdown",
       }
     );
   } catch (err) {
@@ -12615,7 +12814,7 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
       {
         chat_id: chatId,
         message_id: loading.message_id,
-        parse_mode: "Markdown"
+        parse_mode: "Markdown",
       }
     );
   }
