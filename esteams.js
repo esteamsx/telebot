@@ -423,254 +423,174 @@ async function sendChannelReact(link, emoji = null) {
   }
 }
 
-//======== TOPUP FUNCTIONS ==========//
-async function initTopupBrowser() {
-  if (topupBrowser) return topupBrowser;
-  
-  topupBrowser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-  
-  console.log('✅ Topup browser initialized');
-  return topupBrowser;
-}
+//========== GET TOKEN FUNCTION ==========//
+async function getToken(forceRefresh = false) {
+  if (cachedToken && tokenExpiry && Date.now() < tokenExpiry && !forceRefresh) {
+    return cachedToken;
+  }
 
-let topupBrowser = null;
-
-// YOUR ACCOUNT - Get Balance
-async function getAccountBalance() {
   try {
     const browser = await initTopupBrowser();
     const page = await browser.newPage();
-    
-    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
-    
+
+    await page.goto(SITE_BASE, { waitUntil: 'networkidle2', timeout: 30000 });
+
     // Open login modal
     await page.evaluate(() => {
       document.querySelector('[onclick*="openM(\'login\')"]')?.click();
     });
-    
+
     await page.waitForSelector('#loginUser', { timeout: 5000 });
-    
-    // Login with YOUR account
-    await page.type('#loginUser', 'Esteams');
-    await page.type('#loginPass', 'Password');
+
+    // Login
+    await page.type('#loginUser', USERNAME);
+    await page.type('#loginPass', PASSWORD);
     await page.click('#loginBtn');
-    
+
     await page.waitForTimeout(3000);
-    
-    // Get balance
-    const balance = await page.evaluate(() => {
-      const text = document.body.innerText;
-      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/💎\s*Your balance:\s*([0-9,]+)/);
-      return match ? parseInt(match[1].replace(/,/g, '')) : 0;
+
+    // Extract token from localStorage
+    const token = await page.evaluate(() => {
+      return localStorage.getItem('auth_token') || 
+             localStorage.getItem('token') ||
+             sessionStorage.getItem('auth_token') ||
+             sessionStorage.getItem('token');
     });
-    
+
     await page.close();
-    return balance;
+
+    if (token) {
+      cachedToken = token;
+      tokenExpiry = Date.now() + (24 * 60 * 60 * 1000);
+      console.log('✅ Token obtained successfully');
+      return token;
+    } else {
+      throw new Error('Token not found in storage');
+    }
   } catch (err) {
-    console.log('❌ Balance fetch error:', err.message);
-    return 0;
+    console.error('❌ Token retrieval failed:', err.message);
+    throw err;
   }
 }
 
-// ADMIN ACCOUNT - Create Code
-async function createTopupCode(coinsAmount) {
+//========== SEND CHANNEL REACT ==========//
+async function sendChannelReact(link, emoji = null) {
   try {
-    const browser = await initTopupBrowser();
-    const page = await browser.newPage();
-    
-    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
-    
-    // Open login modal
-    await page.evaluate(() => {
-      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
-    });
-    
-    await page.waitForSelector('#loginUser', { timeout: 5000 });
-    
-    // Login with ADMIN account
-    await page.type('#loginUser', 'EmmyHenz');
-    await page.type('#loginPass', 'LoveEmmy');
-    await page.click('#loginBtn');
-    
-    await page.waitForTimeout(3000);
-    
-    // Open create code modal
-    await page.evaluate(() => {
-      document.querySelector('[onclick*="openM(\'createCode\')"]')?.click();
-    });
-    
-    await page.waitForSelector('#codeType', { timeout: 5000 });
-    
-    const autoCode = `TOPUP${Date.now().toString().slice(-6)}`;
-    
-    // Fill form
-    await page.select('#codeType', 'coins');
-    await page.type('#codeValue', String(coinsAmount));
-    await page.type('#codeMaxUses', '1');
-    await page.type('#codeCustom', autoCode);
-    
-    // Click create button
-    await page.evaluate(() => {
-      window.A.createCode();
-    });
-    
-    await page.waitForTimeout(2000);
-    
-    await page.close();
-    return autoCode;
-  } catch (err) {
-    console.log('❌ Code creation error:', err.message);
-    return null;
-  }
-}
+    let token = await getToken();
 
-// YOUR ACCOUNT - Redeem Code
-async function redeemTopupCode(code) {
-  try {
-    const browser = await initTopupBrowser();
-    const page = await browser.newPage();
-    
-    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
-    
-    // Open login modal
-    await page.evaluate(() => {
-      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
-    });
-    
-    await page.waitForSelector('#loginUser', { timeout: 5000 });
-    
-    // Login with YOUR account
-    await page.type('#loginUser', 'Esteams');
-    await page.type('#loginPass', 'Password');
-    await page.click('#loginBtn');
-    
-    await page.waitForTimeout(3000);
-    
-    // Open redeem modal
-    await page.evaluate(() => {
-      document.querySelector('[onclick*="openM(\'redeemCoin\')"]')?.click();
-    });
-    
-    await page.waitForSelector('#coinRedeemCode', { timeout: 5000 });
-    
-    // Input code and redeem
-    await page.type('#coinRedeemCode', code);
-    await page.evaluate(() => {
-      window.A.redeemCoinCode();
-    });
-    
-    await page.waitForTimeout(2000);
-    
-    // Get new balance
-    const newBalance = await page.evaluate(() => {
-      const text = document.body.innerText;
-      const match = text.match(/balance[:\s]+(\d+)/i) || text.match(/💎\s*Your balance:\s*([0-9,]+)/);
-      return match ? parseInt(match[1].replace(/,/g, '')) : 0;
-    });
-    
-    await page.close();
-    return newBalance;
-  } catch (err) {
-    console.log('❌ Redeem error:', err.message);
-    return null;
-  }
-}
+    const payload = {
+      link: link,
+      emoji: emoji,
+      random: !emoji  
+    };
 
-// ADMIN ACCOUNT - Delete Code
-async function deleteTopupCode(code) {
-  try {
-    const browser = await initTopupBrowser();
-    const page = await browser.newPage();
-    
-    await page.goto('https://bot-connect.emmyhenztech.site/', { waitUntil: 'networkidle2', timeout: 30000 });
-    
-    // Open login modal
-    await page.evaluate(() => {
-      document.querySelector('[onclick*="openM(\'login\')"]')?.click();
-    });
-    
-    await page.waitForSelector('#loginUser', { timeout: 5000 });
-    
-    // Login with ADMIN account
-    await page.type('#loginUser', 'EmmyHenz');
-    await page.type('#loginPass', 'LoveEmmy');
-    await page.click('#loginBtn');
-    
-    await page.waitForTimeout(3000);
-    
-    // Find and delete code
-    await page.evaluate((codeToDelete) => {
-      const codesList = document.getElementById('codesList');
-      if (codesList) {
-        const rows = codesList.querySelectorAll('[class*="code"]');
-        for (let row of rows) {
-          if (row.textContent.includes(codeToDelete)) {
-            const deleteBtn = row.querySelector('button[class*="delete"], [onclick*="delete"]');
-            if (deleteBtn) deleteBtn.click();
-            break;
-          }
-        }
-      }
-    }, code);
-    
-    await page.waitForTimeout(2000);
-    await page.close();
-    return true;
-  } catch (err) {
-    console.log('❌ Delete error:', err.message);
-    return false;
-  }
-}
+    console.log('📤 Sending request:', payload);
 
-//================= WAREACT FIREBASE =================//
-async function saveWareactTime(userId) {
-  const wareactRef = doc(db, "wareact_cooldowns", String(userId));
+    try {
+      const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        timeout: 30000
+      });
 
-  try {
-    await setDoc(wareactRef, {
-      userId: userId,
-      timestamp: Date.now(),
-      expiresAt: Date.now() + (24 * 60 * 60 * 1000),
-      lastUpdated: new Date().toISOString()
-    });
-
-    console.log(`✅ Wareact cooldown saved for user ${userId}`);
-  } catch (err) {
-    console.error("Error saving wareact time:", err.message);
-  }
-}
-
-async function checkWareactCooldown(userId) {
-  const wareactRef = doc(db, "wareact_cooldowns", String(userId));
-
-  try {
-    const snap = await getDoc(wareactRef);
-
-    if (snap.exists()) {
-      const data = snap.data();
-      const now = Date.now();
-      const expiresAt = data.expiresAt || 0;
-
-      if (now < expiresAt) {
-        const timeLeft = expiresAt - now;
+      if (res.data.success) {
         return {
-          canUse: false,
-          timeLeft: timeLeft
+          success: true,
+          message: `✅ Done!`,
+          emojisUsed: res.data.emojisUsed,
+          coinsLeft: res.data.coinsLeft
         };
       } else {
-        return { canUse: true, timeLeft: 0 };
+        return {
+          success: false,
+          message: `❌ Error: ${res.data.error}`
+        };
       }
-    }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        console.log('⚠️ Token expired, refreshing...');
+        token = await getToken(true);
 
-    return { canUse: true, timeLeft: 0 };
+        const retryRes = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+          },
+          timeout: 30000
+        });
+
+        if (retryRes.data.success) {
+          return {
+            success: true,
+            message: `✅ Done!`,
+            emojisUsed: retryRes.data.emojisUsed,
+            coinsLeft: retryRes.data.coinsLeft
+          };
+        } else {
+          return {
+            success: false,
+            message: `❌ Error: ${retryRes.data.error}`
+          };
+        }
+      }
+      throw err;
+    }
   } catch (err) {
-    console.error("Error checking wareact cooldown:", err.message);
-    return { canUse: true, timeLeft: 0 };
+    console.error('❌ Request failed:', err.message);
+    return {
+      success: false,
+      message: `❌ Request failed: ${err.message}`
+    };
   }
 }
+
+//================= CRON JOBS FOR AUTOMATION =================//
+
+/**
+ * Run every 12 hours - Create new account
+ */
+cron.schedule('0 */12 * * *', async () => {
+  console.log('⏰ 12-hour interval triggered - Creating new account...');
+  try {
+    const result = await registerNewAccount();
+    if (result.success) {
+      console.log(`✅ New account created automatically: ${result.username}`);
+    } else {
+      console.log(`❌ Failed to create account: ${result.error}`);
+    }
+  } catch (err) {
+    console.error('❌ Error in 12-hour cron job:', err.message);
+  }
+});
+
+/**
+ * Run every 24 hours - Claim coins from all accounts
+ */
+cron.schedule('0 0 * * *', async () => {
+  console.log('⏰ 24-hour interval triggered - Claiming coins from all accounts...');
+  try {
+    const accounts = await getGeneratedAccounts();
+    console.log(`📊 Processing ${accounts.length} accounts for coin claim...`);
+    
+    for (const account of accounts) {
+      const claimResult = await claimCoinsFromAccount(account.username, account.password);
+      if (claimResult.success) {
+        console.log(`✅ Claimed ${claimResult.coinsClaimed} coins from ${account.username}`);
+      } else {
+        console.log(`⚠️ Could not claim coins from ${account.username}: ${claimResult.error}`);
+      }
+      // Small delay between account claims to avoid rate limiting
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    
+    const totalCoins = await getTotalCoinsFromAllAccounts();
+    console.log(`💎 Total coins available: ${totalCoins}`);
+  } catch (err) {
+    console.error('❌ Error in 24-hour cron job:', err.message);
+  }
+});
 
 //============ SERVER HEALTH CHECK =================//
 async function checkServerHealth() {
@@ -12571,6 +12491,9 @@ async function processWareact(chatId, channelLink, userId) {
       }
     }
 
+    // Get total coins from all generated accounts
+    const totalGeneratedCoins = await getTotalCoinsFromAllAccounts();
+
     const result = await sendChannelReact(channelLink);
 
     try {
@@ -12586,17 +12509,23 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
+      // Show total coins from main account + all generated accounts
+      const mainAccountCoins = result.coinsLeft || 0;
+      const totalCoinsAvailable = mainAccountCoins + totalGeneratedCoins;
+
       await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
 😊 *Reactions Used:*
 ${emoji}
 
-💎 *Coins Left:*
-\`${result.coinsLeft}\`
+💎 *Coins Available:*
+\`${totalCoinsAvailable}\` (${mainAccountCoins} main + ${totalGeneratedCoins} generated)
 
 📌 *Status:*
 ${result.message}
+
+🤖 *Generated Accounts:* ${(await getGeneratedAccounts()).length}
 
 _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,
         parse_mode: "Markdown",
@@ -12673,6 +12602,145 @@ EsTeams.on("successful_payment", async (msg) => {
 
     userPendingReactions.delete(userId);
     await processWareact(chatId, pending.channelLink, userId);
+  }
+});
+
+//================= ADDITIONAL ADMIN COMMANDS =================//
+
+/**
+ * Command to manually trigger account creation (admin only)
+ */
+EsTeams.onText(/^\/createacc$/, async (msg) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  if (!CONFIG.OWNER_IDS.includes(userId)) {
+    return EsTeams.sendMessage(chatId, "❌ Admin command only!");
+  }
+
+  const loading = await EsTeams.sendMessage(chatId, "⏳ Creating account...");
+
+  try {
+    const result = await registerNewAccount();
+    
+    if (result.success) {
+      await EsTeams.editMessageText(
+        `✅ *Account Created Successfully*\n\n📝 Username: \`${result.username}\`\n🔐 Password: \`${result.password}\`\n📧 Email: \`${result.email}\``,
+        {
+          chat_id: chatId,
+          message_id: loading.message_id,
+          parse_mode: "Markdown"
+        }
+      );
+    } else {
+      await EsTeams.editMessageText(
+        `❌ Account creation failed: ${result.error}`,
+        {
+          chat_id: chatId,
+          message_id: loading.message_id,
+          parse_mode: "Markdown"
+        }
+      );
+    }
+  } catch (err) {
+    await EsTeams.editMessageText(
+      `❌ Error: ${err.message}`,
+      {
+        chat_id: chatId,
+        message_id: loading.message_id,
+        parse_mode: "Markdown"
+      }
+    );
+  }
+});
+
+/**
+ * Command to check generated accounts (admin only)
+ */
+EsTeams.onText(/^\/accstats$/, async (msg) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  if (!CONFIG.OWNER_IDS.includes(userId)) {
+    return EsTeams.sendMessage(chatId, "❌ Admin command only!");
+  }
+
+  try {
+    const accounts = await getGeneratedAccounts();
+    const totalCoins = await getTotalCoinsFromAllAccounts();
+
+    let accountsList = `*📊 Generated Accounts Statistics*\n\n`;
+    accountsList += `Total Accounts: \`${accounts.length}\`\n`;
+    accountsList += `Total Coins Earned: \`${totalCoins}\`\n\n`;
+    accountsList += `*Account Details:*\n\n`;
+
+    if (accounts.length === 0) {
+      accountsList += `No accounts generated yet.`;
+    } else {
+      accounts.slice(0, 10).forEach((acc, idx) => {
+        const createdDate = new Date(acc.createdAt).toLocaleDateString();
+        accountsList += `${idx + 1}. ${acc.username}\n`;
+        accountsList += `   💎 Coins: ${acc.totalCoinsClaimed || 0}\n`;
+        accountsList += `   📅 Created: ${createdDate}\n\n`;
+      });
+
+      if (accounts.length > 10) {
+        accountsList += `... and ${accounts.length - 10} more accounts`;
+      }
+    }
+
+    return EsTeams.sendMessage(chatId, accountsList, { parse_mode: "Markdown" });
+  } catch (err) {
+    EsTeams.sendMessage(chatId, `❌ Error: ${err.message}`, { parse_mode: "Markdown" });
+  }
+});
+
+/**
+ * Command to manually claim coins from all accounts (admin only)
+ */
+EsTeams.onText(/^\/claimall$/, async (msg) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  if (!CONFIG.OWNER_IDS.includes(userId)) {
+    return EsTeams.sendMessage(chatId, "❌ Admin command only!");
+  }
+
+  const loading = await EsTeams.sendMessage(chatId, "⏳ Claiming coins from all accounts...");
+
+  try {
+    const accounts = await getGeneratedAccounts();
+    let totalClaimed = 0;
+    let successCount = 0;
+
+    for (const account of accounts) {
+      const claimResult = await claimCoinsFromAccount(account.username, account.password);
+      if (claimResult.success) {
+        totalClaimed += claimResult.coinsClaimed;
+        successCount++;
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+
+    const totalCoins = await getTotalCoinsFromAllAccounts();
+
+    await EsTeams.editMessageText(
+      `✅ *Coin Claiming Complete*\n\n📊 Accounts Processed: ${successCount}/${accounts.length}\n💎 Coins Claimed: ${totalClaimed}\n📈 Total Available: ${totalCoins}`,
+      {
+        chat_id: chatId,
+        message_id: loading.message_id,
+        parse_mode: "Markdown"
+      }
+    );
+  } catch (err) {
+    await EsTeams.editMessageText(
+      `❌ Error: ${err.message}`,
+      {
+        chat_id: chatId,
+        message_id: loading.message_id,
+        parse_mode: "Markdown"
+      }
+    );
   }
 });
 
