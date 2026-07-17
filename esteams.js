@@ -3543,7 +3543,7 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
     await EsTeams.sendMessage(chatId, `❌ Failed to process TikTok video.\n\n${err.message}`, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
+          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
     });
@@ -12610,7 +12610,7 @@ Click Proceed to Continue`,
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [[
-            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗧 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }
+            { text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }
           ]]
         }
       });
@@ -12756,13 +12756,10 @@ async function processWareact(chatId, channelLink, userId) {
 😊 *Reactions Used:*  
 ${emoji}  
   
-💎 *Coins Available:*  
-\`${totalCoinsAvailable}\` (${mainAccountCoins} main + ${totalGeneratedCoins} generated)  
+💎 *Coins Available:* ${totalCoinsAvailable}  
   
 📌 *Status:*  
 ${result.message}  
-  
-🤖 *Generated Accounts:* ${(await getGeneratedAccounts()).length}  
   
 _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,  
         parse_mode: "Markdown",  
@@ -12840,7 +12837,7 @@ EsTeams.on("successful_payment", async (msg) => {
     userPendingReactions.delete(userId);  
     await processWareact(chatId, pending.channelLink, userId);  
   }  
-});  
+});
 
 // ============ CREATE ACC COMMAND ========= //
 EsTeams.onText(/^\/createacc$/, async (msg) => {
