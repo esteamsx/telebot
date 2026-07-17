@@ -505,7 +505,6 @@ cron.schedule('0 0 * * *', async () => {
   console.log(`✅ Claimed ${claimResult.coinsClaimed} coins from ${account.username}`);
 
   await addGeneratedCoins(claimResult.coinsClaimed || 0);
-}
       } else {
         console.log(`⚠️ Could not claim coins from ${account.username}: ${claimResult.error}`);
       }
