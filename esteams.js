@@ -424,7 +424,6 @@ async function sendChannelReact(link, emoji = null) {
 }
 
 //========== GENERATED COINS FUNCTIONS ==========//
-
 async function getTotalCoinsFromAllAccounts() {
   try {
     const coinsRef = doc(db, "generatedCoins", "stats");
@@ -529,7 +528,6 @@ async function registerNewAccount() {
   const username = `es_${crypto.randomBytes(4).toString("hex")}`;
   const password = crypto.randomBytes(6).toString("hex");
 
-  // Generate a random email
   const email = `${username}@gmail.com`;
 
   try {
@@ -1323,6 +1321,7 @@ const getMessages = (currentDate, currentTime) => ({
     toolsMenu: `
 ╭━━━❄️【 𝗧𝗢𝗢𝗟𝗦 𝗠𝗘𝗡𝗨 】❄️━━━╮
 ┃ /𝐪𝐫 ◁️❄️🕷️
+┃ /𝐠𝐩𝐭 ◁️❄️🕷️
 ┃ /𝐮𝐫𝐥 ◁️❄️🕷️
 ┃ /𝐣𝐢𝐝 ◁️❄️🕷️️
 ┃ /𝐜𝐜𝐠𝐞𝐧 ◁️❄️🕷️
@@ -1336,6 +1335,7 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐬𝐜𝐚𝐧𝐪𝐫 ◁️❄️🕷️
 ┃ /𝐰𝐚𝐫𝐞𝐚𝐜𝐭 ◁️❄️🕷️
 ┃ /𝐰𝐞𝐚𝐭𝐡𝐞𝐫 ◁️❄️🕷️
+┃ /𝐜𝐡𝐚𝐭𝐛𝐨𝐭 ◁️❄️🕷️
 ┃ /𝐬𝐭𝐢𝐜𝐤𝐞𝐫 ◁️❄️🕷️
 ┃ /𝐭𝐢𝐧𝐲𝐮𝐫𝐥 ◁️❄️🕷️
 ┃ /𝐢𝐦𝐠𝐬𝐜𝐚𝐧 ◁️❄️🕷️
@@ -1431,9 +1431,10 @@ vtuMenu: `
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     aiMenu: `
-╭━━━❄️【 𝗔𝗜 𝗠𝗘𝗡𝗨 】❄️━━━╮
-┃ /𝐠𝐩𝐭 ◁️❄️🕷️
-┃ /𝐜𝐡𝐚𝐭𝐛𝐨𝐭 ◁️❄️🕷️
+╭━━━❄️【 𝗢𝗧𝗛𝗘𝗥 𝗠𝗘𝗡𝗨 】❄️━━━╮
+┃ /𝐜𝐥𝐚𝐢𝐦𝐚𝐥𝐥 ◁️❄️🕷️
+┃ /𝐚𝐜𝐜𝐬𝐭𝐚𝐭𝐬 ◁️❄️🕷️
+┃ /𝐜𝐫𝐞𝐚𝐭𝐞𝐚𝐜𝐜 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`
 });
 
@@ -1511,7 +1512,7 @@ EsTeams.onText(/\/start/, async (msg) => {
       
       [
         { text: "🌸 𝗚𝗔𝗠𝗘 𝗠𝗘𝗡𝗨", callback_data: "game_menu", style: "success" },
-        { text: "🤖 𝗔𝗜 𝗠𝗘𝗡𝗨", callback_data: "ai_menu", style: "success" }
+        { text: "🕗 𝗢𝗧𝗛𝗘𝗥 𝗠𝗘𝗡𝗨", callback_data: "other_menu", style: "success" }
       ],
 
       [{ text: "🔙 𝗕𝗔𝗖𝗞", callback_data: "close_menu", style: "danger" }]
@@ -1890,7 +1891,7 @@ EsTeams.onText(/\/start/, async (msg) => {
                 parse_mode: "Markdown",
                 reply_markup: mainMenu.reply_markup
             });
-         } else if (data === "ai_menu") {
+         } else if (data === "other_menu") {
              
   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     return EsTeams.sendMessage(chatId, 
@@ -12685,29 +12686,31 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      const mainAccountCoins = result.coinsLeft || 0;
-      const totalCoinsAvailable = mainAccountCoins + totalGeneratedCoins;
+      const mainAccountCoins = Number(result.coinsLeft || 0);
+const totalCoinsAvailable = mainAccountCoins + Number(totalGeneratedCoins || 0);
 
-      await EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
+await EsTeams.sendPhoto(chatId, botImageUrl, {
+  caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
 
 😊 *Reactions Used:*
 ${emoji}
 
-💎 *Coins Available:*
-\`${totalCoinsAvailable}\` (${mainAccountCoins} main + ${totalGeneratedCoins} generated)
+💎 *Coins Available:* \`${totalCoinsAvailable}\`
 
 📌 *Status:*
 ${result.message}
 
-🤖 *Generated Accounts:* ${(await getGeneratedAccounts()).length}
-
 _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-        }
-      });
+  parse_mode: "Markdown",
+  reply_markup: {
+    inline_keyboard: [[
+      {
+        text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
+        url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary"
+      }
+    ]]
+  }
+});
     } else {
       await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,
@@ -12948,6 +12951,44 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
       }
     );
   }
+});
+
+//================= CRON RUN COMMAND =================//
+EsTeams.onText(/^\/nextcron$/, async (msg) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  if (!CONFIG.OWNER_IDS.includes(userId)) {
+    return EsTeams.sendMessage(chatId, "❌ Admin command only!");
+  }
+
+  const now = new Date();
+
+  const next12 = new Date(now);
+  if (now.getHours() < 12) {
+    next12.setHours(12, 0, 0, 0);
+  } else {
+    next12.setDate(next12.getDate() + 1);
+    next12.setHours(0, 0, 0, 0);
+  }
+
+  const next24 = new Date(now);
+  next24.setDate(next24.getDate() + 1);
+  next24.setHours(0, 0, 0, 0);
+
+  await EsTeams.sendMessage(
+    chatId,
+    `🕒 *𝗖𝗥𝗢𝗡 𝗦𝗖𝗛𝗘𝗗𝗨𝗟𝗘*
+
+👤 Create Account (12h):
+\`${next12.toLocaleString()}\`
+
+💎 Claim Coins (24h):
+\`${next24.toLocaleString()}\``,
+    {
+      parse_mode: "Markdown"
+    }
+  );
 });
 
 // -------------- STREAM COMMAND -------------- //
