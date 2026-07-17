@@ -511,7 +511,7 @@ async function saveWareactTime(userId) {
   }
 }
 
-//========== GENERATED ACCOUNTS (Firestore-backed) ==========//
+//=============== GENERATED ACCOUNTS  ================//
 async function getGeneratedAccounts() {
   try {
     const ref = doc(db, "generatedAccounts", "list");
@@ -524,8 +524,7 @@ async function getGeneratedAccounts() {
   }
 }
 
-// ASSUMPTION: registration endpoint is POST /api/register with { username, password }.
-// Adjust the path/payload below if your site uses a different route.
+// ============ CREATE ACCT. FUNCTION ========= //
 async function registerNewAccount() {
   const username = `es_${crypto.randomBytes(4).toString("hex")}`;
   const password = crypto.randomBytes(6).toString("hex");
@@ -598,39 +597,62 @@ async function registerNewAccount() {
   }
 }
 
-// ASSUMPTION: coin-claim endpoint is POST /api/claim-coins, returning
-// { success, coinsClaimed }. Adjust if your site's actual route differs.
+// ============ CLAIM DAILY COINS FUNCTION ========= //
 async function claimCoinsFromAccount(username, password) {
   try {
-    const loginRes = await axios.post(`${SITE_BASE}/api/login`, { username, password });
+    // Login
+    const loginRes = await axios.post(`${SITE_BASE}/api/login`, {
+      username,
+      password
+    });
 
     if (!loginRes.data.success) {
-      return { success: false, error: loginRes.data.error || 'Login failed' };
+      return {
+        success: false,
+        error: loginRes.data.error || "Login failed"
+      };
     }
 
     const token = loginRes.data.token;
 
-    const claimRes = await axios.post(`${SITE_BASE}/api/claim-coins`, {}, {
-      headers: { 'x-auth-token': token },
-      timeout: 30000
-    });
+    // Claim daily coin
+    const claimRes = await axios.post(
+      `${SITE_BASE}/api/claim-coin`,
+      {},
+      {
+        headers: {
+          "x-auth-token": token
+        },
+        timeout: 30000
+      }
+    );
 
     if (claimRes.data.success) {
-      return { success: true, coinsClaimed: claimRes.data.coinsClaimed || 0 };
+      return {
+        success: true,
+        coinsClaimed:
+          Number(
+            claimRes.data.coinsClaimed ??
+            claimRes.data.coin ??
+            claimRes.data.coins ??
+            1
+          )
+      };
     }
 
-    return { success: false, error: claimRes.data.error || 'Claim failed' };
+    return {
+      success: false,
+      error: claimRes.data.error || "Claim failed"
+    };
   } catch (err) {
-    return { success: false, error: err.message };
+    return {
+      success: false,
+      error: err.response?.data?.error || err.message
+    };
   }
 }
 
-//========== TOPUP / ACCOUNT BALANCE (site API) ==========//
-// ASSUMPTION: the main account exposes GET /api/balance and
-// POST /api/topup/create, /api/topup/redeem, /api/topup/delete.
-// These paths/payloads are not documented anywhere else in this file,
-// so verify them against your actual site API and adjust as needed.
-
+// ============ ACCT BALANCE FUNCTION ========= //
 async function getAccountBalance() {
   try {
     const token = await getToken();
@@ -699,11 +721,7 @@ async function deleteTopupCode(topupCode) {
   }
 }
 
-//================= CRON JOBS FOR AUTOMATION =================//
-
-/**
- * Run every 12 hours - Create new account
- */
+// ============ CROW JOB FUNCTION ========= //
 cron.schedule('0 */12 * * *', async () => {
   console.log('⏰ 12-hour interval triggered - Creating new account...');
   try {
@@ -718,9 +736,6 @@ cron.schedule('0 */12 * * *', async () => {
   }
 });
 
-/**
- * Run every 24 hours - Claim coins from all accounts
- */
 cron.schedule('0 0 * * *', async () => {
   console.log('⏰ 24-hour interval triggered - Claiming coins from all accounts...');
   try {
@@ -736,7 +751,7 @@ cron.schedule('0 0 * * *', async () => {
       } else {
         console.log(`⚠️ Could not claim coins from ${account.username}: ${claimResult.error}`);
       }
-      // Small delay between account claims to avoid rate limiting
+      // Small delay betwe
       await new Promise(r => setTimeout(r, 2000));
     }
     
@@ -12653,7 +12668,6 @@ async function processWareact(chatId, channelLink, userId) {
       }
     }
 
-    // Get total coins from all generated accounts
     const totalGeneratedCoins = await getTotalCoinsFromAllAccounts();
 
     const result = await sendChannelReact(channelLink);
@@ -12671,7 +12685,6 @@ async function processWareact(chatId, channelLink, userId) {
         ? result.emojisUsed.join(" ")
         : "👍";
 
-      // Show total coins from main account + all generated accounts
       const mainAccountCoins = result.coinsLeft || 0;
       const totalCoinsAvailable = mainAccountCoins + totalGeneratedCoins;
 
@@ -12767,11 +12780,7 @@ EsTeams.on("successful_payment", async (msg) => {
   }
 });
 
-//================= ADDITIONAL ADMIN COMMANDS =================//
-
-/**
- * Command to manually trigger account creation (admin only)
- */
+// ============ CREATE ACC COMMAND ========= //
 EsTeams.onText(/^\/createacc$/, async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -12816,9 +12825,7 @@ EsTeams.onText(/^\/createacc$/, async (msg) => {
   }
 });
 
-/**
- * Command to check generated accounts (admin only)
- */
+// ============ ACC STATS COMMAND ========= //
 EsTeams.onText(/^\/accstats$/, async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -12844,8 +12851,8 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
           ? new Date(acc.createdAt).toLocaleDateString()
           : "Unknown";
 
-        accountsList += `${idx + 1}. ${acc.username}\n`;
-        accountsList += `   📅 Created: ${createdDate}\n\n`;
+        accountsList += `${idx + 1}. \`${acc.username}\`\n`;
+        accountsList += `   📅 Created: \`${createdDate}\`\n\n`;
       });
 
       if (accounts.length > 10) {
@@ -12854,20 +12861,18 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
     }
 
     await EsTeams.sendMessage(chatId, accountsList, {
-      parse_mode: "Markdown"
+      parse_mode: "Markdown",
     });
   } catch (err) {
     console.error("Accstats error:", err.message);
 
-    await EsTeams.sendMessage(chatId, `❌ Error: ${err.message}`, {
-      parse_mode: "Markdown"
+    await EsTeams.sendMessage(chatId, `❌ Error: \`${err.message}\``, {
+      parse_mode: "Markdown",
     });
   }
 });
 
-/**
- * Command to manually claim coins from all accounts (admin only)
- */
+// ============ CLAIM ALL COMMAND ========= //
 EsTeams.onText(/^\/claimall$/, async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -12883,8 +12888,10 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
 
   try {
     const accounts = await getGeneratedAccounts();
+
     let totalClaimed = 0;
     let successCount = 0;
+    let failedCount = 0;
 
     for (const account of accounts) {
       const claimResult = await claimCoinsFromAccount(
@@ -12893,11 +12900,17 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
       );
 
       if (claimResult.success) {
-        totalClaimed += Number(claimResult.coinsClaimed || 0);
+        const claimed = Number(claimResult.coinsClaimed || 0);
+
+        totalClaimed += claimed;
         successCount++;
 
-        // Save claimed coins to Firebase
-        await addGeneratedCoins(claimResult.coinsClaimed || 0);
+        await addGeneratedCoins(claimed);
+
+        console.log(`✅ ${account.username}: +${claimed} coins`);
+      } else {
+        failedCount++;
+        console.log(`❌ ${account.username}: ${claimResult.error}`);
       }
 
       await new Promise((r) => setTimeout(r, 1000));
@@ -12906,9 +12919,13 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
     const totalCoins = await getTotalCoinsFromAllAccounts();
 
     await EsTeams.editMessageText(
-      `✅ *Coin Claiming Complete*
+`✅ *Coin Claiming Complete*
 
-📊 Accounts Processed: ${successCount}/${accounts.length}
+👥 Total Accounts: ${accounts.length}
+
+✅ Successful: ${successCount}
+
+❌ Failed: ${failedCount}
 
 💰 Coins Claimed This Run: ${totalClaimed}
 
@@ -12920,6 +12937,8 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
       }
     );
   } catch (err) {
+    console.error("Claimall error:", err);
+
     await EsTeams.editMessageText(
       `❌ Error: ${err.message}`,
       {
