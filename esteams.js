@@ -12906,7 +12906,9 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
     if (accounts.length === 0) {
       accountsList += `No accounts generated yet.`;
     } else {
-      accounts.slice(0, 10).forEach((acc, idx) => {
+      const lastAccounts = accounts.slice(-5).reverse();
+
+       lastAccounts.forEach((acc, idx) => {
         const createdDate = acc.createdAt
           ? new Date(acc.createdAt).toLocaleDateString()
           : "Unknown";
@@ -12915,9 +12917,9 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
         accountsList += `   📅 Created: \`${createdDate}\`\n\n`;
       });
 
-      if (accounts.length > 10) {
-        accountsList += `...and ${accounts.length - 10} more accounts`;
-      }
+     if (accounts.length > 5) {
+  accountsList += `...and ${accounts.length - 5} more accounts`;
+}
     }
 
     await EsTeams.sendMessage(chatId, accountsList, {
