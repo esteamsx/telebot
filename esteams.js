@@ -157,6 +157,104 @@ EsTeams.forEach(bot => {
       console.error('❌ [polling_error]', err);
     }
   });
+  bot.on('webhook_error', (err) => console.error('❌ [webhook_error]', err));
+  bot.on('error', (err) => console.error('❌ [bot_error]', err));
+});
+
+//============= GLOBAL CRASH GUARD ==============//
+// Keeps the process (and Telegram polling) alive if a single command/API call
+// throws or rejects unexpectedly, instead of letting Node kill the whole bot.
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ [unhandledRejection]', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('❌ [uncaughtException]', err);
+});
+
+//============= NATIVE TELEGRAM COMMAND MENU ==============//
+// Registers the "/" command suggestions shown by Telegram clients.
+// Uses per-scope commands (Bot API scopes) so the owner's private chat
+// gets the extra owner-only commands without exposing them to everyone else.
+EsTeams.forEach(bot => {
+  const publicCommands = [
+    { command: 'start', description: 'Open the ES TEAMS V1 main menu' },
+    { command: 'ping', description: 'Check if the bot is alive' },
+    { command: 'runtime', description: 'Show bot uptime' },
+    { command: 'sysinfo', description: 'Show server/system info' },
+    { command: 'support', description: 'Contact support' },
+    { command: 'donate', description: 'Support the project' },
+    { command: 'gpt', description: 'Ask the AI a question' },
+    { command: 'qr', description: 'Generate a QR code' },
+    { command: 'scanqr', description: 'Scan a QR code from an image' },
+    { command: 'tinyurl', description: 'Shorten a URL' },
+    { command: 'weather', description: 'Get weather for a location' },
+    { command: 'translate', description: 'Translate text' },
+    { command: 'define', description: 'Look up a word definition' },
+    { command: 'calc', description: 'Calculate a math expression' },
+    { command: 'base64', description: 'Encode/decode base64 text' },
+    { command: 'hash', description: 'Generate MD5/SHA1/SHA256 hash' },
+    { command: 'genpass', description: 'Generate a secure password' },
+    { command: 'uuid', description: 'Generate a random UUID' },
+    { command: 'morse', description: 'Encode/decode morse code' },
+    { command: 'reverse', description: 'Reverse a piece of text' },
+    { command: 'timestamp', description: 'Unix timestamp tools' },
+    { command: 'color', description: 'Preview a hex color' },
+    { command: 'avatar', description: 'Get a profile photo' },
+    { command: 'myid', description: 'Show your Telegram ID' },
+    { command: 'chatid', description: 'Show the current chat ID' },
+    { command: 'whoami', description: 'Show your account info' },
+    { command: 'botinfo', description: 'Show info about this bot' },
+    { command: 'groupinfo', description: 'Show info about this group' },
+    { command: 'react', description: 'React to a replied message' },
+    { command: 'joke', description: 'Get a random joke' },
+    { command: 'riddle', description: 'Get a random riddle' },
+    { command: 'trivia', description: 'Play a trivia question' },
+    { command: '8ball', description: 'Ask the magic 8-ball' },
+    { command: 'coinflip', description: 'Flip a coin' },
+    { command: 'rps', description: 'Rock, paper, scissors vs the bot' },
+    { command: 'dice', description: 'Roll an animated dice' },
+    { command: 'slot', description: 'Spin the slot machine' },
+    { command: 'basketball', description: 'Throw an animated basketball' },
+    { command: 'football', description: 'Kick an animated football' },
+    { command: 'darts', description: 'Throw an animated dart' },
+    { command: 'bowling', description: 'Roll an animated bowling ball' },
+    { command: 'truth', description: 'Get a truth question' },
+    { command: 'dare', description: 'Get a dare challenge' },
+    { command: 'wyr', description: 'Would you rather...' },
+    { command: 'tictac', description: 'Play tic-tac-toe' },
+    { command: 'igstalk', description: 'Look up an Instagram profile' },
+    { command: 'ttstalk', description: 'Look up a TikTok profile' },
+    { command: 'gitstalk', description: 'Look up a GitHub profile' },
+    { command: 'quran', description: 'Read a Quran verse' },
+    { command: 'bible', description: 'Read a Bible verse' },
+    { command: 'crypto', description: 'Check crypto prices' },
+    { command: 'trend', description: 'See trending crypto coins' },
+    { command: 'index', description: 'Crypto fear & greed index' },
+    { command: 'balance', description: 'Check your wallet balance' },
+    { command: 'fund', description: 'Fund your wallet' },
+    { command: 'airtime', description: 'Buy airtime' }
+  ];
+
+  const ownerCommands = [
+    ...publicCommands,
+    { command: 'users', description: 'List bot users' },
+    { command: 'broadcast', description: 'Broadcast a message to all users' },
+    { command: 'backup', description: 'Backup bot data' },
+    { command: 'lockbot', description: 'Lock the bot' },
+    { command: 'unlockbot', description: 'Unlock the bot' },
+    { command: 'addowner', description: 'Add a bot owner' },
+    { command: 'delowner', description: 'Remove a bot owner' },
+    { command: 'listowner', description: 'List bot owners' },
+    { command: 'btcstats', description: 'Show BTC stats' }
+  ].slice(0, 100);
+
+  bot.setMyCommands(publicCommands.slice(0, 100), { scope: { type: 'default' } })
+    .catch(err => console.error('❌ [setMyCommands default]', err.message));
+
+  CONFIG.OWNER_IDS.forEach(ownerId => {
+    bot.setMyCommands(ownerCommands, { scope: { type: 'chat', chat_id: ownerId } })
+      .catch(() => {}); // owner may not have started the bot yet, ignore silently
+  });
 });
 
 //================= FILES =================//
@@ -1369,6 +1467,11 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐫𝐮𝐧𝐭𝐢𝐦𝐞 ◁️❄️🕷️
 ┃ /𝐬𝐮𝐩𝐩𝐨𝐫𝐭 ◁️❄️🕷️
 ┃ /𝐬𝐲𝐬𝐢𝐧𝐟𝐨 ◁️❄️🕷️
+┃ /𝐦𝐲𝐢𝐝 ◁️❄️🕷️
+┃ /𝐜𝐡𝐚𝐭𝐢𝐝 ◁️❄️🕷️
+┃ /𝐰𝐡𝐨𝐚𝐦𝐢 ◁️❄️🕷️
+┃ /𝐛𝐨𝐭𝐢𝐧𝐟𝐨 ◁️❄️🕷️
+┃ /𝐠𝐫𝐨𝐮𝐩𝐢𝐧𝐟𝐨 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     mediaMenu: `
@@ -1415,6 +1518,19 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐫𝐞𝐦𝐨𝐯𝐞𝐛𝐠 ◁️❄️🕷️
 ┃ /𝐟𝐚𝐤𝐞𝐰𝐚𝐩𝐩 ◁️❄️🕷️
 ┃ /𝐥𝐢𝐯𝐞𝐬𝐜𝐨𝐫𝐞 ◁️❄️🕷️
+┃ /𝐛𝐚𝐬𝐞𝟔𝟒 ◁️❄️🕷️
+┃ /𝐡𝐚𝐬𝐡 ◁️❄️🕷️
+┃ /𝐠𝐞𝐧𝐩𝐚𝐬𝐬 ◁️❄️🕷️
+┃ /𝐮𝐮𝐢𝐝 ◁️❄️🕷️
+┃ /𝐜𝐚𝐥𝐜 ◁️❄️🕷️
+┃ /𝐦𝐨𝐫𝐬𝐞 ◁️❄️🕷️
+┃ /𝐫𝐞𝐯𝐞𝐫𝐬𝐞 ◁️❄️🕷️
+┃ /𝐭𝐫𝐚𝐧𝐬𝐥𝐚𝐭𝐞 ◁️❄️🕷️
+┃ /𝐝𝐞𝐟𝐢𝐧𝐞 ◁️❄️🕷️
+┃ /𝐚𝐯𝐚𝐭𝐚𝐫 ◁️❄️🕷️
+┃ /𝐭𝐢𝐦𝐞𝐬𝐭𝐚𝐦𝐩 ◁️❄️🕷️
+┃ /𝐜𝐨𝐥𝐨𝐫 ◁️❄️🕷️
+┃ /𝐫𝐞𝐚𝐜𝐭 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     groupMenu: `
@@ -1446,6 +1562,20 @@ gameMenu: `
 ╭━━━❄️【 𝗚𝗔𝗠𝗘 𝗠𝗘𝗡𝗨 】❄️━━━╮
 ┃ /𝐣𝐨𝐤𝐞 ◁️❄️🕷️
 ┃ /𝐭𝐢𝐜𝐭𝐚𝐜 ◁️❄️🕷️
+┃ /𝟖𝐛𝐚𝐥𝐥 ◁️❄️🕷️
+┃ /𝐝𝐢𝐜𝐞 ◁️❄️🕷️
+┃ /𝐬𝐥𝐨𝐭 ◁️❄️🕷️
+┃ /𝐛𝐚𝐬𝐤𝐞𝐭𝐛𝐚𝐥𝐥 ◁️❄️🕷️
+┃ /𝐟𝐨𝐨𝐭𝐛𝐚𝐥𝐥 ◁️❄️🕷️
+┃ /𝐝𝐚𝐫𝐭𝐬 ◁️❄️🕷️
+┃ /𝐛𝐨𝐰𝐥𝐢𝐧𝐠 ◁️❄️🕷️
+┃ /𝐜𝐨𝐢𝐧𝐟𝐥𝐢𝐩 ◁️❄️🕷️
+┃ /𝐫𝐩𝐬 ◁️❄️🕷️
+┃ /𝐫𝐢𝐝𝐝𝐥𝐞 ◁️❄️🕷️
+┃ /𝐭𝐫𝐮𝐭𝐡 ◁️❄️🕷️
+┃ /𝐝𝐚𝐫𝐞 ◁️❄️🕷️
+┃ /𝐰𝐲𝐫 ◁️❄️🕷️
+┃ /𝐭𝐫𝐢𝐯𝐢𝐚 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
 stalkMenu: `
@@ -15566,4 +15696,843 @@ EsTeams.onText(/\/fetchid(?:\s*@(\S+))?/, async (msg, match) => {
             EsTeams.sendMessage(chatId, `❌ Error: ${error.message}`, { parse_mode: 'Markdown' });
         }
     });
+
+//======================================================================
+//  NEW COMMANDS — GAMES, UTILITIES & INFO
+//======================================================================
+
+const waChannelBtn = {
+    inline_keyboard: [
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
+    ]
+};
+
+function isLockedFor(userId) {
+    return LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId);
+}
+
+function newCmdLocked(chatId) {
+    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
+        parse_mode: "Markdown",
+        reply_markup: waChannelBtn
+    });
+}
+
+async function telegramRawApi(method, payload) {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    return res.json();
+}
+
+//---------------- GAMES ----------------//
+
+EsTeams.onText(/^\/8ball(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const question = match[1] ? match[1].trim() : null;
+    if (!question) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/8ball <question>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    const answers = [
+        "It is certain.", "Without a doubt.", "Yes, definitely.", "You may rely on it.",
+        "As I see it, yes.", "Most likely.", "Outlook good.", "Signs point to yes.",
+        "Reply hazy, try again.", "Ask again later.", "Better not tell you now.",
+        "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.",
+        "My reply is no.", "My sources say no.", "Outlook not so good.", "Very doubtful."
+    ];
+    const answer = answers[Math.floor(Math.random() * answers.length)];
+
+    EsTeams.sendMessage(chatId, `🎱 *𝗠𝗔𝗚𝗜𝗖 𝟴 𝗕𝗔𝗟𝗟*\n\n❓ ${question}\n\n🔮 ${answer}`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("8BALL ERROR:", err.message));
+});
+
+async function sendNativeDice(chatId, emoji, label) {
+    try {
+        await EsTeams.sendDice(chatId, { emoji });
+    } catch (err) {
+        console.error(`${label} ERROR:`, err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to roll right now. Try again later.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+}
+
+EsTeams.onText(/^\/dice$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    await sendNativeDice(chatId, '🎲', 'DICE');
+});
+
+EsTeams.onText(/^\/slot$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    await sendNativeDice(chatId, '🎰', 'SLOT');
+});
+
+EsTeams.onText(/^\/basketball$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    await sendNativeDice(chatId, '🏀', 'BASKETBALL');
+});
+
+EsTeams.onText(/^\/football$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    await sendNativeDice(chatId, '⚽', 'FOOTBALL');
+});
+
+EsTeams.onText(/^\/darts$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    await sendNativeDice(chatId, '🎯', 'DARTS');
+});
+
+EsTeams.onText(/^\/bowling$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    await sendNativeDice(chatId, '🎳', 'BOWLING');
+});
+
+EsTeams.onText(/^\/coinflip$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const result = Math.random() < 0.5 ? "🟡 Heads" : "⚪ Tails";
+    EsTeams.sendMessage(chatId, `🪙 *𝗖𝗢𝗜𝗡 𝗙𝗟𝗜𝗣*\n\nResult: *${result}*`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("COINFLIP ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/rps(?:\s+(\S+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const choices = ['rock', 'paper', 'scissors'];
+    const emojis = { rock: '🪨', paper: '📄', scissors: '✂️' };
+    const userChoice = match[1] ? match[1].toLowerCase() : null;
+
+    if (!userChoice || !choices.includes(userChoice)) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/rps rock`, `/rps paper` or `/rps scissors`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    const botChoice = choices[Math.floor(Math.random() * choices.length)];
+    let result;
+    if (botChoice === userChoice) {
+        result = "🤝 It's a tie!";
+    } else if (
+        (userChoice === 'rock' && botChoice === 'scissors') ||
+        (userChoice === 'paper' && botChoice === 'rock') ||
+        (userChoice === 'scissors' && botChoice === 'paper')
+    ) {
+        result = "🎉 You win!";
+    } else {
+        result = "🤖 Bot wins!";
+    }
+
+    EsTeams.sendMessage(chatId,
+        `✊ *𝗥𝗢𝗖𝗞 𝗣𝗔𝗣𝗘𝗥 𝗦𝗖𝗜𝗦𝗦𝗢𝗥𝗦*\n\nYou: ${emojis[userChoice]} ${userChoice}\nBot: ${emojis[botChoice]} ${botChoice}\n\n${result}`,
+        { parse_mode: "Markdown", reply_markup: waChannelBtn }
+    ).catch(err => console.error("RPS ERROR:", err.message));
+});
+
+const riddles = [
+    { q: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", a: "An echo." },
+    { q: "The more you take, the more you leave behind. What am I?", a: "Footsteps." },
+    { q: "What has keys but can't open locks?", a: "A piano." },
+    { q: "What has a head, a tail, but no body?", a: "A coin." },
+    { q: "What gets wetter the more it dries?", a: "A towel." },
+    { q: "What has hands but can't clap?", a: "A clock." },
+    { q: "What has to be broken before you can use it?", a: "An egg." },
+    { q: "I'm tall when I'm young, and short when I'm old. What am I?", a: "A candle." },
+    { q: "What can travel around the world while staying in a corner?", a: "A stamp." },
+    { q: "What has one eye but cannot see?", a: "A needle." }
+];
+
+EsTeams.onText(/^\/riddle$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const index = Math.floor(Math.random() * riddles.length);
+    const riddle = riddles[index];
+
+    EsTeams.sendMessage(chatId, `🧩 *𝗥𝗜𝗗𝗗𝗟𝗘*\n\n${riddle.q}`, {
+        parse_mode: "Markdown",
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: "🔍 𝗥𝗘𝗩𝗘𝗔𝗟 𝗔𝗡𝗦𝗪𝗘𝗥", callback_data: `reveal_riddle_${index}` }],
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
+            ]
+        }
+    }).catch(err => console.error("RIDDLE ERROR:", err.message));
+});
+
+EsTeams.on('callback_query', async (query) => {
+    if (!query.data || !query.data.startsWith('reveal_riddle_')) return;
+    try {
+        const index = parseInt(query.data.replace('reveal_riddle_', ''), 10);
+        const riddle = riddles[index];
+        if (!riddle) {
+            return EsTeams.answerCallbackQuery(query.id, { text: "Riddle not found." });
+        }
+        await EsTeams.answerCallbackQuery(query.id, { text: `Answer: ${riddle.a}`, show_alert: true });
+    } catch (err) {
+        console.error("RIDDLE REVEAL ERROR:", err.message);
+    }
+});
+
+const truths = [
+    "What's a habit you're trying to break?",
+    "What's the most embarrassing thing you've done this year?",
+    "What's a goal you haven't told anyone about?",
+    "What's your biggest fear?",
+    "What's the last lie you told?",
+    "What's a talent people don't know you have?",
+    "What's the best advice you've ever received?",
+    "What's something you regret not doing?",
+    "Who do you admire most and why?",
+    "What's a rule you secretly break?"
+];
+
+const dares = [
+    "Send a voice note singing your favorite song.",
+    "Text a friend a compliment right now.",
+    "Do 10 push-ups before your next message.",
+    "Speak in rhymes for your next 3 messages.",
+    "Share the last photo in your gallery (safely!).",
+    "Type your next message using only emojis.",
+    "Give a random compliment to the last person you texted.",
+    "Do your best impression of a robot for one message.",
+    "Send a fun fact you just looked up.",
+    "Describe your day using only three words."
+];
+
+const wyrs = [
+    "Would you rather have the ability to fly or be invisible?",
+    "Would you rather always be 10 minutes late or 20 minutes early?",
+    "Would you rather lose your phone or your wallet?",
+    "Would you rather live without music or without movies?",
+    "Would you rather be able to talk to animals or speak every language?",
+    "Would you rather have unlimited money or unlimited time?",
+    "Would you rather never use social media again or never watch TV again?",
+    "Would you rather explore space or the ocean?",
+    "Would you rather be famous or be a close friend of someone famous?",
+    "Would you rather always know when someone is lying or always get away with lying?"
+];
+
+EsTeams.onText(/^\/truth$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const truth = truths[Math.floor(Math.random() * truths.length)];
+    EsTeams.sendMessage(chatId, `🤫 *𝗧𝗥𝗨𝗧𝗛*\n\n${truth}`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("TRUTH ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/dare$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const dare = dares[Math.floor(Math.random() * dares.length)];
+    EsTeams.sendMessage(chatId, `🔥 *𝗗𝗔𝗥𝗘*\n\n${dare}`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("DARE ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/wyr$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const wyr = wyrs[Math.floor(Math.random() * wyrs.length)];
+    EsTeams.sendMessage(chatId, `🤔 *𝗪𝗢𝗨𝗟𝗗 𝗬𝗢𝗨 𝗥𝗔𝗧𝗛𝗘𝗥*\n\n${wyr}`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("WYR ERROR:", err.message));
+});
+
+const triviaSessions = new Map();
+
+EsTeams.onText(/^\/trivia$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    try {
+        const res = await fetch("https://opentdb.com/api.php?amount=1&type=multiple&encode=url3986");
+        const data = await res.json();
+        const item = data?.results?.[0];
+        if (!item) throw new Error("No trivia question returned");
+
+        const question = decodeURIComponent(item.question);
+        const correct = decodeURIComponent(item.correct_answer);
+        const options = [...item.incorrect_answers.map(a => decodeURIComponent(a)), correct]
+            .sort(() => Math.random() - 0.5);
+        const correctIndex = options.indexOf(correct);
+
+        const sessionId = crypto.randomBytes(4).toString('hex');
+        triviaSessions.set(sessionId, correctIndex);
+        setTimeout(() => triviaSessions.delete(sessionId), 5 * 60 * 1000);
+
+        await EsTeams.sendMessage(chatId, `🧠 *𝗧𝗥𝗜𝗩𝗜𝗔 𝗧𝗜𝗠𝗘*\n\n${question}`, {
+            parse_mode: "Markdown",
+            reply_markup: {
+                inline_keyboard: options.map((opt, i) => ([
+                    { text: opt.length > 60 ? opt.slice(0, 57) + "..." : opt, callback_data: `trivia_${sessionId}_${i}` }
+                ]))
+            }
+        });
+    } catch (err) {
+        console.error("TRIVIA ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch a trivia question right now. Try again later.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.on('callback_query', async (query) => {
+    if (!query.data || !query.data.startsWith('trivia_')) return;
+    try {
+        const parts = query.data.split('_');
+        const chosenIndex = parseInt(parts.pop(), 10);
+        const sessionId = parts.slice(1).join('_');
+        const correctIndex = triviaSessions.get(sessionId);
+
+        if (correctIndex === undefined) {
+            return EsTeams.answerCallbackQuery(query.id, { text: "⏱ This trivia session expired.", show_alert: true });
+        }
+
+        triviaSessions.delete(sessionId);
+        const isCorrect = chosenIndex === correctIndex;
+
+        await EsTeams.answerCallbackQuery(query.id, { text: isCorrect ? "✅ Correct!" : "❌ Wrong answer!" });
+        await EsTeams.editMessageText(
+            `🧠 *𝗧𝗥𝗜𝗩𝗜𝗔 𝗥𝗘𝗦𝗨𝗟𝗧*\n\n${isCorrect ? "✅ Correct! Well played." : "❌ Not quite — better luck next time!"}`,
+            { chat_id: query.message.chat.id, message_id: query.message.message_id, parse_mode: "Markdown" }
+        );
+    } catch (err) {
+        console.error("TRIVIA CALLBACK ERROR:", err.message);
+    }
+});
+
+//---------------- UTILITIES ----------------//
+
+EsTeams.onText(/^\/base64(?:\s+(encode|decode)\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const mode = match[1] ? match[1].toLowerCase() : null;
+    const text = match[2] ? match[2].trim() : null;
+
+    if (!mode || !text) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/base64 encode <text>` or `/base64 decode <text>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const result = mode === 'encode'
+            ? Buffer.from(text, 'utf8').toString('base64')
+            : Buffer.from(text, 'base64').toString('utf8');
+
+        EsTeams.sendMessage(chatId, `🔐 *𝗕𝗔𝗦𝗘𝟲𝟰 ${mode.toUpperCase()}*\n\n\`${result}\``, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("BASE64 ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to process that text.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/hash(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const text = match[1] ? match[1].trim() : null;
+    if (!text) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/hash <text>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const md5 = crypto.createHash('md5').update(text).digest('hex');
+        const sha1 = crypto.createHash('sha1').update(text).digest('hex');
+        const sha256 = crypto.createHash('sha256').update(text).digest('hex');
+
+        EsTeams.sendMessage(chatId,
+            `🔑 *𝗛𝗔𝗦𝗛 𝗥𝗘𝗦𝗨𝗟𝗧𝗦*\n\n*MD5:*\n\`${md5}\`\n\n*SHA1:*\n\`${sha1}\`\n\n*SHA256:*\n\`${sha256}\``,
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    } catch (err) {
+        console.error("HASH ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to hash that text.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/genpass(?:\s+(\d+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    let length = match[1] ? parseInt(match[1], 10) : 16;
+    if (isNaN(length) || length < 6) length = 6;
+    if (length > 64) length = 64;
+
+    try {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=";
+        const bytes = crypto.randomBytes(length);
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            password += chars[bytes[i] % chars.length];
+        }
+
+        EsTeams.sendMessage(chatId, `🔒 *𝗣𝗔𝗦𝗦𝗪𝗢𝗥𝗗 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥*\n\n\`${password}\`\n\n_Length: ${length} characters_`, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("GENPASS ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to generate a password right now.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/uuid$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const id = crypto.randomUUID();
+    EsTeams.sendMessage(chatId, `🆔 *𝗨𝗨𝗜𝗗*\n\n\`${id}\``, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("UUID ERROR:", err.message));
+});
+
+function safeCalculate(expr) {
+    const cleaned = expr.replace(/\s+/g, '');
+    if (!cleaned || cleaned.length > 100 || !/^[0-9+\-*/().%]+$/.test(cleaned)) {
+        throw new Error("Only numbers and + - * / % ( ) . are allowed.");
+    }
+    const result = Function(`"use strict"; return (${cleaned});`)();
+    if (typeof result !== 'number' || !isFinite(result)) {
+        throw new Error("Invalid expression.");
+    }
+    return result;
+}
+
+EsTeams.onText(/^\/calc(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const expr = match[1] ? match[1].trim() : null;
+    if (!expr) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/calc <expression>`\ne.g. `/calc (12+8)*3`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const result = safeCalculate(expr);
+        EsTeams.sendMessage(chatId, `🧮 *𝗖𝗔𝗟𝗖𝗨𝗟𝗔𝗧𝗢𝗥*\n\n${expr} = *${result}*`, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        EsTeams.sendMessage(chatId, `⚠️ *${err.message}*`, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+    }
+});
+
+const MORSE_MAP = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.',
+    'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.',
+    'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-',
+    'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..',
+    '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+    '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+    ' ': '/'
+};
+const MORSE_MAP_REVERSED = Object.fromEntries(Object.entries(MORSE_MAP).map(([k, v]) => [v, k]));
+
+EsTeams.onText(/^\/morse(?:\s+(encode|decode)\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const mode = match[1] ? match[1].toLowerCase() : null;
+    const text = match[2] ? match[2].trim() : null;
+
+    if (!mode || !text) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/morse encode <text>` or `/morse decode <morse code>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        let result;
+        if (mode === 'encode') {
+            result = text.toUpperCase().split('').map(ch => MORSE_MAP[ch] ?? ch).join(' ');
+        } else {
+            result = text.split(' ').map(code => MORSE_MAP_REVERSED[code] ?? code).join('');
+        }
+        EsTeams.sendMessage(chatId, `📡 *𝗠𝗢𝗥𝗦𝗘 ${mode.toUpperCase()}*\n\n\`${result}\``, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("MORSE ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to process that text.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/reverse(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const text = match[1] ? match[1].trim() : null;
+    if (!text) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/reverse <text>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    const reversed = [...text].reverse().join('');
+    EsTeams.sendMessage(chatId, `🔁 *𝗥𝗘𝗩𝗘𝗥𝗦𝗘𝗗 𝗧𝗘𝗫𝗧*\n\n${reversed}`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("REVERSE ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/translate(?:\s+(\S+)\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const targetLang = match[1] ? match[1].toLowerCase() : null;
+    const text = match[2] ? match[2].trim() : null;
+
+    if (!targetLang || !text) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/translate <lang_code> <text>`\ne.g. `/translate es Hello there`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${encodeURIComponent(targetLang)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const translated = data?.responseData?.translatedText;
+
+        if (!translated) throw new Error("No translation returned");
+
+        EsTeams.sendMessage(chatId, `🌐 *𝗧𝗥𝗔𝗡𝗦𝗟𝗔𝗧𝗜𝗢𝗡 (${targetLang.toUpperCase()})*\n\n${translated}`, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("TRANSLATE ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to translate right now. Try again later.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/define(?:\s+(\S+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const word = match[1] ? match[1].trim() : null;
+    if (!word) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/define <word>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+        const data = await res.json();
+        if (!Array.isArray(data) || !data[0]) throw new Error("Word not found");
+
+        const entry = data[0];
+        const meanings = entry.meanings.slice(0, 3).map(m => {
+            const def = m.definitions[0]?.definition || "No definition available";
+            return `*${m.partOfSpeech}:* ${def}`;
+        }).join('\n\n');
+
+        EsTeams.sendMessage(chatId, `📖 *𝗗𝗘𝗙𝗜𝗡𝗜𝗧𝗜𝗢𝗡: ${entry.word}*\n\n${meanings}`, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("DEFINE ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `⚠️ *No definition found for "${word}".*`, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/avatar$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const targetUser = msg.reply_to_message?.from || msg.from;
+
+    try {
+        const photos = await EsTeams.getUserProfilePhotos(targetUser.id, { limit: 1 });
+        if (!photos.total_count || !photos.photos.length) {
+            return EsTeams.sendMessage(chatId, "⚠️ *This user has no profile photo set, or it's private.*", {
+                parse_mode: "Markdown", reply_markup: waChannelBtn
+            });
+        }
+
+        const sizes = photos.photos[0];
+        const fileId = sizes[sizes.length - 1].file_id;
+
+        await EsTeams.sendPhoto(chatId, fileId, {
+            caption: `🖼️ *𝗔𝗩𝗔𝗧𝗔𝗥 — ${targetUser.first_name || 'User'}*`,
+            parse_mode: "Markdown",
+            reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("AVATAR ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch avatar right now.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/timestamp(?:\s+(\d+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    try {
+        if (match[1]) {
+            const unix = parseInt(match[1], 10);
+            const date = new Date(unix * 1000);
+            if (isNaN(date.getTime())) throw new Error("Invalid timestamp");
+
+            EsTeams.sendMessage(chatId, `🕒 *𝗧𝗜𝗠𝗘𝗦𝗧𝗔𝗠𝗣 𝗖𝗢𝗡𝗩𝗘𝗥𝗧𝗘𝗥*\n\nUnix: \`${unix}\`\nDate (UTC): ${date.toUTCString()}\nISO: ${date.toISOString()}`, {
+                parse_mode: "Markdown", reply_markup: waChannelBtn
+            });
+        } else {
+            const now = new Date();
+            EsTeams.sendMessage(chatId, `🕒 *𝗖𝗨𝗥𝗥𝗘𝗡𝗧 𝗧𝗜𝗠𝗘𝗦𝗧𝗔𝗠𝗣*\n\nUnix: \`${Math.floor(now.getTime() / 1000)}\`\nDate (UTC): ${now.toUTCString()}\nISO: ${now.toISOString()}\n\n_Tip: use \`/timestamp <unix>\` to convert one._`, {
+                parse_mode: "Markdown", reply_markup: waChannelBtn
+            });
+        }
+    } catch (err) {
+        console.error("TIMESTAMP ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Invalid timestamp provided.*", { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/color(?:\s+#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6}))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    let hex = match[1];
+    if (!hex) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/color <hex>`\ne.g. `/color ff5733`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+
+    try {
+        const canvas = createCanvas(300, 120);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = `#${hex}`;
+        ctx.fillRect(0, 0, 300, 120);
+        ctx.fillStyle = (r * 0.299 + g * 0.587 + b * 0.114) > 150 ? '#000000' : '#ffffff';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillText(`#${hex.toUpperCase()}`, 20, 65);
+        const buf = canvas.toBuffer('image/png');
+
+        await EsTeams.sendPhoto(chatId, buf, {
+            caption: `🎨 *𝗖𝗢𝗟𝗢𝗥 𝗣𝗥𝗘𝗩𝗜𝗘𝗪*\n\nHEX: \`#${hex.toUpperCase()}\`\nRGB: \`${r}, ${g}, ${b}\``,
+            parse_mode: "Markdown",
+            reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("COLOR ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `🎨 *𝗖𝗢𝗟𝗢𝗥 𝗜𝗡𝗙𝗢*\n\nHEX: \`#${hex.toUpperCase()}\`\nRGB: \`${r}, ${g}, ${b}\``, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/react(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const emoji = match[1] ? match[1].trim() : null;
+    const target = msg.reply_to_message;
+
+    if (!emoji || !target) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nReply to a message with `/react <emoji>`\ne.g. reply with `/react 🔥`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const result = await telegramRawApi('setMessageReaction', {
+            chat_id: chatId,
+            message_id: target.message_id,
+            reaction: [{ type: 'emoji', emoji }]
+        });
+
+        if (!result.ok) throw new Error(result.description || 'Reaction rejected');
+
+        EsTeams.sendMessage(chatId, `✅ Reacted with ${emoji}`, { parse_mode: "Markdown" }).catch(() => {});
+    } catch (err) {
+        console.error("REACT ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *That emoji isn't a valid reaction. Try 👍 ❤️ 🔥 🎉 😁 etc.*", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        }).catch(() => {});
+    }
+});
+
+//---------------- INFO ----------------//
+
+EsTeams.onText(/^\/myid$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    EsTeams.sendMessage(chatId, `🆔 *𝗬𝗢𝗨𝗥 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗜𝗗*\n\n\`${msg.from.id}\``, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("MYID ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/chatid$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    EsTeams.sendMessage(chatId, `💬 *𝗖𝗛𝗔𝗧 𝗜𝗗*\n\n\`${chatId}\`\nType: ${msg.chat.type}`, {
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("CHATID ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/whoami$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const u = msg.from;
+    const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ');
+
+    EsTeams.sendMessage(chatId,
+        `👤 *𝗪𝗛𝗢 𝗔𝗠 𝗜*\n\n` +
+        `*Name:* ${fullName || 'N/A'}\n` +
+        `*Username:* ${u.username ? '@' + u.username : 'N/A'}\n` +
+        `*ID:* \`${u.id}\`\n` +
+        `*Language:* ${u.language_code || 'N/A'}\n` +
+        `*Premium:* ${u.is_premium ? 'Yes ✅' : 'No'}`,
+        { parse_mode: "Markdown", reply_markup: waChannelBtn }
+    ).catch(err => console.error("WHOAMI ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/botinfo$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    try {
+        const me = await EsTeams.getMe();
+        const uptimeSeconds = Math.floor(process.uptime());
+        const hours = Math.floor(uptimeSeconds / 3600);
+        const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+
+        EsTeams.sendMessage(chatId,
+            `🤖 *𝗕𝗢𝗧 𝗜𝗡𝗙𝗢*\n\n` +
+            `*Name:* ${me.first_name}\n` +
+            `*Username:* @${me.username}\n` +
+            `*ID:* \`${me.id}\`\n` +
+            `*Commands:* ${totalCommands}\n` +
+            `*Process Uptime:* ${hours}h ${minutes}m\n` +
+            `*Node Version:* ${process.version}`,
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    } catch (err) {
+        console.error("BOTINFO ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch bot info right now.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/groupinfo$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
+        return EsTeams.sendMessage(chatId, "⚠️ *This command only works inside a group.*", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const chat = await EsTeams.getChat(chatId);
+        let memberCount = null;
+        try {
+            memberCount = await EsTeams.getChatMemberCount(chatId);
+        } catch {}
+
+        EsTeams.sendMessage(chatId,
+            `👥 *𝗚𝗥𝗢𝗨𝗣 𝗜𝗡𝗙𝗢*\n\n` +
+            `*Title:* ${chat.title || 'N/A'}\n` +
+            `*ID:* \`${chat.id}\`\n` +
+            `*Type:* ${chat.type}\n` +
+            `*Members:* ${memberCount ?? 'N/A'}`,
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    } catch (err) {
+        console.error("GROUPINFO ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch group info right now.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+//---------------- FIXED: /gitstalk (was listed in the menu but never implemented) ----------------//
+
+EsTeams.onText(/^\/gitstalk(?:\s+(.+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const username = match[1] ? match[1].trim().replace(/\s+/g, '') : null;
+    if (!username) {
+        return EsTeams.sendPhoto(chatId, botImageUrl, {
+            caption: "❌ *𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗙𝗼𝗿𝗺𝗮𝘁*\n\nPlease use `/gitstalk username`.",
+            parse_mode: "Markdown",
+            reply_markup: waChannelBtn
+        });
+    }
+
+    let waitMessage;
+    try {
+        waitMessage = await EsTeams.sendMessage(chatId, "🔄 *𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴...*", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        console.error("Error sending wait message:", err);
+    }
+
+    try {
+        const res = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
+            headers: { 'User-Agent': 'ES-TEAMS-V1-Bot' }
+        });
+        const data = await res.json();
+
+        if (waitMessage) {
+            try { await EsTeams.deleteMessage(chatId, waitMessage.message_id); } catch {}
+        }
+
+        if (!res.ok || data.message === 'Not Found') {
+            throw new Error("GitHub user not found");
+        }
+
+        const caption = `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗚𝗜𝗧𝗛𝗨𝗕 𝗦𝗧𝗔𝗟𝗞𝗘𝗥*\n\n` +
+            `*Username:* ${data.login}\n` +
+            `*Name:* ${data.name || 'N/A'}\n` +
+            `*Bio:* ${data.bio || 'N/A'}\n` +
+            `*Public Repos:* ${data.public_repos}\n` +
+            `*Followers:* ${data.followers}\n` +
+            `*Following:* ${data.following}\n` +
+            `*Profile:* ${data.html_url}\n\n` +
+            `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ`;
+
+        await EsTeams.sendPhoto(chatId, data.avatar_url || botImageUrl, {
+            caption,
+            parse_mode: "Markdown",
+            reply_markup: waChannelBtn
+        });
+    } catch (err) {
+        if (waitMessage) {
+            try { await EsTeams.deleteMessage(chatId, waitMessage.message_id); } catch {}
+        }
+        await EsTeams.sendPhoto(chatId, botImageUrl, {
+            caption: `❌ *𝗙𝗮𝗶𝗹𝗲𝗱 𝘁𝗼 𝗳𝗲𝘁𝗰𝗵 𝗱𝗮𝘁𝗮.*\n\n${err.message}`,
+            parse_mode: "Markdown",
+            reply_markup: waChannelBtn
+        });
+    }
+});
 });
