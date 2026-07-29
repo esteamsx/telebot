@@ -138,7 +138,25 @@ const CONFIG = {
 //================= BOT SETUP =================//
 const tokens = [process.env.BOT_TOKEN];
 const exec = util.promisify(execCallback);
-const EsTeams = tokens.map(token => new TelegramBot(token, { polling: true }));
+// Explicit allowed_updates so newer update types (business_*, inline_query, etc.)
+// are delivered. This list is a superset of Telegram's implicit default, so
+// nothing that already worked stops working.
+const ALLOWED_UPDATES = [
+    'message', 'edited_message', 'channel_post', 'edited_channel_post',
+    'business_connection', 'business_message', 'edited_business_message', 'deleted_business_messages',
+    'message_reaction', 'message_reaction_count',
+    'inline_query', 'chosen_inline_result', 'callback_query',
+    'shipping_query', 'pre_checkout_query', 'purchased_paid_media',
+    'poll', 'poll_answer',
+    'my_chat_member', 'chat_member', 'chat_join_request',
+    'chat_boost', 'removed_chat_boost'
+];
+
+const EsTeams = tokens.map(token => new TelegramBot(token, {
+    polling: {
+        params: { allowed_updates: JSON.stringify(ALLOWED_UPDATES) }
+    }
+}));
 const FLUTTERWAVE_SECRET_KEY = process.env.FLUTTERWAVE_SECRET_KEY;
 const startTime = Date.now();
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
@@ -206,6 +224,14 @@ EsTeams.forEach(bot => {
     { command: 'botinfo', description: 'Show info about this bot' },
     { command: 'groupinfo', description: 'Show info about this group' },
     { command: 'react', description: 'React to a replied message' },
+    { command: 'spoiler', description: 'Resend replied media blurred' },
+    { command: 'effect', description: 'Send a message with an effect' },
+    { command: 'newtopic', description: 'Create a forum topic' },
+    { command: 'closetopic', description: 'Close the current forum topic' },
+    { command: 'reopentopic', description: 'Reopen the current forum topic' },
+    { command: 'renametopic', description: 'Rename the current forum topic' },
+    { command: 'bizassistant', description: 'Toggle Business auto-reply' },
+    { command: 'bizstatus', description: 'Check Business connection status' },
     { command: 'joke', description: 'Get a random joke' },
     { command: 'riddle', description: 'Get a random riddle' },
     { command: 'trivia', description: 'Play a trivia question' },
@@ -1472,6 +1498,8 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐰𝐡𝐨𝐚𝐦𝐢 ◁️❄️🕷️
 ┃ /𝐛𝐨𝐭𝐢𝐧𝐟𝐨 ◁️❄️🕷️
 ┃ /𝐠𝐫𝐨𝐮𝐩𝐢𝐧𝐟𝐨 ◁️❄️🕷️
+┃ /𝐛𝐢𝐳𝐚𝐬𝐬𝐢𝐬𝐭𝐚𝐧𝐭 ◁️❄️🕷️
+┃ /𝐛𝐢𝐳𝐬𝐭𝐚𝐭𝐮𝐬 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     mediaMenu: `
@@ -1531,6 +1559,8 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐭𝐢𝐦𝐞𝐬𝐭𝐚𝐦𝐩 ◁️❄️🕷️
 ┃ /𝐜𝐨𝐥𝐨𝐫 ◁️❄️🕷️
 ┃ /𝐫𝐞𝐚𝐜𝐭 ◁️❄️🕷️
+┃ /𝐬𝐩𝐨𝐢𝐥𝐞𝐫 ◁️❄️🕷️
+┃ /𝐞𝐟𝐟𝐞𝐜𝐭 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     groupMenu: `
@@ -1550,6 +1580,11 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐬𝐞𝐭𝐠𝐜𝐢𝐦𝐚𝐠𝐞 ◁️❄️🕷️
 ┃ /𝐥𝐨𝐜𝐤𝐠𝐜 ◁️❄️🕷️
 ┃ /𝐮𝐧𝐥𝐨𝐜𝐤𝐠𝐜 ◁️❄️🕷️
+┃ /𝐧𝐞𝐰𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
+┃ /𝐜𝐥𝐨𝐬𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
+┃ /𝐫𝐞𝐨𝐩𝐞𝐧𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
+┃ /𝐝𝐞𝐥𝐞𝐭𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
+┃ /𝐫𝐞𝐧𝐚𝐦𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
 mailMenu: `
@@ -16534,5 +16569,437 @@ EsTeams.onText(/^\/gitstalk(?:\s+(.+))?$/, async (msg, match) => {
             reply_markup: waChannelBtn
         });
     }
+});
+
+//======================================================================
+//  INLINE MODE, SPOILER MEDIA, MESSAGE EFFECTS, TOPICS & BUSINESS BOTS
+//======================================================================
+
+//---------------- INLINE MODE ----------------//
+// NOTE: inline mode must also be switched on once via @BotFather -> /setinline,
+// otherwise Telegram never forwards inline queries to the bot at all.
+EsTeams.on('inline_query', async (inlineQuery) => {
+    const query = (inlineQuery.query || '').trim();
+
+    try {
+        let results = [];
+
+        if (!query) {
+            results = [{
+                type: 'article',
+                id: 'help',
+                title: '💡 Type something to search…',
+                description: 'Try: calc 12*8, color ff5733, 8ball <question>, joke, riddle',
+                input_message_content: {
+                    message_text: 'ℹ️ Type after my username to try inline mode — e.g. `calc 12*8`, `color ff5733`, `joke`, `riddle`, or `8ball will it rain today?`',
+                    parse_mode: 'Markdown'
+                }
+            }];
+        } else if (/^calc\s+/i.test(query)) {
+            const expr = query.replace(/^calc\s+/i, '');
+            try {
+                const result = safeCalculate(expr);
+                results = [{
+                    type: 'article',
+                    id: 'calc',
+                    title: `🧮 ${expr} = ${result}`,
+                    description: 'Tap to send this result',
+                    input_message_content: { message_text: `🧮 *𝗖𝗔𝗟𝗖𝗨𝗟𝗔𝗧𝗢𝗥*\n\n${expr} = *${result}*`, parse_mode: 'Markdown' }
+                }];
+            } catch (e) {
+                results = [{
+                    type: 'article',
+                    id: 'calc_error',
+                    title: '⚠️ Invalid expression',
+                    description: e.message,
+                    input_message_content: { message_text: `⚠️ ${e.message}` }
+                }];
+            }
+        } else if (/^color\s+#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/i.test(query)) {
+            let hex = query.replace(/^color\s+#?/i, '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            const r = parseInt(hex.slice(0, 2), 16);
+            const g = parseInt(hex.slice(2, 4), 16);
+            const b = parseInt(hex.slice(4, 6), 16);
+            results = [{
+                type: 'article',
+                id: 'color',
+                title: `🎨 #${hex.toUpperCase()}`,
+                description: `RGB: ${r}, ${g}, ${b}`,
+                input_message_content: { message_text: `🎨 *𝗖𝗢𝗟𝗢𝗥 𝗜𝗡𝗙𝗢*\n\nHEX: \`#${hex.toUpperCase()}\`\nRGB: \`${r}, ${g}, ${b}\``, parse_mode: 'Markdown' }
+            }];
+        } else if (/^8ball\s+/i.test(query)) {
+            const question = query.replace(/^8ball\s+/i, '');
+            const answers8 = ["It is certain.", "Without a doubt.", "Ask again later.", "My sources say no.", "Outlook good.", "Very doubtful.", "Signs point to yes."];
+            const answer = answers8[Math.floor(Math.random() * answers8.length)];
+            results = [{
+                type: 'article',
+                id: '8ball',
+                title: '🎱 Magic 8-Ball',
+                description: answer,
+                input_message_content: { message_text: `🎱 *𝗠𝗔𝗚𝗜𝗖 𝟴 𝗕𝗔𝗟𝗟*\n\n❓ ${question}\n\n🔮 ${answer}`, parse_mode: 'Markdown' }
+            }];
+        } else if (/^joke$/i.test(query)) {
+            try {
+                const res = await fetch("https://official-joke-api.appspot.com/jokes/random");
+                const joke = await res.json();
+                results = [{
+                    type: 'article',
+                    id: 'joke',
+                    title: joke.setup,
+                    description: joke.punchline,
+                    input_message_content: { message_text: `😂 *${joke.setup}*\n\n👉 _${joke.punchline}_`, parse_mode: 'Markdown' }
+                }];
+            } catch {
+                results = [];
+            }
+        } else if (/^riddle$/i.test(query)) {
+            const riddle = riddles[Math.floor(Math.random() * riddles.length)];
+            results = [{
+                type: 'article',
+                id: 'riddle',
+                title: '🧩 ' + riddle.q,
+                description: 'Tap to send this riddle',
+                input_message_content: { message_text: `🧩 *𝗥𝗜𝗗𝗗𝗟𝗘*\n\n${riddle.q}`, parse_mode: 'Markdown' }
+            }];
+        } else {
+            results = [{
+                type: 'article',
+                id: 'echo',
+                title: `Send: "${query.slice(0, 60)}"`,
+                description: 'Send this text as a message',
+                input_message_content: { message_text: query }
+            }];
+        }
+
+        await EsTeams.answerInlineQuery(inlineQuery.id, results, { cache_time: 5, is_personal: true });
+    } catch (err) {
+        console.error("INLINE_QUERY ERROR:", err.message);
+        EsTeams.answerInlineQuery(inlineQuery.id, [], { cache_time: 5 }).catch(() => {});
+    }
+});
+
+//---------------- SPOILER MEDIA ----------------//
+
+EsTeams.onText(/^\/spoiler$/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const target = msg.reply_to_message;
+    if (!target || (!target.photo && !target.video && !target.animation)) {
+        return EsTeams.sendMessage(chatId,
+            "*Invalid Usage*\n\nReply to a photo, video, or GIF with `/spoiler` to resend it blurred until tapped.",
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    }
+
+    try {
+        const caption = target.caption || undefined;
+        if (target.photo) {
+            const fileId = target.photo[target.photo.length - 1].file_id;
+            await EsTeams.sendPhoto(chatId, fileId, { caption, has_spoiler: true, reply_markup: waChannelBtn });
+        } else if (target.video) {
+            await EsTeams.sendVideo(chatId, target.video.file_id, { caption, has_spoiler: true, reply_markup: waChannelBtn });
+        } else if (target.animation) {
+            await EsTeams.sendAnimation(chatId, target.animation.file_id, { caption, has_spoiler: true, reply_markup: waChannelBtn });
+        }
+    } catch (err) {
+        console.error("SPOILER ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to send spoiler media right now.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+//---------------- MESSAGE EFFECTS ----------------//
+// Telegram's built-in message effects only work in private chats.
+
+const MESSAGE_EFFECTS = {
+    fire: '5104841245755180586',
+    heart: '5159385139981059251',
+    thumbsup: '5107584321108051014',
+    thumbsdown: '5104858069142078462',
+    party: '5046509860389126442',
+    poop: '5046589136895476101'
+};
+
+EsTeams.onText(/^\/effect(?:\s+(\S+)(?:\s+([\s\S]+))?)?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    if (msg.chat.type !== 'private') {
+        return EsTeams.sendMessage(chatId, "⚠️ *Message effects only work in private chats* — that's a Telegram limitation, not a bot one.", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    const effectName = match[1] ? match[1].toLowerCase() : null;
+    const text = match[2] ? match[2].trim() : "✨";
+
+    if (!effectName || !MESSAGE_EFFECTS[effectName]) {
+        return EsTeams.sendMessage(chatId,
+            `*Invalid Input*\n\nPlease use \`/effect <name> [text]\`\n\nAvailable: ${Object.keys(MESSAGE_EFFECTS).join(', ')}`,
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    }
+
+    try {
+        await EsTeams.sendMessage(chatId, text, { message_effect_id: MESSAGE_EFFECTS[effectName] });
+    } catch (err) {
+        console.error("EFFECT ERROR:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to send that effect right now.*", { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+//---------------- TOPICS (FORUM) MANAGEMENT ----------------//
+
+async function isGroupAdmin(chatId, userId) {
+    try {
+        const member = await EsTeams.getChatMember(chatId, userId);
+        return ['creator', 'administrator'].includes(member.status);
+    } catch {
+        return false;
+    }
+}
+
+EsTeams.onText(/^\/newtopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    if (!msg.chat.is_forum) {
+        return EsTeams.sendMessage(chatId, "⚠️ *This group doesn't have Topics enabled.*\n\nEnable it via Group Settings → Topics first.", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+    if (!(await isGroupAdmin(chatId, msg.from.id))) {
+        return EsTeams.sendMessage(chatId, "❌ *Only group admins can create topics.*", { parse_mode: "Markdown" });
+    }
+
+    const name = match[1] ? match[1].trim() : null;
+    if (!name) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/newtopic <name>`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        const topic = await EsTeams.createForumTopic(chatId, name);
+        EsTeams.sendMessage(chatId, `✅ *𝗧𝗢𝗣𝗜𝗖 𝗖𝗥𝗘𝗔𝗧𝗘𝗗*\n\n"${name}"`, {
+            parse_mode: "Markdown", reply_markup: waChannelBtn, message_thread_id: topic.message_thread_id
+        });
+    } catch (err) {
+        console.error("NEWTOPIC ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `⚠️ *Unable to create topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/closetopic$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!msg.message_thread_id) {
+        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to close.*", { parse_mode: "Markdown" });
+    }
+    if (!(await isGroupAdmin(chatId, msg.from.id))) {
+        return EsTeams.sendMessage(chatId, "❌ *Only group admins can close topics.*", { parse_mode: "Markdown" });
+    }
+    try {
+        await EsTeams.closeForumTopic(chatId, msg.message_thread_id);
+        EsTeams.sendMessage(chatId, "🔒 *Topic closed.*", { parse_mode: "Markdown", message_thread_id: msg.message_thread_id }).catch(() => {});
+    } catch (err) {
+        console.error("CLOSETOPIC ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `⚠️ *Unable to close topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/reopentopic$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!msg.message_thread_id) {
+        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to reopen.*", { parse_mode: "Markdown" });
+    }
+    if (!(await isGroupAdmin(chatId, msg.from.id))) {
+        return EsTeams.sendMessage(chatId, "❌ *Only group admins can reopen topics.*", { parse_mode: "Markdown" });
+    }
+    try {
+        await EsTeams.reopenForumTopic(chatId, msg.message_thread_id);
+        EsTeams.sendMessage(chatId, "🔓 *Topic reopened.*", { parse_mode: "Markdown", message_thread_id: msg.message_thread_id }).catch(() => {});
+    } catch (err) {
+        console.error("REOPENTOPIC ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `⚠️ *Unable to reopen topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/deletetopic$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!msg.message_thread_id) {
+        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to delete.*", { parse_mode: "Markdown" });
+    }
+    if (!(await isGroupAdmin(chatId, msg.from.id))) {
+        return EsTeams.sendMessage(chatId, "❌ *Only group admins can delete topics.*", { parse_mode: "Markdown" });
+    }
+    try {
+        await EsTeams.deleteForumTopic(chatId, msg.message_thread_id);
+    } catch (err) {
+        console.error("DELETETOPIC ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `⚠️ *Unable to delete topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!msg.message_thread_id) {
+        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to rename.*", { parse_mode: "Markdown" });
+    }
+    if (!(await isGroupAdmin(chatId, msg.from.id))) {
+        return EsTeams.sendMessage(chatId, "❌ *Only group admins can rename topics.*", { parse_mode: "Markdown" });
+    }
+
+    const name = match[1] ? match[1].trim() : null;
+    if (!name) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/renametopic <new name>` inside the topic.", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    try {
+        await EsTeams.editForumTopic(chatId, msg.message_thread_id, { name });
+        EsTeams.sendMessage(chatId, `✅ *Topic renamed to "${name}"*`, { parse_mode: "Markdown", message_thread_id: msg.message_thread_id }).catch(() => {});
+    } catch (err) {
+        console.error("RENAMETOPIC ERROR:", err.message);
+        EsTeams.sendMessage(chatId, `⚠️ *Unable to rename topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+    }
+});
+
+//---------------- TELEGRAM BUSINESS ACCOUNT ASSISTANT ----------------//
+// Requires: Telegram Settings -> Telegram Business -> Chatbots -> connect this bot.
+// That step only wires up the connection on Telegram's side; everything below is
+// what actually makes the bot DO something once connected (this was missing before).
+
+const BUSINESS_FILE = './ES_TEAMS-MEDIA/business_connections.json';
+
+function loadBusinessConnections() {
+    try {
+        if (fs.existsSync(BUSINESS_FILE)) {
+            return JSON.parse(fs.readFileSync(BUSINESS_FILE, 'utf8'));
+        }
+    } catch (err) {
+        console.error("BUSINESS LOAD ERROR:", err.message);
+    }
+    return {};
+}
+
+function saveBusinessConnections(data) {
+    try {
+        fs.writeFileSync(BUSINESS_FILE, JSON.stringify(data, null, 2));
+    } catch (err) {
+        console.error("BUSINESS SAVE ERROR:", err.message);
+    }
+}
+
+let businessConnections = loadBusinessConnections();
+
+EsTeams.on('business_connection', (connection) => {
+    try {
+        businessConnections[connection.id] = {
+            id: connection.id,
+            userId: connection.user.id,
+            userChatId: connection.user_chat_id,
+            isEnabled: !!connection.is_enabled,
+            canReply: connection.rights?.can_reply ?? true,
+            autoReply: businessConnections[connection.id]?.autoReply || false
+        };
+        saveBusinessConnections(businessConnections);
+
+        const text = connection.is_enabled
+            ? `✅ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗔𝗦𝗦𝗜𝗦𝗧𝗔𝗡𝗧 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗*\n\nES TEAMS V1 is now linked to your Telegram Business account.\n\nBy default I only notify you here about new customer messages. Send \`/bizassistant on\` if you'd also like me to auto-reply to customers for you, or \`/bizstatus\` to check the connection anytime.`
+            : `❌ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗧𝗨𝗥𝗡𝗘𝗗 𝗢𝗙𝗙*\n\nYour Telegram Business connection to ES TEAMS V1 was disabled from Telegram settings.`;
+
+        EsTeams.sendMessage(connection.user_chat_id, text, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+    } catch (err) {
+        console.error("BUSINESS_CONNECTION ERROR:", err.message);
+    }
+});
+
+EsTeams.on('business_message', async (msg) => {
+    try {
+        const connectionId = msg.business_connection_id;
+        const connection = businessConnections[connectionId];
+        if (!connection || !connection.isEnabled) return;
+
+        const from = msg.from || {};
+        const text = msg.text || msg.caption || '';
+        const preview = text ? (text.length > 300 ? text.slice(0, 300) + '…' : text) : '[non-text message]';
+
+        EsTeams.sendMessage(connection.userChatId,
+            `📩 *𝗡𝗘𝗪 𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘*\n\n*From:* ${from.first_name || 'Customer'}${from.username ? ' (@' + from.username + ')' : ''}\n\n${preview}`,
+            { parse_mode: "Markdown" }
+        ).catch(() => {});
+
+        if (!connection.autoReply || !connection.canReply || !text) return;
+
+        let reply = "Thanks for your message! We'll get back to you shortly.";
+        try {
+            const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(text)}`);
+            const data = await res.json();
+            if (data?.success && data?.response) reply = data.response;
+        } catch {}
+
+        await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId }).catch(() => {});
+    } catch (err) {
+        console.error("BUSINESS_MESSAGE ERROR:", err.message);
+    }
+});
+
+EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
+
+    if (!connection) {
+        return EsTeams.sendMessage(chatId,
+            "ℹ️ *No Telegram Business connection found.*\n\nTo link this bot: open Telegram Settings → Telegram Business → Chatbots → connect *this bot*.",
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    }
+
+    EsTeams.sendMessage(chatId,
+        `🔗 *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗦𝗧𝗔𝗧𝗨𝗦*\n\n` +
+        `*Connected:* ${connection.isEnabled ? 'Yes ✅' : 'No ❌'}\n` +
+        `*Auto-reply:* ${connection.autoReply ? 'ON ✅' : 'OFF'}\n` +
+        `*Can reply on your behalf:* ${connection.canReply ? 'Yes' : 'No (grant this right in Telegram settings)'}`,
+        { parse_mode: "Markdown", reply_markup: waChannelBtn }
+    ).catch(err => console.error("BIZSTATUS ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/bizassistant(?:\s+(on|off))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const mode = match[1] ? match[1].toLowerCase() : null;
+    if (!mode) {
+        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/bizassistant on` or `/bizassistant off`", {
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+        });
+    }
+
+    const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
+    if (!connection) {
+        return EsTeams.sendMessage(chatId,
+            "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.",
+            { parse_mode: "Markdown", reply_markup: waChannelBtn }
+        );
+    }
+
+    connection.autoReply = mode === 'on';
+    businessConnections[connection.id] = connection;
+    saveBusinessConnections(businessConnections);
+
+    EsTeams.sendMessage(chatId,
+        mode === 'on'
+            ? "✅ *Auto-reply enabled.* I'll now reply to your customers automatically when they message your Business account."
+            : "🔕 *Auto-reply disabled.* I'll only notify you about new messages from now on.",
+        { parse_mode: "Markdown", reply_markup: waChannelBtn }
+    ).catch(err => console.error("BIZASSISTANT ERROR:", err.message));
 });
 });
