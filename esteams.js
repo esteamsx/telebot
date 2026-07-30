@@ -5320,15 +5320,66 @@ EsTeams.onText(/\/publish(?:\s+(.+))?/, async (msg, match) => {
   console.log(`✅ Broadcast complete: ${successCount}/${totalTargets} delivered successfully.`);
 });
 
+//======= AI IDENTITY GUARD =================//
+const AI_IDENTITY_ANSWER = "I am a virtual business Ai created by ES TEAMS TECH";
+
+const AI_IDENTITY_PATTERNS = [
+    /\bwho\s+(?:made|created|built|designed|developed|programmed|coded|trained|invented|founded|owns|own|runs|manages|powers|wrote)\s+(?:you|u|this|thee?\s*bot|ya)\b/i,
+    /\bwho(?:'?s| is| are)\s+(?:your|ur|thy)\s+(?:owner|creator|maker|developer|dev|father|mother|boss|master|founder|author|programmer|coder|designer|builder|company|manufacturer|provider|source|parent)\b/i,
+    /\bwho\s+do\s+you\s+(?:belong|work)\s+(?:to|for)\b/i,
+    /\bwhose\s+(?:bot|ai|assistant|creation|product|property)\s+(?:are\s+)?(?:you|u)\b/i,
+    /\bwhose\s+(?:are\s+)?(?:you|u)\b/i,
+    /\bwhat\s+(?:company|organisation|organization|team|brand)\s+(?:made|created|built|owns|developed)\s+(?:you|u)\b/i,
+    /\b(?:what|which)\s+(?:ai|model|llm|language\s+model|gpt|version|engine|system|technology|tech)\s+(?:are\s+you|you\s+are|is\s+this|do\s+you\s+use|powers?\s+you|are\s+you\s+(?:based\s+on|running\s+on|built\s+on))\b/i,
+    /\bare\s+you\s+(?:chat\s*)?(?:gpt|gpt-?\d|openai|claude|anthropic|gemini|bard|google|llama|meta|mistral|deepseek|grok|copilot|siri|alexa|perplexity|qwen|a\s+bot|a\s+robot|an?\s+ai|human|real|a\s+person|a\s+machine|a\s+language\s+model|an?\s+llm)\b/i,
+    /\byou\s+are\s+(?:chat\s*)?(?:gpt|openai|claude|anthropic|gemini|bard|llama|mistral|deepseek|grok)\b/i,
+    /\b(?:tell|say)\s+me\s+(?:about\s+)?(?:who|what)\s+(?:you\s+are|made\s+you|created\s+you)\b/i,
+    /\b(?:introduce|describe)\s+your\s*self\b/i,
+    /\bwho\s+(?:are|r)\s+(?:you|u)\b/i,
+    /\bwhat\s+(?:are|r)\s+(?:you|u)\b/i,
+    /\bwhat(?:'?s| is)\s+your\s+(?:name|identity|origin|model|source|version|maker|creator|owner|developer|company|brand)\b/i,
+    /\bwhere\s+(?:were\s+you|did\s+you\s+(?:come|get))\s+(?:made|created|built|developed|trained|trained\s+from|from)\b/i,
+    /\bwhere\s+(?:are|r)\s+(?:you|u)\s+from\b/i,
+    /\bwho\s+(?:is|are)\s+behind\s+(?:you|this\s+bot|this\s+ai)\b/i,
+    /\bwho\s+(?:programmed|deployed|hosted|launched|maintains)\s+(?:you|this)\b/i,
+    /\bwho\s+(?:gave|taught)\s+you\b/i,
+    /\bwhat\s+(?:powers|drives|runs)\s+(?:you|this\s+bot)\b/i,
+    /\bare\s+you\s+(?:made|created|built|developed|powered|trained|owned)\s+by\b/i,
+    /\bwho\s+(?:is|'?s|are)\s+(?:the\s+)?(?:brain|genius|mind|person|people|guy|man|woman|team|company)\s+behind\s+(?:you|this|it)\b/i,
+    /\bare\s+you\s+(?:based|built|running|trained)\s+on\b/i,
+    /\bwhat\s+(?:kind|type|sort)\s+of\s+(?:ai|bot|assistant|model)\s+(?:are\s+)?(?:you|u)\b/i,
+    /\bdo\s+you\s+(?:have|work\s+for)\s+(?:an?\s+)?(?:owner|creator|company|boss)\b/i,
+    /\bwho\s+sponsors?\s+(?:you|this)\b/i,
+    /\bwhat\s+is\s+this\s+bot\b/i,
+    /\bwho\s+trained\s+you\s+on\b/i,
+    /\byour\s+(?:creator|maker|owner|developer|founder|author)\s*\?/i,
+];
+
+function identityGuardAnswer(text) {
+    if (!text) return null;
+    const clean = String(text).trim();
+    if (!clean) return null;
+    return AI_IDENTITY_PATTERNS.some(re => re.test(clean)) ? AI_IDENTITY_ANSWER : null;
+}
+
 //======= SHARED FREE AI HELPER =================//
 async function askFreeAI(prompt, timeoutMs = 15000) {
     const providers = [
         async () => {
+            const res = await fetch(`https://apis.davidcyril.name.ng/ai/claude-opus-4.5?prompt=${encodeURIComponent(prompt)}`, { signal: AbortSignal.timeout(timeoutMs) });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const json = await res.json();
+            const out = json?.data || json?.response || json?.result;
+            if (!out) throw new Error('empty response');
+            return String(out).trim();
+        },
+        async () => {
             const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(prompt)}`, { signal: AbortSignal.timeout(timeoutMs) });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
-            if (!data?.success || !data?.response) throw new Error('empty response');
-            return data.response.trim();
+            const out = data?.data || data?.response;
+            if (!out) throw new Error('empty response');
+            return String(out).trim();
         },
         async () => {
             const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`, { signal: AbortSignal.timeout(timeoutMs) });
@@ -5391,7 +5442,7 @@ EsTeams.onText(/\/gpt(?:\s+(.+))?/, async (msg, match) => {
         await EsTeams.sendChatAction(chatId, 'typing');
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const aiResponse = await askFreeAI(query);
+        const aiResponse = identityGuardAnswer(query) || await askFreeAI(query);
         if (!aiResponse) {
             throw new Error("All AI providers failed");
         }
@@ -9983,7 +10034,7 @@ EsTeams.on("message", async (msg) => {
     try {
         const conversation = chatbotMemory[userId].map(m => `${m.role}: ${m.content}`).join("\n");
 
-        const aiResponse = await askFreeAI(conversation) || "⚠️ Sorry, I couldn't reach any AI provider right now. Please try again shortly.";
+        const aiResponse = identityGuardAnswer(text) || await askFreeAI(conversation) || "⚠️ Sorry, I couldn't reach any AI provider right now. Please try again shortly.";
 
         chatbotMemory[userId].push({ role: "bot", content: aiResponse });
         await saveChatbotMemory(chatbotMemory);
@@ -17152,12 +17203,43 @@ EsTeams.on('business_connection', (connection) => {
     }
 });
 
-function generateBusinessReply(connection) {
+function generateBusinessGreeting(connection) {
     const greeting = connection.ownerName
         ? `👋 Thanks for messaging ${connection.ownerName}!`
         : `👋 Thanks for your message!`;
     const note = connection.profile ? `\n\n${connection.profile}` : '';
     return `${greeting} We've received it and will get back to you as soon as possible.${note}`;
+}
+
+const BIZ_GREET_WINDOW_MS = 24 * 60 * 60 * 1000;
+const bizLastSeen = new Map();
+
+function shouldGreetBusinessChat(connectionId, chatId) {
+    const key = `${connectionId}:${chatId}`;
+    const now = Date.now();
+    const last = bizLastSeen.get(key);
+    bizLastSeen.set(key, now);
+    return !last || (now - last) >= BIZ_GREET_WINDOW_MS;
+}
+
+async function generateBusinessAiReply(connection, customerText) {
+    const guarded = identityGuardAnswer(customerText);
+    if (guarded) return guarded;
+
+    const about = connection.profile
+        ? `About this business, in the owner's own words: "${connection.profile}".`
+        : '';
+    const prompt =
+        `You are the customer-support assistant replying on Telegram for ${connection.ownerName || 'this business'}. ${about} ` +
+        `Reply directly, warmly and helpfully to the customer's message below. Keep it short (1-4 sentences). ` +
+        `Never say you are an AI language model and never mention any AI company or model name. ` +
+        `If asked who made you, only say you are a virtual business Ai created by ES TEAMS TECH.\n\n` +
+        `Customer's message: "${customerText}"\n\nYour reply:`;
+
+    const reply = await askFreeAI(prompt);
+    if (!reply) return null;
+
+    return identityGuardAnswer(reply) ? AI_IDENTITY_ANSWER : reply;
 }
 
 EsTeams.on('business_message', async (msg) => {
@@ -17197,7 +17279,24 @@ EsTeams.on('business_message', async (msg) => {
             return;
         }
 
-        const reply = generateBusinessReply(connection);
+        if (shouldGreetBusinessChat(connectionId, msg.chat.id)) {
+            try {
+                await EsTeams.sendMessage(msg.chat.id, generateBusinessGreeting(connection), { business_connection_id: connectionId });
+                console.error(`BIZ GREETING SENT to chat ${msg.chat.id}`);
+            } catch (err) {
+                console.error("BIZ GREETING SEND ERROR:", err.message);
+            }
+        }
+
+        try {
+            await EsTeams.sendChatAction(msg.chat.id, 'typing', { business_connection_id: connectionId });
+        } catch {}
+
+        const reply = await generateBusinessAiReply(connection, text);
+        if (!reply) {
+            console.error("BIZ AUTOREPLY SKIPPED: all AI providers failed");
+            return;
+        }
 
         try {
             await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId });
@@ -17234,17 +17333,17 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
+    await ensureBusinessSettings();
+    const connection = findBusinessConnectionFor(msg);
+    if (!connection) {
+        return sendBizNotConnected(chatId);
+    }
+
     const mode = match[1] ? match[1].toLowerCase() : null;
     if (!mode) {
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/bizassistant on` or `/bizassistant off`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
          });
-    }
-
-    await ensureBusinessSettings();
-    const connection = findBusinessConnectionFor(msg);
-    if (!connection) {
-        return sendBizNotConnected(chatId);
     }
 
     setBusinessSetting(connection, { autoReply: mode === 'on' });
