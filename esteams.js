@@ -5716,6 +5716,8 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
   const chatId = msg.chat.id;
   const url = match[1]?.trim();
 
+  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
   if (!url) {
     return EsTeams.sendMessage(chatId, "⚠️ Invalid Input\n\nPlease use `/facebook <video link>`", {
       reply_markup: {
@@ -6416,6 +6418,8 @@ EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
 EsTeams.onText(/^\/gcid$/, async (msg) => {
   const chatId = msg.chat.id;
 
+  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
   if (msg.chat.type === "private") {
     return EsTeams.sendMessage(chatId, "❌ *Command only used in group*", {
       parse_mode: "Markdown",
@@ -6623,6 +6627,8 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 //CCGEN COMMAND
 EsTeams.onText(/^\/ccgen$/i, async (msg) => {
   const chatId = msg.chat.id;
+
+  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
   // Set session and auto-select MasterCard
   ccgenSessions[chatId] = { step: "awaiting_amount", msgIds: [], type: "MasterCard" };
@@ -10114,6 +10120,8 @@ EsTeams.onText(/\/info/, async (msg) => {
     const reply = msg.reply_to_message;
     const botImage = "https://files.catbox.moe/3jibot.jpg";
 
+    if (isLockedFor(senderId)) return newCmdLocked(chatId);
+
     if (msg.chat.type === "private") {
         return EsTeams.sendPhoto(chatId, botImage, {
             caption: "❌ *This command can only be used in groups.*",
@@ -10989,7 +10997,13 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 
         await EsTeams.setChatPermissions(chatId, {
             can_send_messages: false,
-            can_send_media_messages: false,
+            can_send_audios: false,
+            can_send_documents: false,
+            can_send_photos: false,
+            can_send_videos: false,
+            can_send_video_notes: false,
+            can_send_voice_notes: false,
+            can_send_polls: false,
             can_send_other_messages: false,
             can_add_web_page_previews: false
         });
@@ -11064,7 +11078,13 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 
         await EsTeams.setChatPermissions(chatId, {
             can_send_messages: true,
-            can_send_media_messages: true,
+            can_send_audios: true,
+            can_send_documents: true,
+            can_send_photos: true,
+            can_send_videos: true,
+            can_send_video_notes: true,
+            can_send_voice_notes: true,
+            can_send_polls: true,
             can_send_other_messages: true,
             can_add_web_page_previews: true
         });
@@ -11308,6 +11328,8 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 EsTeams.onText(/^\/delete$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+
+    if (isLockedFor(userId)) return newCmdLocked(chatId);
 
     if (msg.chat.type !== "supergroup" && msg.chat.type !== "group") {
         return EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
@@ -12385,6 +12407,8 @@ Click below to continue payment.`,
 EsTeams.onText(/\/donate/, async (msg) => {
 
     const chatId = msg.chat.id;
+
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     const sent = await EsTeams.sendPhoto(
         chatId,
@@ -13815,7 +13839,7 @@ EsTeams.onText(/\/decoder/, async (msg) => {
     const chatId = msg.chat.id;
     decoderState[chatId] = { step: "choose_platform" };
 
-   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
+   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
       parse_mode: "Markdown",
       reply_markup: {
@@ -13825,7 +13849,7 @@ EsTeams.onText(/\/decoder/, async (msg) => {
       }
     });
   }
-  
+
     await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `📺 𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗦𝗘𝗥𝗜𝗘𝗦 𝗗𝗘𝗖𝗢𝗗𝗘𝗥\n\nChoose your platform:`,
         reply_markup: {
@@ -14369,6 +14393,8 @@ EsTeams.on("callback_query", async (query) => {
 EsTeams.onText(/\/sysinfo/, async (msg) => {
   const chatId = msg.chat.id;
 
+  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
   // ---------- CAPTCHA ----------
   const correctFruit = fruits[Math.floor(Math.random() * fruits.length)];
   sysinfoCaptcha.set(chatId, correctFruit);
@@ -14521,6 +14547,8 @@ EsTeams.on("callback_query", async (query) => {
 EsTeams.onText(/\/moviedebug(?:\s(.+))?/, async (msg, match) => {
   const chatId = msg.chat.id;
   const movieQuery = match[1]?.trim();
+
+  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
   if (!movieQuery)
     return EsTeams.sendMessage(chatId, "⚠️ Please use `/moviedebug <movie name>`");
@@ -15241,6 +15269,8 @@ function boardHash(board) {
 EsTeams.onText(/\/pinlock/, async (msg) => {
   const chatId = msg.chat.id;
 
+  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
   pinLocks[chatId] = {
     entered: "",
     expected: "2006"
@@ -15747,10 +15777,14 @@ function isLockedFor(userId) {
 }
 
 function newCmdLocked(chatId) {
-    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
+    return EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...",
         parse_mode: "Markdown",
         reply_markup: waChannelBtn
-    });
+    }).catch(() => EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...",
+        parse_mode: "Markdown",
+        reply_markup: waChannelBtn
+     }));
 }
 
 async function telegramRawApi(method, payload) {
@@ -15770,9 +15804,9 @@ EsTeams.onText(/^\/8ball(?:\s+([\s\S]+))?$/, async (msg, match) => {
 
     const question = match[1] ? match[1].trim() : null;
     if (!question) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/8ball <question>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/8ball <question>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     const answers = [
@@ -15784,9 +15818,9 @@ EsTeams.onText(/^\/8ball(?:\s+([\s\S]+))?$/, async (msg, match) => {
     ];
     const answer = answers[Math.floor(Math.random() * answers.length)];
 
-    EsTeams.sendMessage(chatId, `🎱 *𝗠𝗔𝗚𝗜𝗖 𝟴 𝗕𝗔𝗟𝗟*\n\n❓ ${question}\n\n🔮 ${answer}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🎱 *𝗠𝗔𝗚𝗜𝗖 𝟴 𝗕𝗔𝗟𝗟*\n\n❓ ${question}\n\n🔮 ${answer}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("8BALL ERROR:", err.message));
+     }).catch(err => console.error("8BALL ERROR:", err.message));
 });
 
 async function sendNativeDice(chatId, emoji, label) {
@@ -15794,7 +15828,7 @@ async function sendNativeDice(chatId, emoji, label) {
         await EsTeams.sendDice(chatId, { emoji });
     } catch (err) {
         console.error(`${label} ERROR:`, err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to roll right now. Try again later.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to roll right now. Try again later.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 }
 
@@ -15839,9 +15873,9 @@ EsTeams.onText(/^\/coinflip$/, async (msg) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     const result = Math.random() < 0.5 ? "🟡 Heads" : "⚪ Tails";
-    EsTeams.sendMessage(chatId, `🪙 *𝗖𝗢𝗜𝗡 𝗙𝗟𝗜𝗣*\n\nResult: *${result}*`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🪙 *𝗖𝗢𝗜𝗡 𝗙𝗟𝗜𝗣*\n\nResult: *${result}*`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("COINFLIP ERROR:", err.message));
+     }).catch(err => console.error("COINFLIP ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/rps(?:\s+(\S+))?$/i, async (msg, match) => {
@@ -15853,9 +15887,9 @@ EsTeams.onText(/^\/rps(?:\s+(\S+))?$/i, async (msg, match) => {
     const userChoice = match[1] ? match[1].toLowerCase() : null;
 
     if (!userChoice || !choices.includes(userChoice)) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/rps rock`, `/rps paper` or `/rps scissors`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/rps rock`, `/rps paper` or `/rps scissors`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     const botChoice = choices[Math.floor(Math.random() * choices.length)];
@@ -15872,10 +15906,7 @@ EsTeams.onText(/^\/rps(?:\s+(\S+))?$/i, async (msg, match) => {
         result = "🤖 Bot wins!";
     }
 
-    EsTeams.sendMessage(chatId,
-        `✊ *𝗥𝗢𝗖𝗞 𝗣𝗔𝗣𝗘𝗥 𝗦𝗖𝗜𝗦𝗦𝗢𝗥𝗦*\n\nYou: ${emojis[userChoice]} ${userChoice}\nBot: ${emojis[botChoice]} ${botChoice}\n\n${result}`,
-        { parse_mode: "Markdown", reply_markup: waChannelBtn }
-    ).catch(err => console.error("RPS ERROR:", err.message));
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `✊ *𝗥𝗢𝗖𝗞 𝗣𝗔𝗣𝗘𝗥 𝗦𝗖𝗜𝗦𝗦𝗢𝗥𝗦*\n\nYou: ${emojis[userChoice]} ${userChoice}\nBot: ${emojis[botChoice]} ${botChoice}\n\n${result}`, parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("RPS ERROR:", err.message));
 });
 
 const riddles = [
@@ -15898,7 +15929,7 @@ EsTeams.onText(/^\/riddle$/, async (msg) => {
     const index = Math.floor(Math.random() * riddles.length);
     const riddle = riddles[index];
 
-    EsTeams.sendMessage(chatId, `🧩 *𝗥𝗜𝗗𝗗𝗟𝗘*\n\n${riddle.q}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🧩 *𝗥𝗜𝗗𝗗𝗟𝗘*\n\n${riddle.q}`,
         parse_mode: "Markdown",
         reply_markup: {
             inline_keyboard: [
@@ -15906,7 +15937,7 @@ EsTeams.onText(/^\/riddle$/, async (msg) => {
                 [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
             ]
         }
-    }).catch(err => console.error("RIDDLE ERROR:", err.message));
+     }).catch(err => console.error("RIDDLE ERROR:", err.message));
 });
 
 EsTeams.on('callback_query', async (query) => {
@@ -15966,27 +15997,27 @@ EsTeams.onText(/^\/truth$/, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     const truth = truths[Math.floor(Math.random() * truths.length)];
-    EsTeams.sendMessage(chatId, `🤫 *𝗧𝗥𝗨𝗧𝗛*\n\n${truth}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🤫 *𝗧𝗥𝗨𝗧𝗛*\n\n${truth}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("TRUTH ERROR:", err.message));
+     }).catch(err => console.error("TRUTH ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/dare$/, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     const dare = dares[Math.floor(Math.random() * dares.length)];
-    EsTeams.sendMessage(chatId, `🔥 *𝗗𝗔𝗥𝗘*\n\n${dare}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔥 *𝗗𝗔𝗥𝗘*\n\n${dare}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("DARE ERROR:", err.message));
+     }).catch(err => console.error("DARE ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/wyr$/, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     const wyr = wyrs[Math.floor(Math.random() * wyrs.length)];
-    EsTeams.sendMessage(chatId, `🤔 *𝗪𝗢𝗨𝗟𝗗 𝗬𝗢𝗨 𝗥𝗔𝗧𝗛𝗘𝗥*\n\n${wyr}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🤔 *𝗪𝗢𝗨𝗟𝗗 𝗬𝗢𝗨 𝗥𝗔𝗧𝗛𝗘𝗥*\n\n${wyr}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("WYR ERROR:", err.message));
+     }).catch(err => console.error("WYR ERROR:", err.message));
 });
 
 const triviaSessions = new Map();
@@ -16011,17 +16042,17 @@ EsTeams.onText(/^\/trivia$/, async (msg) => {
         triviaSessions.set(sessionId, correctIndex);
         setTimeout(() => triviaSessions.delete(sessionId), 5 * 60 * 1000);
 
-        await EsTeams.sendMessage(chatId, `🧠 *𝗧𝗥𝗜𝗩𝗜𝗔 𝗧𝗜𝗠𝗘*\n\n${question}`, {
+        await EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🧠 *𝗧𝗥𝗜𝗩𝗜𝗔 𝗧𝗜𝗠𝗘*\n\n${question}`,
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: options.map((opt, i) => ([
                     { text: opt.length > 60 ? opt.slice(0, 57) + "..." : opt, callback_data: `trivia_${sessionId}_${i}` }
                 ]))
             }
-        });
+         });
     } catch (err) {
         console.error("TRIVIA ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch a trivia question right now. Try again later.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to fetch a trivia question right now. Try again later.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16041,7 +16072,10 @@ EsTeams.on('callback_query', async (query) => {
         const isCorrect = chosenIndex === correctIndex;
 
         await EsTeams.answerCallbackQuery(query.id, { text: isCorrect ? "✅ Correct!" : "❌ Wrong answer!" });
-        await EsTeams.editMessageText(
+        // The trivia question is sent as a photo (bot image + caption), so the
+        // result has to be applied with editMessageCaption, not editMessageText
+        // (Telegram rejects editMessageText on a message that carries media).
+        await EsTeams.editMessageCaption(
             `🧠 *𝗧𝗥𝗜𝗩𝗜𝗔 𝗥𝗘𝗦𝗨𝗟𝗧*\n\n${isCorrect ? "✅ Correct! Well played." : "❌ Not quite — better luck next time!"}`,
             { chat_id: query.message.chat.id, message_id: query.message.message_id, parse_mode: "Markdown" }
         );
@@ -16060,9 +16094,9 @@ EsTeams.onText(/^\/base64(?:\s+(encode|decode)\s+([\s\S]+))?$/i, async (msg, mat
     const text = match[2] ? match[2].trim() : null;
 
     if (!mode || !text) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/base64 encode <text>` or `/base64 decode <text>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/base64 encode <text>` or `/base64 decode <text>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16070,12 +16104,12 @@ EsTeams.onText(/^\/base64(?:\s+(encode|decode)\s+([\s\S]+))?$/i, async (msg, mat
             ? Buffer.from(text, 'utf8').toString('base64')
             : Buffer.from(text, 'base64').toString('utf8');
 
-        EsTeams.sendMessage(chatId, `🔐 *𝗕𝗔𝗦𝗘𝟲𝟰 ${mode.toUpperCase()}*\n\n\`${result}\``, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔐 *𝗕𝗔𝗦𝗘𝟲𝟰 ${mode.toUpperCase()}*\n\n\`${result}\``,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
         console.error("BASE64 ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to process that text.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to process that text.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16085,9 +16119,9 @@ EsTeams.onText(/^\/hash(?:\s+([\s\S]+))?$/, async (msg, match) => {
 
     const text = match[1] ? match[1].trim() : null;
     if (!text) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/hash <text>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/hash <text>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16095,13 +16129,10 @@ EsTeams.onText(/^\/hash(?:\s+([\s\S]+))?$/, async (msg, match) => {
         const sha1 = crypto.createHash('sha1').update(text).digest('hex');
         const sha256 = crypto.createHash('sha256').update(text).digest('hex');
 
-        EsTeams.sendMessage(chatId,
-            `🔑 *𝗛𝗔𝗦𝗛 𝗥𝗘𝗦𝗨𝗟𝗧𝗦*\n\n*MD5:*\n\`${md5}\`\n\n*SHA1:*\n\`${sha1}\`\n\n*SHA256:*\n\`${sha256}\``,
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔑 *𝗛𝗔𝗦𝗛 𝗥𝗘𝗦𝗨𝗟𝗧𝗦*\n\n*MD5:*\n\`${md5}\`\n\n*SHA1:*\n\`${sha1}\`\n\n*SHA256:*\n\`${sha256}\``, parse_mode: "Markdown", reply_markup: waChannelBtn  });
     } catch (err) {
         console.error("HASH ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to hash that text.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to hash that text.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16121,12 +16152,12 @@ EsTeams.onText(/^\/genpass(?:\s+(\d+))?$/, async (msg, match) => {
             password += chars[bytes[i] % chars.length];
         }
 
-        EsTeams.sendMessage(chatId, `🔒 *𝗣𝗔𝗦𝗦𝗪𝗢𝗥𝗗 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥*\n\n\`${password}\`\n\n_Length: ${length} characters_`, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔒 *𝗣𝗔𝗦𝗦𝗪𝗢𝗥𝗗 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥*\n\n\`${password}\`\n\n_Length: ${length} characters_`,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
         console.error("GENPASS ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to generate a password right now.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to generate a password right now.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16134,9 +16165,9 @@ EsTeams.onText(/^\/uuid$/, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     const id = crypto.randomUUID();
-    EsTeams.sendMessage(chatId, `🆔 *𝗨𝗨𝗜𝗗*\n\n\`${id}\``, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🆔 *𝗨𝗨𝗜𝗗*\n\n\`${id}\``,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("UUID ERROR:", err.message));
+     }).catch(err => console.error("UUID ERROR:", err.message));
 });
 
 function safeCalculate(expr) {
@@ -16157,18 +16188,18 @@ EsTeams.onText(/^\/calc(?:\s+([\s\S]+))?$/, async (msg, match) => {
 
     const expr = match[1] ? match[1].trim() : null;
     if (!expr) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/calc <expression>`\ne.g. `/calc (12+8)*3`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/calc <expression>`\ne.g. `/calc (12+8)*3`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
         const result = safeCalculate(expr);
-        EsTeams.sendMessage(chatId, `🧮 *𝗖𝗔𝗟𝗖𝗨𝗟𝗔𝗧𝗢𝗥*\n\n${expr} = *${result}*`, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🧮 *𝗖𝗔𝗟𝗖𝗨𝗟𝗔𝗧𝗢𝗥*\n\n${expr} = *${result}*`,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
-        EsTeams.sendMessage(chatId, `⚠️ *${err.message}*`, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *${err.message}*`, parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(() => {});
     }
 });
 
@@ -16191,9 +16222,9 @@ EsTeams.onText(/^\/morse(?:\s+(encode|decode)\s+([\s\S]+))?$/i, async (msg, matc
     const text = match[2] ? match[2].trim() : null;
 
     if (!mode || !text) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/morse encode <text>` or `/morse decode <morse code>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/morse encode <text>` or `/morse decode <morse code>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16203,12 +16234,12 @@ EsTeams.onText(/^\/morse(?:\s+(encode|decode)\s+([\s\S]+))?$/i, async (msg, matc
         } else {
             result = text.split(' ').map(code => MORSE_MAP_REVERSED[code] ?? code).join('');
         }
-        EsTeams.sendMessage(chatId, `📡 *𝗠𝗢𝗥𝗦𝗘 ${mode.toUpperCase()}*\n\n\`${result}\``, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `📡 *𝗠𝗢𝗥𝗦𝗘 ${mode.toUpperCase()}*\n\n\`${result}\``,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
         console.error("MORSE ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to process that text.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to process that text.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16218,15 +16249,15 @@ EsTeams.onText(/^\/reverse(?:\s+([\s\S]+))?$/, async (msg, match) => {
 
     const text = match[1] ? match[1].trim() : null;
     if (!text) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/reverse <text>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/reverse <text>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     const reversed = [...text].reverse().join('');
-    EsTeams.sendMessage(chatId, `🔁 *𝗥𝗘𝗩𝗘𝗥𝗦𝗘𝗗 𝗧𝗘𝗫𝗧*\n\n${reversed}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔁 *𝗥𝗘𝗩𝗘𝗥𝗦𝗘𝗗 𝗧𝗘𝗫𝗧*\n\n${reversed}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("REVERSE ERROR:", err.message));
+     }).catch(err => console.error("REVERSE ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/translate(?:\s+(\S+)\s+([\s\S]+))?$/i, async (msg, match) => {
@@ -16237,9 +16268,9 @@ EsTeams.onText(/^\/translate(?:\s+(\S+)\s+([\s\S]+))?$/i, async (msg, match) => 
     const text = match[2] ? match[2].trim() : null;
 
     if (!targetLang || !text) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/translate <lang_code> <text>`\ne.g. `/translate es Hello there`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/translate <lang_code> <text>`\ne.g. `/translate es Hello there`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16250,12 +16281,12 @@ EsTeams.onText(/^\/translate(?:\s+(\S+)\s+([\s\S]+))?$/i, async (msg, match) => 
 
         if (!translated) throw new Error("No translation returned");
 
-        EsTeams.sendMessage(chatId, `🌐 *𝗧𝗥𝗔𝗡𝗦𝗟𝗔𝗧𝗜𝗢𝗡 (${targetLang.toUpperCase()})*\n\n${translated}`, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🌐 *𝗧𝗥𝗔𝗡𝗦𝗟𝗔𝗧𝗜𝗢𝗡 (${targetLang.toUpperCase()})*\n\n${translated}`,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
         console.error("TRANSLATE ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to translate right now. Try again later.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to translate right now. Try again later.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16265,9 +16296,9 @@ EsTeams.onText(/^\/define(?:\s+(\S+))?$/i, async (msg, match) => {
 
     const word = match[1] ? match[1].trim() : null;
     if (!word) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/define <word>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/define <word>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16281,12 +16312,12 @@ EsTeams.onText(/^\/define(?:\s+(\S+))?$/i, async (msg, match) => {
             return `*${m.partOfSpeech}:* ${def}`;
         }).join('\n\n');
 
-        EsTeams.sendMessage(chatId, `📖 *𝗗𝗘𝗙𝗜𝗡𝗜𝗧𝗜𝗢𝗡: ${entry.word}*\n\n${meanings}`, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `📖 *𝗗𝗘𝗙𝗜𝗡𝗜𝗧𝗜𝗢𝗡: ${entry.word}*\n\n${meanings}`,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
         console.error("DEFINE ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `⚠️ *No definition found for "${word}".*`, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *No definition found for "${word}".*`, parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(() => {});
     }
 });
 
@@ -16299,9 +16330,9 @@ EsTeams.onText(/^\/avatar$/, async (msg) => {
     try {
         const photos = await EsTeams.getUserProfilePhotos(targetUser.id, { limit: 1 });
         if (!photos.total_count || !photos.photos.length) {
-            return EsTeams.sendMessage(chatId, "⚠️ *This user has no profile photo set, or it's private.*", {
+            return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *This user has no profile photo set, or it's private.*",
                 parse_mode: "Markdown", reply_markup: waChannelBtn
-            });
+             });
         }
 
         const sizes = photos.photos[0];
@@ -16314,7 +16345,7 @@ EsTeams.onText(/^\/avatar$/, async (msg) => {
         });
     } catch (err) {
         console.error("AVATAR ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch avatar right now.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to fetch avatar right now.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16328,18 +16359,18 @@ EsTeams.onText(/^\/timestamp(?:\s+(\d+))?$/, async (msg, match) => {
             const date = new Date(unix * 1000);
             if (isNaN(date.getTime())) throw new Error("Invalid timestamp");
 
-            EsTeams.sendMessage(chatId, `🕒 *𝗧𝗜𝗠𝗘𝗦𝗧𝗔𝗠𝗣 𝗖𝗢𝗡𝗩𝗘𝗥𝗧𝗘𝗥*\n\nUnix: \`${unix}\`\nDate (UTC): ${date.toUTCString()}\nISO: ${date.toISOString()}`, {
+            EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🕒 *𝗧𝗜𝗠𝗘𝗦𝗧𝗔𝗠𝗣 𝗖𝗢𝗡𝗩𝗘𝗥𝗧𝗘𝗥*\n\nUnix: \`${unix}\`\nDate (UTC): ${date.toUTCString()}\nISO: ${date.toISOString()}`,
                 parse_mode: "Markdown", reply_markup: waChannelBtn
-            });
+             });
         } else {
             const now = new Date();
-            EsTeams.sendMessage(chatId, `🕒 *𝗖𝗨𝗥𝗥𝗘𝗡𝗧 𝗧𝗜𝗠𝗘𝗦𝗧𝗔𝗠𝗣*\n\nUnix: \`${Math.floor(now.getTime() / 1000)}\`\nDate (UTC): ${now.toUTCString()}\nISO: ${now.toISOString()}\n\n_Tip: use \`/timestamp <unix>\` to convert one._`, {
+            EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🕒 *𝗖𝗨𝗥𝗥𝗘𝗡𝗧 𝗧𝗜𝗠𝗘𝗦𝗧𝗔𝗠𝗣*\n\nUnix: \`${Math.floor(now.getTime() / 1000)}\`\nDate (UTC): ${now.toUTCString()}\nISO: ${now.toISOString()}\n\n_Tip: use \`/timestamp <unix>\` to convert one._`,
                 parse_mode: "Markdown", reply_markup: waChannelBtn
-            });
+             });
         }
     } catch (err) {
         console.error("TIMESTAMP ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Invalid timestamp provided.*", { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Invalid timestamp provided.*", parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(() => {});
     }
 });
 
@@ -16349,9 +16380,9 @@ EsTeams.onText(/^\/color(?:\s+#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6}))?$/, async (msg,
 
     let hex = match[1];
     if (!hex) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/color <hex>`\ne.g. `/color ff5733`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/color <hex>`\ne.g. `/color ff5733`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
@@ -16376,9 +16407,9 @@ EsTeams.onText(/^\/color(?:\s+#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6}))?$/, async (msg,
         });
     } catch (err) {
         console.error("COLOR ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `🎨 *𝗖𝗢𝗟𝗢𝗥 𝗜𝗡𝗙𝗢*\n\nHEX: \`#${hex.toUpperCase()}\`\nRGB: \`${r}, ${g}, ${b}\``, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🎨 *𝗖𝗢𝗟𝗢𝗥 𝗜𝗡𝗙𝗢*\n\nHEX: \`#${hex.toUpperCase()}\`\nRGB: \`${r}, ${g}, ${b}\``,
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        }).catch(() => {});
+         }).catch(() => {});
     }
 });
 
@@ -16390,9 +16421,9 @@ EsTeams.onText(/^\/react(?:\s+(\S+))?$/, async (msg, match) => {
     const target = msg.reply_to_message;
 
     if (!emoji || !target) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nReply to a message with `/react <emoji>`\ne.g. reply with `/react 🔥`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nReply to a message with `/react <emoji>`\ne.g. reply with `/react 🔥`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16404,12 +16435,12 @@ EsTeams.onText(/^\/react(?:\s+(\S+))?$/, async (msg, match) => {
 
         if (!result.ok) throw new Error(result.description || 'Reaction rejected');
 
-        EsTeams.sendMessage(chatId, `✅ Reacted with ${emoji}`, { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `✅ Reacted with ${emoji}`, parse_mode: "Markdown"  }).catch(() => {});
     } catch (err) {
         console.error("REACT ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *That emoji isn't a valid reaction. Try 👍 ❤️ 🔥 🎉 😁 etc.*", {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *That emoji isn't a valid reaction. Try 👍 ❤️ 🔥 🎉 😁 etc.*",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        }).catch(() => {});
+         }).catch(() => {});
     }
 });
 
@@ -16418,17 +16449,17 @@ EsTeams.onText(/^\/react(?:\s+(\S+))?$/, async (msg, match) => {
 EsTeams.onText(/^\/myid$/, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    EsTeams.sendMessage(chatId, `🆔 *𝗬𝗢𝗨𝗥 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗜𝗗*\n\n\`${msg.from.id}\``, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🆔 *𝗬𝗢𝗨𝗥 𝗧𝗘𝗟𝗘𝗚𝗥𝗔𝗠 𝗜𝗗*\n\n\`${msg.from.id}\``,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("MYID ERROR:", err.message));
+     }).catch(err => console.error("MYID ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/chatid$/, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    EsTeams.sendMessage(chatId, `💬 *𝗖𝗛𝗔𝗧 𝗜𝗗*\n\n\`${chatId}\`\nType: ${msg.chat.type}`, {
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `💬 *𝗖𝗛𝗔𝗧 𝗜𝗗*\n\n\`${chatId}\`\nType: ${msg.chat.type}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
-    }).catch(err => console.error("CHATID ERROR:", err.message));
+     }).catch(err => console.error("CHATID ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/whoami$/, async (msg) => {
@@ -16438,15 +16469,12 @@ EsTeams.onText(/^\/whoami$/, async (msg) => {
     const u = msg.from;
     const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ');
 
-    EsTeams.sendMessage(chatId,
-        `👤 *𝗪𝗛𝗢 𝗔𝗠 𝗜*\n\n` +
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `👤 *𝗪𝗛𝗢 𝗔𝗠 𝗜*\n\n` +
         `*Name:* ${fullName || 'N/A'}\n` +
         `*Username:* ${u.username ? '@' + u.username : 'N/A'}\n` +
         `*ID:* \`${u.id}\`\n` +
         `*Language:* ${u.language_code || 'N/A'}\n` +
-        `*Premium:* ${u.is_premium ? 'Yes ✅' : 'No'}`,
-        { parse_mode: "Markdown", reply_markup: waChannelBtn }
-    ).catch(err => console.error("WHOAMI ERROR:", err.message));
+        `*Premium:* ${u.is_premium ? 'Yes ✅' : 'No'}`, parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("WHOAMI ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/botinfo$/, async (msg) => {
@@ -16459,19 +16487,16 @@ EsTeams.onText(/^\/botinfo$/, async (msg) => {
         const hours = Math.floor(uptimeSeconds / 3600);
         const minutes = Math.floor((uptimeSeconds % 3600) / 60);
 
-        EsTeams.sendMessage(chatId,
-            `🤖 *𝗕𝗢𝗧 𝗜𝗡𝗙𝗢*\n\n` +
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🤖 *𝗕𝗢𝗧 𝗜𝗡𝗙𝗢*\n\n` +
             `*Name:* ${me.first_name}\n` +
             `*Username:* @${me.username}\n` +
             `*ID:* \`${me.id}\`\n` +
             `*Commands:* ${totalCommands}\n` +
             `*Process Uptime:* ${hours}h ${minutes}m\n` +
-            `*Node Version:* ${process.version}`,
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+            `*Node Version:* ${process.version}`, parse_mode: "Markdown", reply_markup: waChannelBtn  });
     } catch (err) {
         console.error("BOTINFO ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch bot info right now.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to fetch bot info right now.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16480,9 +16505,9 @@ EsTeams.onText(/^\/groupinfo$/, async (msg) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
-        return EsTeams.sendMessage(chatId, "⚠️ *This command only works inside a group.*", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *This command only works inside a group.*",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
@@ -16492,17 +16517,14 @@ EsTeams.onText(/^\/groupinfo$/, async (msg) => {
             memberCount = await EsTeams.getChatMemberCount(chatId);
         } catch {}
 
-        EsTeams.sendMessage(chatId,
-            `👥 *𝗚𝗥𝗢𝗨𝗣 𝗜𝗡𝗙𝗢*\n\n` +
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `👥 *𝗚𝗥𝗢𝗨𝗣 𝗜𝗡𝗙𝗢*\n\n` +
             `*Title:* ${chat.title || 'N/A'}\n` +
             `*ID:* \`${chat.id}\`\n` +
             `*Type:* ${chat.type}\n` +
-            `*Members:* ${memberCount ?? 'N/A'}`,
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+            `*Members:* ${memberCount ?? 'N/A'}`, parse_mode: "Markdown", reply_markup: waChannelBtn  });
     } catch (err) {
         console.error("GROUPINFO ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch group info right now.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to fetch group info right now.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16523,9 +16545,9 @@ EsTeams.onText(/^\/gitstalk(?:\s+(.+))?$/, async (msg, match) => {
 
     let waitMessage;
     try {
-        waitMessage = await EsTeams.sendMessage(chatId, "🔄 *𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴...*", {
+        waitMessage = await EsTeams.sendPhoto(chatId, botImageUrl, { caption: "🔄 *𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴...*",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     } catch (err) {
         console.error("Error sending wait message:", err);
     }
@@ -16687,10 +16709,7 @@ EsTeams.onText(/^\/spoiler$/, async (msg) => {
 
     const target = msg.reply_to_message;
     if (!target || (!target.photo && !target.video && !target.animation)) {
-        return EsTeams.sendMessage(chatId,
-            "*Invalid Usage*\n\nReply to a photo, video, or GIF with `/spoiler` to resend it blurred until tapped.",
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Usage*\n\nReply to a photo, video, or GIF with `/spoiler` to resend it blurred until tapped.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
     }
 
     try {
@@ -16705,7 +16724,7 @@ EsTeams.onText(/^\/spoiler$/, async (msg) => {
         }
     } catch (err) {
         console.error("SPOILER ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to send spoiler media right now.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to send spoiler media right now.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16726,26 +16745,23 @@ EsTeams.onText(/^\/effect(?:\s+(\S+)(?:\s+([\s\S]+))?)?$/i, async (msg, match) =
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     if (msg.chat.type !== 'private') {
-        return EsTeams.sendMessage(chatId, "⚠️ *Message effects only work in private chats* — that's a Telegram limitation, not a bot one.", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Message effects only work in private chats* — that's a Telegram limitation, not a bot one.",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     const effectName = match[1] ? match[1].toLowerCase() : null;
     const text = match[2] ? match[2].trim() : "✨";
 
     if (!effectName || !MESSAGE_EFFECTS[effectName]) {
-        return EsTeams.sendMessage(chatId,
-            `*Invalid Input*\n\nPlease use \`/effect <name> [text]\`\n\nAvailable: ${Object.keys(MESSAGE_EFFECTS).join(', ')}`,
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: `*Invalid Input*\n\nPlease use \`/effect <name> [text]\`\n\nAvailable: ${Object.keys(MESSAGE_EFFECTS).join(', ')}`, parse_mode: "Markdown", reply_markup: waChannelBtn  });
     }
 
     try {
-        await EsTeams.sendMessage(chatId, text, { message_effect_id: MESSAGE_EFFECTS[effectName] });
+        await EsTeams.sendPhoto(chatId, botImageUrl, { caption: text, message_effect_id: MESSAGE_EFFECTS[effectName]  });
     } catch (err) {
         console.error("EFFECT ERROR:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to send that effect right now.*", { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Unable to send that effect right now.*", parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16765,29 +16781,29 @@ EsTeams.onText(/^\/newtopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     if (!msg.chat.is_forum) {
-        return EsTeams.sendMessage(chatId, "⚠️ *This group doesn't have Topics enabled.*\n\nEnable it via Group Settings → Topics first.", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *This group doesn't have Topics enabled.*\n\nEnable it via Group Settings → Topics first.",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
     if (!(await isGroupAdmin(chatId, msg.from.id))) {
-        return EsTeams.sendMessage(chatId, "❌ *Only group admins can create topics.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ *Only group admins can create topics.*", parse_mode: "Markdown"  });
     }
 
     const name = match[1] ? match[1].trim() : null;
     if (!name) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/newtopic <name>`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/newtopic <name>`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
         const topic = await EsTeams.createForumTopic(chatId, name);
-        EsTeams.sendMessage(chatId, `✅ *𝗧𝗢𝗣𝗜𝗖 𝗖𝗥𝗘𝗔𝗧𝗘𝗗*\n\n"${name}"`, {
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `✅ *𝗧𝗢𝗣𝗜𝗖 𝗖𝗥𝗘𝗔𝗧𝗘𝗗*\n\n"${name}"`,
             parse_mode: "Markdown", reply_markup: waChannelBtn, message_thread_id: topic.message_thread_id
-        });
+         });
     } catch (err) {
         console.error("NEWTOPIC ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `⚠️ *Unable to create topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *Unable to create topic.*\n\n${err.message}`, parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16795,17 +16811,17 @@ EsTeams.onText(/^\/closetopic$/i, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     if (!msg.message_thread_id) {
-        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to close.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Use this command inside the topic you want to close.*", parse_mode: "Markdown"  });
     }
     if (!(await isGroupAdmin(chatId, msg.from.id))) {
-        return EsTeams.sendMessage(chatId, "❌ *Only group admins can close topics.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ *Only group admins can close topics.*", parse_mode: "Markdown"  });
     }
     try {
         await EsTeams.closeForumTopic(chatId, msg.message_thread_id);
-        EsTeams.sendMessage(chatId, "🔒 *Topic closed.*", { parse_mode: "Markdown", message_thread_id: msg.message_thread_id }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "🔒 *Topic closed.*", parse_mode: "Markdown", message_thread_id: msg.message_thread_id  }).catch(() => {});
     } catch (err) {
         console.error("CLOSETOPIC ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `⚠️ *Unable to close topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *Unable to close topic.*\n\n${err.message}`, parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16813,17 +16829,17 @@ EsTeams.onText(/^\/reopentopic$/i, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     if (!msg.message_thread_id) {
-        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to reopen.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Use this command inside the topic you want to reopen.*", parse_mode: "Markdown"  });
     }
     if (!(await isGroupAdmin(chatId, msg.from.id))) {
-        return EsTeams.sendMessage(chatId, "❌ *Only group admins can reopen topics.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ *Only group admins can reopen topics.*", parse_mode: "Markdown"  });
     }
     try {
         await EsTeams.reopenForumTopic(chatId, msg.message_thread_id);
-        EsTeams.sendMessage(chatId, "🔓 *Topic reopened.*", { parse_mode: "Markdown", message_thread_id: msg.message_thread_id }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: "🔓 *Topic reopened.*", parse_mode: "Markdown", message_thread_id: msg.message_thread_id  }).catch(() => {});
     } catch (err) {
         console.error("REOPENTOPIC ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `⚠️ *Unable to reopen topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *Unable to reopen topic.*\n\n${err.message}`, parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16831,16 +16847,16 @@ EsTeams.onText(/^\/deletetopic$/i, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     if (!msg.message_thread_id) {
-        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to delete.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Use this command inside the topic you want to delete.*", parse_mode: "Markdown"  });
     }
     if (!(await isGroupAdmin(chatId, msg.from.id))) {
-        return EsTeams.sendMessage(chatId, "❌ *Only group admins can delete topics.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ *Only group admins can delete topics.*", parse_mode: "Markdown"  });
     }
     try {
         await EsTeams.deleteForumTopic(chatId, msg.message_thread_id);
     } catch (err) {
         console.error("DELETETOPIC ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `⚠️ *Unable to delete topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *Unable to delete topic.*\n\n${err.message}`, parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16848,25 +16864,25 @@ EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
     if (!msg.message_thread_id) {
-        return EsTeams.sendMessage(chatId, "⚠️ *Use this command inside the topic you want to rename.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "⚠️ *Use this command inside the topic you want to rename.*", parse_mode: "Markdown"  });
     }
     if (!(await isGroupAdmin(chatId, msg.from.id))) {
-        return EsTeams.sendMessage(chatId, "❌ *Only group admins can rename topics.*", { parse_mode: "Markdown" });
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ *Only group admins can rename topics.*", parse_mode: "Markdown"  });
     }
 
     const name = match[1] ? match[1].trim() : null;
     if (!name) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/renametopic <new name>` inside the topic.", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/renametopic <new name>` inside the topic.",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     try {
         await EsTeams.editForumTopic(chatId, msg.message_thread_id, { name });
-        EsTeams.sendMessage(chatId, `✅ *Topic renamed to "${name}"*`, { parse_mode: "Markdown", message_thread_id: msg.message_thread_id }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `✅ *Topic renamed to "${name}"*`, parse_mode: "Markdown", message_thread_id: msg.message_thread_id  }).catch(() => {});
     } catch (err) {
         console.error("RENAMETOPIC ERROR:", err.message);
-        EsTeams.sendMessage(chatId, `⚠️ *Unable to rename topic.*\n\n${err.message}`, { parse_mode: "Markdown" }).catch(() => {});
+        EsTeams.sendPhoto(chatId, botImageUrl, { caption: `⚠️ *Unable to rename topic.*\n\n${err.message}`, parse_mode: "Markdown"  }).catch(() => {});
     }
 });
 
@@ -16900,18 +16916,26 @@ let businessConnections = loadBusinessConnections();
 
 EsTeams.on('business_connection', (connection) => {
     try {
+        const previous = businessConnections[connection.id];
+        const stateChanged = !previous || previous.isEnabled !== !!connection.is_enabled;
+
         businessConnections[connection.id] = {
             id: connection.id,
             userId: connection.user.id,
             userChatId: connection.user_chat_id,
             isEnabled: !!connection.is_enabled,
             canReply: connection.rights?.can_reply ?? true,
-            autoReply: businessConnections[connection.id]?.autoReply || false
+            autoReply: previous?.autoReply || false
         };
         saveBusinessConnections(businessConnections);
 
+        // Only notify when the connection actually changes state — Telegram can
+        // redeliver this update (e.g. on bot restart) without anything changing,
+        // and re-sending "connected!" every time is exactly the spam we don't want.
+        if (!stateChanged) return;
+
         const text = connection.is_enabled
-            ? `✅ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗔𝗦𝗦𝗜𝗦𝗧𝗔𝗡𝗧 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗*\n\nES TEAMS V1 is now linked to your Telegram Business account.\n\nBy default I only notify you here about new customer messages. Send \`/bizassistant on\` if you'd also like me to auto-reply to customers for you, or \`/bizstatus\` to check the connection anytime.`
+            ? `✅ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗔𝗦𝗦𝗜𝗦𝗧𝗔𝗡𝗧 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗*\n\nES TEAMS V1 is now linked to your Telegram Business account.\n\nBy default I only notify you *here, in this DM with me* about new customer messages — I won't touch your Business chats themselves.\n\nSend me \`/bizassistant on\` **right here in this chat** if you'd also like me to auto-reply to customers for you, or \`/bizstatus\` to check the connection anytime.\n\n⚠️ Commands like \`/bizassistant\` only work when sent directly to me in this chat — not inside your Business conversations with customers, those just get relayed to me as notifications.`
             : `❌ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗧𝗨𝗥𝗡𝗘𝗗 𝗢𝗙𝗙*\n\nYour Telegram Business connection to ES TEAMS V1 was disabled from Telegram settings.`;
 
         EsTeams.sendMessage(connection.user_chat_id, text, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
@@ -16927,6 +16951,16 @@ EsTeams.on('business_message', async (msg) => {
         if (!connection || !connection.isEnabled) return;
 
         const from = msg.from || {};
+
+        // Never react to our own relayed sends or the owner's own messages —
+        // otherwise the AI ends up replying to itself in an endless loop and
+        // spamming the owner's own chat with "new message" notifications.
+        let botId;
+        try {
+            botId = (await EsTeams.getMe()).id;
+        } catch {}
+        if ((botId && from.id === botId) || from.id === connection.userId) return;
+
         const text = msg.text || msg.caption || '';
         const preview = text ? (text.length > 300 ? text.slice(0, 300) + '…' : text) : '[non-text message]';
 
@@ -16957,49 +16991,37 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
 
     if (!connection) {
-        return EsTeams.sendMessage(chatId,
-            "ℹ️ *No Telegram Business connection found.*\n\nTo link this bot: open Telegram Settings → Telegram Business → Chatbots → connect *this bot*.",
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found.*\n\nTo link this bot: open Telegram Settings → Telegram Business → Chatbots → connect *this bot*.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
     }
 
-    EsTeams.sendMessage(chatId,
-        `🔗 *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗦𝗧𝗔𝗧𝗨𝗦*\n\n` +
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔗 *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗦𝗧𝗔𝗧𝗨𝗦*\n\n` +
         `*Connected:* ${connection.isEnabled ? 'Yes ✅' : 'No ❌'}\n` +
         `*Auto-reply:* ${connection.autoReply ? 'ON ✅' : 'OFF'}\n` +
-        `*Can reply on your behalf:* ${connection.canReply ? 'Yes' : 'No (grant this right in Telegram settings)'}`,
-        { parse_mode: "Markdown", reply_markup: waChannelBtn }
-    ).catch(err => console.error("BIZSTATUS ERROR:", err.message));
+        `*Can reply on your behalf:* ${connection.canReply ? 'Yes' : 'No (grant this right in Telegram settings)'}`, parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZSTATUS ERROR:", err.message));
 });
 
-EsTeams.onText(/^\/bizassistant(?:\s+(on|off))?$/i, async (msg, match) => {
+EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     const mode = match[1] ? match[1].toLowerCase() : null;
     if (!mode) {
-        return EsTeams.sendMessage(chatId, "*Invalid Input*\n\nPlease use `/bizassistant on` or `/bizassistant off`", {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "*Invalid Input*\n\nPlease use `/bizassistant on` or `/bizassistant off`",
             parse_mode: "Markdown", reply_markup: waChannelBtn
-        });
+         });
     }
 
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
     if (!connection) {
-        return EsTeams.sendMessage(chatId,
-            "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.",
-            { parse_mode: "Markdown", reply_markup: waChannelBtn }
-        );
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
     }
 
     connection.autoReply = mode === 'on';
     businessConnections[connection.id] = connection;
     saveBusinessConnections(businessConnections);
 
-    EsTeams.sendMessage(chatId,
-        mode === 'on'
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption: mode === 'on'
             ? "✅ *Auto-reply enabled.* I'll now reply to your customers automatically when they message your Business account."
-            : "🔕 *Auto-reply disabled.* I'll only notify you about new messages from now on.",
-        { parse_mode: "Markdown", reply_markup: waChannelBtn }
-    ).catch(err => console.error("BIZASSISTANT ERROR:", err.message));
+            : "🔕 *Auto-reply disabled.* I'll only notify you about new messages from now on.", parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZASSISTANT ERROR:", err.message));
 });
 });
