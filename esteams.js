@@ -5362,6 +5362,35 @@ function identityGuardAnswer(text) {
     return AI_IDENTITY_PATTERNS.some(re => re.test(clean)) ? AI_IDENTITY_ANSWER : null;
 }
 
+// Scans an AI-generated REPLY (not the customer's question) for any
+// self-identifying leak — e.g. the model breaking character and admitting
+// "I'm Claude, made by Anthropic" instead of roleplaying the business. If any
+// of these appear anywhere in the reply, the whole reply is discarded and
+// replaced, since a partially-redacted refusal still reads as broken/leaked.
+const AI_LEAK_KEYWORDS = [
+    'claude', 'anthropic', 'chatgpt', 'chat gpt', 'openai', 'open ai',
+    'gpt-3', 'gpt-4', 'gpt-5', 'gpt3', 'gpt4', 'gpt5', 'davidcyril',
+    'gemini', 'bard', 'google ai', 'llama', 'meta ai', 'mistral', 'deepseek',
+    'grok', 'copilot', 'perplexity', 'qwen', 'huggingface',
+    'language model', 'large language model', 'an llm', 'i am an ai',
+    "i'm an ai", 'as an ai', 'as an artificial intelligence',
+    'i cannot roleplay', "i can't roleplay", 'i cannot pretend', "i can't pretend",
+    'i am not able to pretend', 'i am not able to roleplay',
+    'made by anthropic', 'created by anthropic', 'trained by anthropic',
+    'made by openai', 'created by openai', 'trained by openai'
+];
+
+function containsAiLeak(text) {
+    if (!text) return false;
+    const lower = String(text).toLowerCase();
+    return AI_LEAK_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+function sanitizeAiReply(reply) {
+    if (!reply) return reply;
+    return (identityGuardAnswer(reply) || containsAiLeak(reply)) ? AI_IDENTITY_ANSWER : reply;
+}
+
 //======= SHARED FREE AI HELPER =================//
 async function askFreeAI(prompt, timeoutMs = 15000) {
     const providers = [
@@ -5442,7 +5471,7 @@ EsTeams.onText(/\/gpt(?:\s+(.+))?/, async (msg, match) => {
         await EsTeams.sendChatAction(chatId, 'typing');
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const aiResponse = identityGuardAnswer(query) || await askFreeAI(query);
+        const aiResponse = identityGuardAnswer(query) || sanitizeAiReply(await askFreeAI(query));
         if (!aiResponse) {
             throw new Error("All AI providers failed");
         }
@@ -10034,7 +10063,7 @@ EsTeams.on("message", async (msg) => {
     try {
         const conversation = chatbotMemory[userId].map(m => `${m.role}: ${m.content}`).join("\n");
 
-        const aiResponse = identityGuardAnswer(text) || await askFreeAI(conversation) || "⚠️ Sorry, I couldn't reach any AI provider right now. Please try again shortly.";
+        const aiResponse = identityGuardAnswer(text) || sanitizeAiReply(await askFreeAI(conversation)) || "⚠️ Sorry, I couldn't reach any AI provider right now. Please try again shortly.";
 
         chatbotMemory[userId].push({ role: "bot", content: aiResponse });
         await saveChatbotMemory(chatbotMemory);
@@ -17239,7 +17268,7 @@ async function generateBusinessAiReply(connection, customerText) {
     const reply = await askFreeAI(prompt);
     if (!reply) return null;
 
-    return identityGuardAnswer(reply) ? AI_IDENTITY_ANSWER : reply;
+    return sanitizeAiReply(reply);
 }
 
 EsTeams.on('business_message', async (msg) => {
