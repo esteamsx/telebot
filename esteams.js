@@ -16989,16 +16989,10 @@ EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 
 //---------------- TELEGRAM BUSINESS ACCOUNT ASSISTANT ----------------//
 async function buildBizNotConnectedView() {
-    let profileUrl = null;
-    try {
-        const me = await EsTeams.getMe();
-        profileUrl = `https://t.me/${me.username}`;
-    } catch {}
-
     const caption =
         "ℹ️ *No Telegram Business connection found for your account.*\n\n" +
         "*How to link this bot:*\n\n" +
-        "1️⃣ Open Telegram *Settings*\n" +
+        "1️⃣ Tap the button below to jump into Telegram *Settings*\n" +
         "2️⃣ Tap *Account*\n" +
         "3️⃣ Tap *Chat Automation*\n" +
         "4️⃣ Select *ES TEAMS V1* and connect it\n\n" +
@@ -17008,7 +17002,7 @@ async function buildBizNotConnectedView() {
         caption,
         keyboard: {
             inline_keyboard: [
-                ...(profileUrl ? [[{ text: "🔗 𝗟𝗜𝗡𝗞 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗢𝗨𝗡𝗧", url: profileUrl, style: "danger" }]] : []),
+                [{ text: "🔗 𝗟𝗜𝗡𝗞 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗢𝗨𝗡𝗧", url: "tg://settings", style: "danger" }],
                 [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }],
             ],
         },
