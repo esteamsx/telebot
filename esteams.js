@@ -392,12 +392,13 @@ async function readUsers() {
 
 export { saveUser, readUsers };
 
-//============ SUPPRESS EXCESSIVE LOGGING ============//
-console.error = function(...args) {
-  if (args[0]?.includes?.('Error') || args[0]?.code === 429) {
-    process.stderr.write(`${args.join(' ')}\n`);
-  }
-};
+//============ ERROR LOGGING ============//
+// Previously overridden to only print messages containing the exact
+// substring "Error" (capital E) or a `.code === 429`. Since this codebase
+// (and every fix added since) logs things like "SOMETHING ERROR:" or
+// "something error:", neither matched — real failures were silently
+// dropped instead of showing up in the logs. Left as the native
+// console.error so errors are actually visible.
 
 process.env.DEBUG = '';
 process.env.NODE_DEBUG = '';
@@ -5922,6 +5923,83 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
 });
 
 //========== USERS COMMAND =================//
+//======= USER LIST PAGINATION HELPERS =================//
+// Kept deliberately simple after the earlier crash: no per-user buttons (271
+// users would mean 271 buttons — never do that), and usernames are only
+// resolved for the 10 users on the CURRENT page, not all 271 at once. A
+// failed lookup (blocked bot, deleted account) just falls back to the raw ID
+// instead of taking down the whole page.
+const USERS_PAGE_SIZE = 10;
+
+async function resolveUserLabel(userId) {
+  try {
+    const chat = await EsTeams.getChat(userId);
+    const name = chat.username
+      ? `@${chat.username}`
+      : [chat.first_name, chat.last_name].filter(Boolean).join(' ') || null;
+    if (!name) return null;
+    return name.length > 30 ? name.slice(0, 27) + '...' : name;
+  } catch {
+    return null;
+  }
+}
+
+async function buildUsersStatsView(totalUsers, refreshed) {
+  const caption = `
+📊 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗨𝗦𝗘𝗥 𝗗𝗔𝗧𝗔𝗕𝗔𝗦𝗘*
+
+👥 Total Registered Users: *${totalUsers}*
+
+✅ Database ${refreshed ? 'refreshed' : 'synced'} successfully.
+
+ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ
+`;
+  return {
+    caption,
+    keyboard: {
+      inline_keyboard: [
+        [{ text: "👥 𝗩𝗜𝗘𝗪 𝗨𝗦𝗘𝗥𝗦", callback_data: "users_page_1" }],
+        [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "users_refresh" }],
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }],
+      ],
+    },
+  };
+}
+
+async function buildUsersPageView(users, page) {
+  const totalUsers = users.length;
+  const totalPages = Math.max(1, Math.ceil(totalUsers / USERS_PAGE_SIZE));
+  const safePage = Math.min(Math.max(1, page), totalPages);
+  const start = (safePage - 1) * USERS_PAGE_SIZE;
+  const pageIds = users.slice(start, start + USERS_PAGE_SIZE);
+
+  const labels = await Promise.allSettled(pageIds.map(id => resolveUserLabel(id)));
+  const lines = pageIds.map((id, i) => {
+    const resolved = labels[i].status === 'fulfilled' ? labels[i].value : null;
+    return `${start + i + 1}. ${resolved || `ID: ${id}`}`;
+  });
+
+  const caption =
+    `👥 *𝗨𝗦𝗘𝗥 𝗟𝗜𝗦𝗧* — Page ${safePage}/${totalPages}\n\n` +
+    (lines.length ? lines.join('\n') : '_No users on this page._') +
+    `\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`;
+
+  const navRow = [];
+  if (safePage > 1) navRow.push({ text: "⬅️ 𝗕𝗔𝗖𝗞", callback_data: `users_page_${safePage - 1}` });
+  navRow.push({ text: "🏠 𝗛𝗢𝗠𝗘", callback_data: "users_home" });
+  if (safePage < totalPages) navRow.push({ text: "𝗡𝗘𝗫𝗧 ➡️", callback_data: `users_page_${safePage + 1}` });
+
+  return {
+    caption,
+    keyboard: {
+      inline_keyboard: [
+        navRow,
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }],
+      ],
+    },
+  };
+}
+
 EsTeams.onText(/\/users/, async (msg) => {
   const chatId = msg.chat.id;
 
@@ -5935,32 +6013,12 @@ EsTeams.onText(/\/users/, async (msg) => {
   async function sendUserStats() {
     try {
       const users = await readUsers();
-      const totalUsers = users.length;
-
-      const caption = `
-📊 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗨𝗦𝗘𝗥 𝗗𝗔𝗧𝗔𝗕𝗔𝗦𝗘*
-
-👥 Total Registered Users: *${totalUsers}*
-
-✅ Database synced successfully.
-
-ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ
-`;
+      const { caption, keyboard } = await buildUsersStatsView(users.length, false);
 
       await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption,
         parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "users_refresh" }],
-            [
-              {
-                text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
-              },
-            ],
-          ],
-        },
+        reply_markup: keyboard,
       });
     } catch (err) {
       console.error("Users command error:", err.message);
@@ -5980,35 +6038,40 @@ EsTeams.on("callback_query", async (query) => {
     try {
       await EsTeams.deleteMessage(chatId, query.message.message_id).catch(() => {});
       const users = await readUsers();
-      const totalUsers = users.length;
-
-      const caption = `
-📊 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗨𝗦𝗘𝗥 𝗗𝗔𝗧𝗔𝗕𝗔𝗦𝗘*
-
-👥 Total Registered Users: *${totalUsers}*
-
-✅ Database refreshed successfully.
-
-ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ
-`;
+      const { caption, keyboard } = await buildUsersStatsView(users.length, true);
 
       await EsTeams.sendPhoto(chatId, botImageUrl, {
         caption,
         parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "🔁 𝗥𝗘𝗙𝗥𝗘𝗦𝗛", callback_data: "users_refresh" }],
-            [
-              {
-                text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟",
-                url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29",
-              },
-            ],
-          ],
-        },
+        reply_markup: keyboard,
       });
     } catch (err) {
       console.error("Users refresh error:", err.message);
+    }
+  } else if (data && (data.startsWith("users_page_") || data === "users_home")) {
+    if (query.from.id !== adminId) {
+      return EsTeams.answerCallbackQuery(query.id, { text: "Not authorized." }).catch(() => {});
+    }
+    try {
+      const users = await readUsers();
+      let view;
+      if (data === "users_home") {
+        view = await buildUsersStatsView(users.length, false);
+      } else {
+        const page = parseInt(data.replace("users_page_", ""), 10) || 1;
+        view = await buildUsersPageView(users, page);
+      }
+
+      await EsTeams.editMessageCaption(view.caption, {
+        chat_id: chatId,
+        message_id: query.message.message_id,
+        parse_mode: "Markdown",
+        reply_markup: view.keyboard,
+      });
+      await EsTeams.answerCallbackQuery(query.id).catch(() => {});
+    } catch (err) {
+      console.error("Users page error:", err.message);
+      await EsTeams.answerCallbackQuery(query.id, { text: "⚠️ Could not load that page." }).catch(() => {});
     }
   } else {
     await EsTeams.answerCallbackQuery(query.id, { text: "OK" }).catch(() => {});
