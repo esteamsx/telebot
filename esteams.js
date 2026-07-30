@@ -5941,7 +5941,6 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
 });
 
 //========== USERS COMMAND =================//
-//======= USER LIST PAGINATION HELPERS =================//
 const USERS_PAGE_SIZE = 10;
 
 function escapeMarkdown(text) {
@@ -16830,7 +16829,6 @@ EsTeams.onText(/^\/spoiler$/, async (msg) => {
 });
 
 //---------------- MESSAGE EFFECTS ----------------//
-// Telegram's built-in message effects only work in private chats.
 
 const MESSAGE_EFFECTS = {
     fire: '5104841245755180586',
@@ -17011,10 +17009,6 @@ function saveBusinessConnections() {
 
 let businessConnections = loadBusinessConnections();
 
-// The connection itself is recovered from Telegram on demand, so it never
-// depends on storage. Only the owner's two preferences live here, keyed by
-// the owner's Telegram user id (stable across re-links), so "auto-reply on"
-// and their note aren't silently lost every time the container restarts.
 const BIZ_SETTINGS_DOC = doc(db, "botData", "businessSettings");
 let businessSettings = {};
 
@@ -17079,9 +17073,6 @@ async function buildBizNotConnectedView() {
     return { caption, keyboard: { inline_keyboard: rows } };
 }
 
-// Sends the "not connected" card, falling back to a plain text message if the
-// photo/button version is rejected — otherwise a single bad button means the
-// user sees nothing at all.
 async function sendBizNotConnected(chatId) {
     const view = await buildBizNotConnectedView();
     try {
@@ -17114,9 +17105,6 @@ function storeBusinessConnection(connection) {
     return businessConnections[connection.id];
 }
 
-// Asks Telegram directly about a connection we don't have stored yet. This is
-// what lets the bot recover after a restart without the owner re-linking:
-// the first business message that arrives re-registers the connection.
 async function recoverBusinessConnection(connectionId) {
     try {
         const fresh = await EsTeams.getBusinessConnection(connectionId);
@@ -17178,9 +17166,6 @@ EsTeams.on('business_message', async (msg) => {
         const connectionId = msg.business_connection_id;
         let connection = businessConnections[connectionId];
 
-        // Not stored (fresh start, wiped container, or we missed the original
-        // business_connection event) — ask Telegram who this belongs to and
-        // store it, so everything keeps working without a manual re-link.
         if (!connection) {
             connection = await recoverBusinessConnection(connectionId);
         }
