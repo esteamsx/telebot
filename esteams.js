@@ -138,9 +138,6 @@ const CONFIG = {
 //================= BOT SETUP =================//
 const tokens = [process.env.BOT_TOKEN];
 const exec = util.promisify(execCallback);
-// Explicit allowed_updates so newer update types (business_*, inline_query, etc.)
-// are delivered. This list is a superset of Telegram's implicit default, so
-// nothing that already worked stops working.
 const ALLOWED_UPDATES = [
     'message', 'edited_message', 'channel_post', 'edited_channel_post',
     'business_connection', 'business_message', 'edited_business_message', 'deleted_business_messages',
@@ -180,8 +177,6 @@ EsTeams.forEach(bot => {
 });
 
 //============= GLOBAL CRASH GUARD ==============//
-// Keeps the process (and Telegram polling) alive if a single command/API call
-// throws or rejects unexpectedly, instead of letting Node kill the whole bot.
 process.on('unhandledRejection', (reason) => {
   console.error('❌ [unhandledRejection]', reason);
 });
@@ -190,9 +185,6 @@ process.on('uncaughtException', (err) => {
 });
 
 //============= NATIVE TELEGRAM COMMAND MENU ==============//
-// Registers the "/" command suggestions shown by Telegram clients.
-// Uses per-scope commands (Bot API scopes) so the owner's private chat
-// gets the extra owner-only commands without exposing them to everyone else.
 EsTeams.forEach(bot => {
   const publicCommands = [
     { command: 'start', description: 'Open the ES TEAMS V1 main menu' },
@@ -389,14 +381,6 @@ async function readUsers() {
 }  
 
 export { saveUser, readUsers };
-
-//============ ERROR LOGGING ============//
-// Previously overridden to only print messages containing the exact
-// substring "Error" (capital E) or a `.code === 429`. Since this codebase
-// (and every fix added since) logs things like "SOMETHING ERROR:" or
-// "something error:", neither matched — real failures were silently
-// dropped instead of showing up in the logs. Left as the native
-// console.error so errors are actually visible.
 
 process.env.DEBUG = '';
 process.env.NODE_DEBUG = '';
@@ -5337,12 +5321,6 @@ EsTeams.onText(/\/publish(?:\s+(.+))?/, async (msg, match) => {
 });
 
 //======= SHARED FREE AI HELPER =================//
-// Used by /gpt, /chatbot, and the Business auto-reply. davidcyril's API is a
-// free, unofficial community wrapper with no uptime guarantee, so this tries
-// it first and falls back through other free/keyless providers (each with
-// one retry) before giving up. No single free provider can be guaranteed
-// reliable — this just improves the odds of getting a real answer instead of
-// silently falling back to canned text.
 async function askFreeAI(prompt, timeoutMs = 15000) {
     const providers = [
         async () => {
@@ -5964,17 +5942,8 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
 
 //========== USERS COMMAND =================//
 //======= USER LIST PAGINATION HELPERS =================//
-// Kept deliberately simple after the earlier crash: no per-user buttons (271
-// users would mean 271 buttons — never do that), and usernames are only
-// resolved for the 10 users on the CURRENT page, not all 271 at once. A
-// failed lookup (blocked bot, deleted account) just falls back to the raw ID
-// instead of taking down the whole page.
 const USERS_PAGE_SIZE = 10;
 
-// Real names/usernames routinely contain _ * ` [ — with parse_mode Markdown
-// those are formatting characters, so an unescaped underscore in someone's
-// username (extremely common) breaks Telegram's parser and makes the whole
-// send/edit silently fail. Escape before it ever reaches a caption.
 function escapeMarkdown(text) {
   return String(text).replace(/([_*`\[])/g, '\\$1');
 }
@@ -6340,7 +6309,6 @@ EsTeams.onText(/\/backup/, async (msg) => {
   archive.append(fs.createReadStream('package.json'), { name: 'package.json' });
   archive.append(fs.createReadStream('esteamspro.json'), { name: 'esteamspro.json' });
   archive.append(fs.createReadStream('blacklist.json'), { name: 'blacklist.json' });
-  archive.append(fs.createReadStream('esteamsv1.json'), { name: 'esteamsv1.json' });
   archive.append(fs.createReadStream('firebase.js'), { name: 'firebase.js' });
   archive.append(fs.createReadStream('auto_push.py'), { name: 'auto_push.py' });
   archive.append(fs.createReadStream('ES_TEAMS.md'), { name: 'ES_TEAMS.md' });
@@ -9875,11 +9843,6 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
 });
 
 //==---------[ CHATBOT COMMAND ]-----------==//
-// Stored in Firestore instead of local files (same reasoning as the Business
-// connections fix): Railway rebuilds the container filesystem from scratch on
-// every restart/redeploy, so a local JSON file's runtime writes are wiped —
-// only what's committed to git survives, which for these files was always
-// just `{}`. Firestore actually persists across restarts.
 const CHATBOT_SETTINGS_DOC = doc(db, "botData", "chatbotSettings");
 const CHATBOT_MEMORY_DOC = doc(db, "botData", "chatbotMemory");
 
@@ -16215,9 +16178,6 @@ EsTeams.on('callback_query', async (query) => {
         const isCorrect = chosenIndex === correctIndex;
 
         await EsTeams.answerCallbackQuery(query.id, { text: isCorrect ? "✅ Correct!" : "❌ Wrong answer!" });
-        // The trivia question is sent as a photo (bot image + caption), so the
-        // result has to be applied with editMessageCaption, not editMessageText
-        // (Telegram rejects editMessageText on a message that carries media).
         await EsTeams.editMessageCaption(
             `🧠 *𝗧𝗥𝗜𝗩𝗜𝗔 𝗥𝗘𝗦𝗨𝗟𝗧*\n\n${isCorrect ? "✅ Correct! Well played." : "❌ Not quite — better luck next time!"}`,
             { chat_id: query.message.chat.id, message_id: query.message.message_id, parse_mode: "Markdown" }
@@ -16741,8 +16701,6 @@ EsTeams.onText(/^\/gitstalk(?:\s+(.+))?$/, async (msg, match) => {
 //======================================================================
 
 //---------------- INLINE MODE ----------------//
-// NOTE: inline mode must also be switched on once via @BotFather -> /setinline,
-// otherwise Telegram never forwards inline queries to the bot at all.
 EsTeams.on('inline_query', async (inlineQuery) => {
     const query = (inlineQuery.query || '').trim();
 
@@ -17030,17 +16988,6 @@ EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 });
 
 //---------------- TELEGRAM BUSINESS ACCOUNT ASSISTANT ----------------//
-// Requires: Telegram Settings -> Account -> Chat Automation -> connect this bot.
-// That step only wires up the connection on Telegram's side; everything below is
-// what actually makes the bot DO something once connected (this was missing before).
-
-// Shown wherever a /biz* command is used without an active connection. There's
-// no universal Telegram deep link that jumps straight into Account > Chat
-// Automation for a specific bot (that screen is native OS-level Telegram
-// settings, not something a bot can navigate to on the user's behalf) — the
-// link button below opens this bot's own profile page instead, which is where
-// Telegram surfaces the "connect to my Business account" option once a bot
-// supports it.
 async function buildBizNotConnectedView() {
     let profileUrl = null;
     try {
@@ -17068,11 +17015,6 @@ async function buildBizNotConnectedView() {
     };
 }
 
-// Stored in Firestore (same doc pattern as readUsers/saveUser) instead of a
-// local JSON file. Railway (and most container hosts) rebuild the filesystem
-// from scratch on every restart/redeploy — a local file gets wiped, which is
-// exactly why the Business connection "disappeared" and had to be re-linked
-// after a restart. Firestore survives restarts, so this doesn't happen again.
 const BUSINESS_DOC = doc(db, "botData", "businessConnections");
 
 async function loadBusinessConnections() {
@@ -17114,9 +17056,6 @@ EsTeams.on('business_connection', async (connection) => {
         };
         await saveBusinessConnections(businessConnections);
 
-        // Only notify when the connection actually changes state — Telegram can
-        // redeliver this update (e.g. on bot restart) without anything changing,
-        // and re-sending "connected!" every time is exactly the spam we don't want.
         if (!stateChanged) return;
 
         const text = connection.is_enabled
@@ -17139,9 +17078,6 @@ EsTeams.on('business_connection', async (connection) => {
     }
 });
 
-// Builds a reply that actually sounds like the connected business owner,
-// using whatever context they've given us via /bizprofile, and tries a
-// second free AI provider before giving up if the first one fails.
 async function generateBusinessReply(connection, customerText) {
     const persona = connection.profile
         ? `You are personally replying to a customer on Telegram on behalf of ${connection.ownerName || 'the business owner'}. About this business, in the owner's own words: "${connection.profile}". `
@@ -17161,9 +17097,6 @@ EsTeams.on('business_message', async (msg) => {
 
         const from = msg.from || {};
 
-        // Never react to our own relayed sends or the owner's own messages —
-        // otherwise the AI ends up replying to itself in an endless loop and
-        // spamming the owner's own chat with "new message" notifications.
         let botId;
         try {
             botId = (await EsTeams.getMe()).id;
@@ -17172,9 +17105,6 @@ EsTeams.on('business_message', async (msg) => {
 
         const text = msg.text || msg.caption || '';
         const rawPreview = text ? (text.length > 300 ? text.slice(0, 300) + '…' : text) : '[non-text message]';
-        // Escaped because customer names/usernames/messages are free-form text —
-        // an unescaped _ * ` [ in there breaks Markdown parsing and silently
-        // drops the whole notification.
         const preview = escapeMarkdown(rawPreview);
         const fromName = escapeMarkdown(from.first_name || 'Customer');
         const fromUsername = from.username ? ` (@${escapeMarkdown(from.username)})` : '';
