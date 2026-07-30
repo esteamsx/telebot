@@ -17011,6 +17011,50 @@ function saveBusinessConnections() {
 
 let businessConnections = loadBusinessConnections();
 
+// The connection itself is recovered from Telegram on demand, so it never
+// depends on storage. Only the owner's two preferences live here, keyed by
+// the owner's Telegram user id (stable across re-links), so "auto-reply on"
+// and their note aren't silently lost every time the container restarts.
+const BIZ_SETTINGS_DOC = doc(db, "botData", "businessSettings");
+let businessSettings = {};
+
+async function loadBusinessSettings() {
+    try {
+        const snap = await getDoc(BIZ_SETTINGS_DOC);
+        if (snap.exists()) return snap.data().owners || {};
+        await setDoc(BIZ_SETTINGS_DOC, { owners: {} });
+    } catch (err) {
+        console.error("BIZ SETTINGS LOAD ERROR:", err.message);
+    }
+    return {};
+}
+
+async function saveBusinessSettings() {
+    try {
+        await setDoc(BIZ_SETTINGS_DOC, { owners: businessSettings });
+    } catch (err) {
+        console.error("BIZ SETTINGS SAVE ERROR:", err.message);
+    }
+}
+
+let businessSettingsPromise = null;
+function ensureBusinessSettings() {
+    if (!businessSettingsPromise) {
+        businessSettingsPromise = loadBusinessSettings().then(s => { businessSettings = s; return s; });
+    }
+    return businessSettingsPromise;
+}
+ensureBusinessSettings();
+
+function setBusinessSetting(connection, patch) {
+    const key = String(connection.userId);
+    businessSettings[key] = { ...(businessSettings[key] || {}), ...patch };
+    Object.assign(connection, patch);
+    businessConnections[connection.id] = connection;
+    saveBusinessConnections();
+    saveBusinessSettings();
+}
+
 async function buildBizNotConnectedView() {
     let botUsername = '';
     try {
@@ -17054,15 +17098,17 @@ async function sendBizNotConnected(chatId) {
 
 function storeBusinessConnection(connection) {
     const previous = businessConnections[connection.id];
+    const saved = businessSettings[String(connection.user.id)] || {};
+
     businessConnections[connection.id] = {
         id: connection.id,
         userId: connection.user.id,
         userChatId: connection.user_chat_id,
         isEnabled: connection.is_enabled !== undefined ? !!connection.is_enabled : (previous?.isEnabled ?? true),
         canReply: connection.rights?.can_reply ?? connection.can_reply ?? previous?.canReply ?? true,
-        autoReply: previous?.autoReply || false,
+        autoReply: previous?.autoReply ?? saved.autoReply ?? false,
         ownerName: connection.user.first_name || previous?.ownerName || '',
-        profile: previous?.profile || ''
+        profile: previous?.profile || saved.profile || ''
     };
     saveBusinessConnections();
     return businessConnections[connection.id];
@@ -17128,6 +17174,7 @@ function generateBusinessReply(connection) {
 
 EsTeams.on('business_message', async (msg) => {
     try {
+        await ensureBusinessSettings();
         const connectionId = msg.business_connection_id;
         let connection = businessConnections[connectionId];
 
@@ -17160,11 +17207,19 @@ EsTeams.on('business_message', async (msg) => {
             { parse_mode: "Markdown" }
         ).catch(() => {});
 
-        if (!connection.autoReply || !connection.canReply || !text) return;
+        if (!connection.autoReply || !connection.canReply || !text) {
+            console.error(`BIZ AUTOREPLY SKIPPED: autoReply=${connection.autoReply} canReply=${connection.canReply} hasText=${!!text}`);
+            return;
+        }
 
         const reply = generateBusinessReply(connection);
 
-        await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId }).catch(() => {});
+        try {
+            await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId });
+            console.error(`BIZ AUTOREPLY SENT to chat ${msg.chat.id}`);
+        } catch (err) {
+            console.error("BIZ AUTOREPLY SEND ERROR:", err.message);
+        }
     } catch (err) {
         console.error("BUSINESS_MESSAGE ERROR:", err.message);
     }
@@ -17174,6 +17229,7 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
+    await ensureBusinessSettings();
     const connection = findBusinessConnectionFor(msg);
 
     if (!connection) {
@@ -17200,14 +17256,13 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
          });
     }
 
+    await ensureBusinessSettings();
     const connection = findBusinessConnectionFor(msg);
     if (!connection) {
         return sendBizNotConnected(chatId);
     }
 
-    connection.autoReply = mode === 'on';
-    businessConnections[connection.id] = connection;
-    saveBusinessConnections();
+    setBusinessSetting(connection, { autoReply: mode === 'on' });
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption: mode === 'on'
             ? `✅ *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗲𝗻𝗮𝗯𝗹𝗲𝗱*\n\nI'll now send an instant reply to your customers when they message your Business account — a reliable fixed message, not AI-generated.\n\n${connection.profile ? "It'll include the note you set with /bizprofile." : "Tip: set /bizprofile to add a short note (e.g. hours, what you sell) to the end of every auto-reply."}`
@@ -17218,6 +17273,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
+    await ensureBusinessSettings();
     const connection = findBusinessConnectionFor(msg);
     if (!connection) {
         return sendBizNotConnected(chatId);
@@ -17233,9 +17289,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
          });
     }
 
-    connection.profile = description.slice(0, 600);
-    businessConnections[connection.id] = connection;
-    saveBusinessConnections();
+    setBusinessSetting(connection, { profile: description.slice(0, 600) });
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
         `✅ *𝗡𝗼𝘁𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
