@@ -16994,31 +16994,37 @@ EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 // That step only wires up the connection on Telegram's side; everything below is
 // what actually makes the bot DO something once connected (this was missing before).
 
-const BUSINESS_FILE = './ES_TEAMS-MEDIA/business_connections.json';
+// Stored in Firestore (same doc pattern as readUsers/saveUser) instead of a
+// local JSON file. Railway (and most container hosts) rebuild the filesystem
+// from scratch on every restart/redeploy — a local file gets wiped, which is
+// exactly why the Business connection "disappeared" and had to be re-linked
+// after a restart. Firestore survives restarts, so this doesn't happen again.
+const BUSINESS_DOC = doc(db, "botData", "businessConnections");
 
-function loadBusinessConnections() {
+async function loadBusinessConnections() {
     try {
-        if (fs.existsSync(BUSINESS_FILE)) {
-            return JSON.parse(fs.readFileSync(BUSINESS_FILE, 'utf8'));
+        const snap = await getDoc(BUSINESS_DOC);
+        if (snap.exists()) {
+            return snap.data().connections || {};
         }
+        await setDoc(BUSINESS_DOC, { connections: {} });
     } catch (err) {
         console.error("BUSINESS LOAD ERROR:", err.message);
     }
     return {};
 }
 
-function saveBusinessConnections(data) {
+async function saveBusinessConnections(data) {
     try {
-        fs.writeFileSync(BUSINESS_FILE, JSON.stringify(data, null, 2));
+        await setDoc(BUSINESS_DOC, { connections: data });
     } catch (err) {
         console.error("BUSINESS SAVE ERROR:", err.message);
     }
 }
 
-let businessConnections = loadBusinessConnections();
-
-EsTeams.on('business_connection', (connection) => {
+EsTeams.on('business_connection', async (connection) => {
     try {
+        const businessConnections = await loadBusinessConnections();
         const previous = businessConnections[connection.id];
         const stateChanged = !previous || previous.isEnabled !== !!connection.is_enabled;
 
@@ -17032,7 +17038,7 @@ EsTeams.on('business_connection', (connection) => {
             ownerName: connection.user.first_name || previous?.ownerName || '',
             profile: previous?.profile || ''
         };
-        saveBusinessConnections(businessConnections);
+        await saveBusinessConnections(businessConnections);
 
         // Only notify when the connection actually changes state — Telegram can
         // redeliver this update (e.g. on bot restart) without anything changing,
@@ -17075,6 +17081,7 @@ async function generateBusinessReply(connection, customerText) {
 EsTeams.on('business_message', async (msg) => {
     try {
         const connectionId = msg.business_connection_id;
+        const businessConnections = await loadBusinessConnections();
         const connection = businessConnections[connectionId];
         if (!connection || !connection.isEnabled) return;
 
@@ -17113,6 +17120,7 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
+    const businessConnections = await loadBusinessConnections();
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
 
     if (!connection) {
@@ -17139,6 +17147,7 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
          });
     }
 
+    const businessConnections = await loadBusinessConnections();
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
     if (!connection) {
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
@@ -17146,7 +17155,7 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
 
     connection.autoReply = mode === 'on';
     businessConnections[connection.id] = connection;
-    saveBusinessConnections(businessConnections);
+    await saveBusinessConnections(businessConnections);
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption: mode === 'on'
             ? `✅ *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗲𝗻𝗮𝗯𝗹𝗲𝗱*\n\nI'll now reply to your customers automatically when they message your Business account.\n\n${connection.profile ? "I'll use the business profile you set with /bizprofile to sound like you." : "Tip: set /bizprofile with a quick description of your business so my replies actually sound like you, instead of generic."}`
@@ -17157,6 +17166,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
+    const businessConnections = await loadBusinessConnections();
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
     if (!connection) {
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
@@ -17174,7 +17184,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 
     connection.profile = description.slice(0, 600);
     businessConnections[connection.id] = connection;
-    saveBusinessConnections(businessConnections);
+    await saveBusinessConnections(businessConnections);
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
         `✅ *𝗕𝘂𝘀𝗶𝗻𝗲𝘀𝘀 𝗽𝗿𝗼𝗳𝗶𝗹𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
