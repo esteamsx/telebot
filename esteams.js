@@ -288,8 +288,6 @@ EsTeams.forEach(bot => {
 const TIMER_FILE = "ES_TEAMS-MEDIA/ctimer.json";
 const WELCOME_FILE = 'ES_TEAMS-MEDIA/welcome_settings.json';
 const ANTILINK_FILE = './ES_TEAMS-MEDIA/antilink.json';
-const CHATBOT_FILE = './ES_TEAMS-MEDIA/chatbot.json';
-const CHATBOT_MEMORY_FILE = './ES_TEAMS-MEDIA/chatbot_memory.json';
 const START_TIME_FILE = 'ES_TEAMS-MEDIA/start_time.json';
 const TTT_FILE = './ES_TEAMS-MEDIA/ttt.json';
 const botImageUrl = 'https://files.catbox.moe/3jibot.jpg';
@@ -1817,12 +1815,13 @@ EsTeams.onText(/\/start/, async (msg) => {
 
     EsTeams.on("callback_query", (query) => {
     const data = query.data;
+    const chatId = query.message.chat.id;
     const messageId = query.message.message_id;
-    const userId = query.from.id;  
+    const userId = query.from.id;
 
         if (data === "open_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1844,7 +1843,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
         } else if (data === "close_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1866,7 +1865,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
         } else if (data === "canva_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1888,7 +1887,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
       } else if (data === "stalk_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1910,7 +1909,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
      } else if (data === "game_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1932,7 +1931,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
         } else if (data === "scrape_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1954,7 +1953,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
         } else if (data === "media_menu") {
         
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1976,7 +1975,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
             } else if (data === "vtu_menu") {
         
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -1998,7 +1997,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
         } else if (data === "tools_menu") {
         
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2020,7 +2019,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
          } else if (data === "group_menu") {
              
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2042,7 +2041,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
            } else if (data === "religion_menu") {
                
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2064,7 +2063,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
           } else if (data === "mail_menu") {
               
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2086,7 +2085,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
             } else if (data === "rentbot_menu") {
             
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2108,7 +2107,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
              } else if (data === "crypto_menu") {
                 
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2130,7 +2129,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
          } else if (data === "other_menu") {
              
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -2152,7 +2151,7 @@ EsTeams.onText(/\/start/, async (msg) => {
             });
         } else if (data === "end_menu") {
          
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
     return EsTeams.sendMessage(chatId, 
       "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", 
       {
@@ -5972,6 +5971,14 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
 // instead of taking down the whole page.
 const USERS_PAGE_SIZE = 10;
 
+// Real names/usernames routinely contain _ * ` [ — with parse_mode Markdown
+// those are formatting characters, so an unescaped underscore in someone's
+// username (extremely common) breaks Telegram's parser and makes the whole
+// send/edit silently fail. Escape before it ever reaches a caption.
+function escapeMarkdown(text) {
+  return String(text).replace(/([_*`\[])/g, '\\$1');
+}
+
 async function resolveUserLabel(userId) {
   try {
     const chat = await EsTeams.getChat(userId);
@@ -5979,7 +5986,8 @@ async function resolveUserLabel(userId) {
       ? `@${chat.username}`
       : [chat.first_name, chat.last_name].filter(Boolean).join(' ') || null;
     if (!name) return null;
-    return name.length > 30 ? name.slice(0, 27) + '...' : name;
+    const trimmed = name.length > 30 ? name.slice(0, 27) + '...' : name;
+    return escapeMarkdown(trimmed);
   } catch {
     return null;
   }
@@ -9867,6 +9875,52 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
 });
 
 //==---------[ CHATBOT COMMAND ]-----------==//
+// Stored in Firestore instead of local files (same reasoning as the Business
+// connections fix): Railway rebuilds the container filesystem from scratch on
+// every restart/redeploy, so a local JSON file's runtime writes are wiped —
+// only what's committed to git survives, which for these files was always
+// just `{}`. Firestore actually persists across restarts.
+const CHATBOT_SETTINGS_DOC = doc(db, "botData", "chatbotSettings");
+const CHATBOT_MEMORY_DOC = doc(db, "botData", "chatbotMemory");
+
+async function loadChatbotSettings() {
+    try {
+        const snap = await getDoc(CHATBOT_SETTINGS_DOC);
+        if (snap.exists()) return snap.data().users || {};
+        await setDoc(CHATBOT_SETTINGS_DOC, { users: {} });
+    } catch (err) {
+        console.error("CHATBOT SETTINGS LOAD ERROR:", err.message);
+    }
+    return {};
+}
+
+async function saveChatbotSettings(data) {
+    try {
+        await setDoc(CHATBOT_SETTINGS_DOC, { users: data });
+    } catch (err) {
+        console.error("CHATBOT SETTINGS SAVE ERROR:", err.message);
+    }
+}
+
+async function loadChatbotMemory() {
+    try {
+        const snap = await getDoc(CHATBOT_MEMORY_DOC);
+        if (snap.exists()) return snap.data().users || {};
+        await setDoc(CHATBOT_MEMORY_DOC, { users: {} });
+    } catch (err) {
+        console.error("CHATBOT MEMORY LOAD ERROR:", err.message);
+    }
+    return {};
+}
+
+async function saveChatbotMemory(data) {
+    try {
+        await setDoc(CHATBOT_MEMORY_DOC, { users: data });
+    } catch (err) {
+        console.error("CHATBOT MEMORY SAVE ERROR:", err.message);
+    }
+}
+
 EsTeams.onText(/^\/chatbot$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -9894,11 +9948,7 @@ EsTeams.onText(/^\/chatbot$/, async (msg) => {
         });
     }
 
-    let chatbotSettings = {};
-    if (fs.existsSync(CHATBOT_FILE)) {
-        chatbotSettings = JSON.parse(fs.readFileSync(CHATBOT_FILE));
-    }
-
+    const chatbotSettings = await loadChatbotSettings();
     const chatbotStatus = chatbotSettings[userId] || "off";
 
     EsTeams.sendPhoto(chatId, botImageUrl, {
@@ -9918,17 +9968,14 @@ EsTeams.on("callback_query", async (callbackQuery) => {
     const [action, mode, userId] = callbackQuery.data.split(":");
     if (action !== "chatbot") return;
 
-    let chatbotSettings = {};
-    if (fs.existsSync(CHATBOT_FILE)) {
-        chatbotSettings = JSON.parse(fs.readFileSync(CHATBOT_FILE));
-    }
+    const chatbotSettings = await loadChatbotSettings();
 
     if (chatbotSettings[userId] === mode) {
         return EsTeams.answerCallbackQuery(callbackQuery.id, { text: `⚠️ Chatbot is already ${mode.toUpperCase()}!` });
     }
 
     chatbotSettings[userId] = mode;
-    fs.writeFileSync(CHATBOT_FILE, JSON.stringify(chatbotSettings, null, 2));
+    await saveChatbotSettings(chatbotSettings);
 
     EsTeams.answerCallbackQuery(callbackQuery.id, { text: `✅ Chatbot has been set to ${mode.toUpperCase()}!` });
 
@@ -9954,17 +10001,10 @@ EsTeams.on("message", async (msg) => {
 
     if (!text || msg.chat.type !== "private") return;
 
-    let chatbotSettings = {};
-    if (fs.existsSync(CHATBOT_FILE)) {
-        chatbotSettings = JSON.parse(fs.readFileSync(CHATBOT_FILE));
-    }
-
+    const chatbotSettings = await loadChatbotSettings();
     if (chatbotSettings[userId] !== "on") return;
 
-    let chatbotMemory = {};
-    if (fs.existsSync(CHATBOT_MEMORY_FILE)) {
-        chatbotMemory = JSON.parse(fs.readFileSync(CHATBOT_MEMORY_FILE));
-    }
+    const chatbotMemory = await loadChatbotMemory();
     if (!chatbotMemory[userId]) chatbotMemory[userId] = [];
 
     chatbotMemory[userId].push({ role: "user", content: text });
@@ -9974,7 +10014,7 @@ EsTeams.on("message", async (msg) => {
         chatbotMemory[userId] = chatbotMemory[userId].slice(-15);
     }
 
-    fs.writeFileSync(CHATBOT_MEMORY_FILE, JSON.stringify(chatbotMemory, null, 2));
+    await saveChatbotMemory(chatbotMemory);
 
     await EsTeams.sendChatAction(chatId, "typing");
 
@@ -9984,7 +10024,7 @@ EsTeams.on("message", async (msg) => {
         const aiResponse = await askFreeAI(conversation) || "⚠️ Sorry, I couldn't reach any AI provider right now. Please try again shortly.";
 
         chatbotMemory[userId].push({ role: "bot", content: aiResponse });
-        fs.writeFileSync(CHATBOT_MEMORY_FILE, JSON.stringify(chatbotMemory, null, 2));
+        await saveChatbotMemory(chatbotMemory);
 
         await EsTeams.sendMessage(chatId,
             `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗛𝗔𝗧𝗕𝗢𝗧*\n\n${aiResponse}\n\n*ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇ𝗮𝗺ꜱ ᴛᴇ𝗰ʜ*`,
@@ -16990,9 +17030,43 @@ EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 });
 
 //---------------- TELEGRAM BUSINESS ACCOUNT ASSISTANT ----------------//
-// Requires: Telegram Settings -> Telegram Business -> Chatbots -> connect this bot.
+// Requires: Telegram Settings -> Account -> Chat Automation -> connect this bot.
 // That step only wires up the connection on Telegram's side; everything below is
 // what actually makes the bot DO something once connected (this was missing before).
+
+// Shown wherever a /biz* command is used without an active connection. There's
+// no universal Telegram deep link that jumps straight into Account > Chat
+// Automation for a specific bot (that screen is native OS-level Telegram
+// settings, not something a bot can navigate to on the user's behalf) — the
+// link button below opens this bot's own profile page instead, which is where
+// Telegram surfaces the "connect to my Business account" option once a bot
+// supports it.
+async function buildBizNotConnectedView() {
+    let profileUrl = null;
+    try {
+        const me = await EsTeams.getMe();
+        profileUrl = `https://t.me/${me.username}`;
+    } catch {}
+
+    const caption =
+        "ℹ️ *No Telegram Business connection found for your account.*\n\n" +
+        "*How to link this bot:*\n\n" +
+        "1️⃣ Open Telegram *Settings*\n" +
+        "2️⃣ Tap *Account*\n" +
+        "3️⃣ Tap *Chat Automation*\n" +
+        "4️⃣ Select *ES TEAMS V1* and connect it\n\n" +
+        "Then come back here and try the command again.";
+
+    return {
+        caption,
+        keyboard: {
+            inline_keyboard: [
+                ...(profileUrl ? [[{ text: "🔗 𝗟𝗜𝗡𝗞 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗢𝗨𝗡𝗧", url: profileUrl, style: "danger" }]] : []),
+                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }],
+            ],
+        },
+    };
+}
 
 // Stored in Firestore (same doc pattern as readUsers/saveUser) instead of a
 // local JSON file. Railway (and most container hosts) rebuild the filesystem
@@ -17097,11 +17171,17 @@ EsTeams.on('business_message', async (msg) => {
         if ((botId && from.id === botId) || from.id === connection.userId) return;
 
         const text = msg.text || msg.caption || '';
-        const preview = text ? (text.length > 300 ? text.slice(0, 300) + '…' : text) : '[non-text message]';
+        const rawPreview = text ? (text.length > 300 ? text.slice(0, 300) + '…' : text) : '[non-text message]';
+        // Escaped because customer names/usernames/messages are free-form text —
+        // an unescaped _ * ` [ in there breaks Markdown parsing and silently
+        // drops the whole notification.
+        const preview = escapeMarkdown(rawPreview);
+        const fromName = escapeMarkdown(from.first_name || 'Customer');
+        const fromUsername = from.username ? ` (@${escapeMarkdown(from.username)})` : '';
 
         EsTeams.sendMessage(connection.userChatId,
             `📩 *𝗡𝗘𝗪 𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘*\n\n` +
-            `*From:* ${from.first_name || 'Customer'}${from.username ? ' (@' + from.username + ')' : ''}\n\n` +
+            `*From:* ${fromName}${fromUsername}\n\n` +
             `*Message:*\n${preview}`,
             { parse_mode: "Markdown" }
         ).catch(() => {});
@@ -17124,7 +17204,8 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
 
     if (!connection) {
-        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found.*\n\nTo link this bot: open Telegram Settings → Telegram Business → Chatbots → connect *this bot*.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
+        const notConnected = await buildBizNotConnectedView();
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
     }
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
@@ -17132,7 +17213,7 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
         `*Connected:*\n${connection.isEnabled ? 'Yes ✅' : 'No ❌'}\n\n` +
         `*Auto-reply:*\n${connection.autoReply ? 'ON ✅' : 'OFF'}\n\n` +
         `*Can reply on your behalf:*\n${connection.canReply ? 'Yes' : 'No — grant this right in Telegram settings'}\n\n` +
-        `*Business profile:*\n${connection.profile ? connection.profile : '_Not set — use /bizprofile to describe your business so replies sound like you._'}`,
+        `*Business profile:*\n${connection.profile ? escapeMarkdown(connection.profile) : '_Not set — use /bizprofile to describe your business so replies sound like you._'}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZSTATUS ERROR:", err.message));
 });
 
@@ -17150,7 +17231,8 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
     const businessConnections = await loadBusinessConnections();
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
     if (!connection) {
-        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
+        const notConnected = await buildBizNotConnectedView();
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
     }
 
     connection.autoReply = mode === 'on';
@@ -17169,7 +17251,8 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const businessConnections = await loadBusinessConnections();
     const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
     if (!connection) {
-        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
+        const notConnected = await buildBizNotConnectedView();
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
     }
 
     const description = match[1] ? match[1].trim() : null;
@@ -17177,7 +17260,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption:
             `*Invalid Input*\n\nPlease use \`/bizprofile <description>\`\n\n` +
             `e.g. \`/bizprofile We sell handmade candles in Lagos, ship nationwide, and reply in a friendly, casual tone.\`\n\n` +
-            `${connection.profile ? `*Current profile:*\n${connection.profile}` : 'No profile set yet — the AI is replying generically until you set one.'}`,
+            `${connection.profile ? `*Current profile:*\n${escapeMarkdown(connection.profile)}` : 'No profile set yet — the AI is replying generically until you set one.'}`,
             parse_mode: "Markdown", reply_markup: waChannelBtn
          });
     }
@@ -17188,7 +17271,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
         `✅ *𝗕𝘂𝘀𝗶𝗻𝗲𝘀𝘀 𝗽𝗿𝗼𝗳𝗶𝗹𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
-        `${connection.profile}\n\n` +
+        `${escapeMarkdown(connection.profile)}\n\n` +
         `From now on, auto-replies will use this to sound like you instead of a generic assistant.`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
     }).catch(err => console.error("BIZPROFILE ERROR:", err.message));
