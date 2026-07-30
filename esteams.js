@@ -17032,6 +17032,15 @@ async function saveBusinessConnections(data) {
     }
 }
 
+// Matches on userId OR userChatId (the private chat with the connection's
+// owner) rather than userId alone, so a lookup still works even if one of
+// those fields is ever missing/mismatched for a given connection.
+function findBusinessConnectionFor(businessConnections, msg) {
+    const list = Object.values(businessConnections);
+    console.error(`BIZ LOOKUP: from.id=${msg.from.id} chat.id=${msg.chat.id} storedConnections=${JSON.stringify(list.map(c => ({ userId: c.userId, userChatId: c.userChatId, isEnabled: c.isEnabled })))}`);
+    return list.find(c => c.userId === msg.from.id || c.userChatId === msg.chat.id);
+}
+
 EsTeams.on('business_connection', async (connection) => {
     try {
         const businessConnections = await loadBusinessConnections();
@@ -17058,7 +17067,7 @@ EsTeams.on('business_connection', async (connection) => {
               `By default I only notify you here, in this DM with me, about new customer messages. I won't touch your Business chats themselves.\n\n` +
               `Here's how to set it up:\n\n` +
               `1️⃣ \`/bizprofile <describe your business>\`\n` +
-              `Tell me what you do, so replies actually sound like you.\n\n` +
+              `Optional — gets added as a note at the end of every auto-reply.\n\n` +
               `2️⃣ \`/bizassistant on\`\n` +
               `Turns on auto-reply for customer messages.\n\n` +
               `3️⃣ \`/bizstatus\`\n` +
@@ -17072,14 +17081,12 @@ EsTeams.on('business_connection', async (connection) => {
     }
 });
 
-async function generateBusinessReply(connection, customerText) {
-    const persona = connection.profile
-        ? `You are personally replying to a customer on Telegram on behalf of ${connection.ownerName || 'the business owner'}. About this business, in the owner's own words: "${connection.profile}". `
-        : `You are personally replying to a customer on Telegram on behalf of ${connection.ownerName || 'the business owner'}. `;
-    const instructions = `${persona}Reply naturally, warmly, and helpfully, the way a real person running this business would — not like a bot, and don't mention that you're an AI. Keep it short (1-4 sentences) unless the question genuinely needs more detail.\n\nCustomer's message: "${customerText}"\n\nYour reply:`;
-
-    const reply = await askFreeAI(instructions);
-    return reply || "Thanks for reaching out! I'll take a proper look and get back to you shortly.";
+function generateBusinessReply(connection) {
+    const greeting = connection.ownerName
+        ? `👋 Thanks for messaging ${connection.ownerName}!`
+        : `👋 Thanks for your message!`;
+    const note = connection.profile ? `\n\n${connection.profile}` : '';
+    return `${greeting} We've received it and will get back to you as soon as possible.${note}`;
 }
 
 EsTeams.on('business_message', async (msg) => {
@@ -17112,7 +17119,7 @@ EsTeams.on('business_message', async (msg) => {
 
         if (!connection.autoReply || !connection.canReply || !text) return;
 
-        const reply = await generateBusinessReply(connection, text);
+        const reply = generateBusinessReply(connection);
 
         await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId }).catch(() => {});
     } catch (err) {
@@ -17125,7 +17132,7 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     const businessConnections = await loadBusinessConnections();
-    const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
+    const connection = findBusinessConnectionFor(businessConnections, msg);
 
     if (!connection) {
         const notConnected = await buildBizNotConnectedView();
@@ -17137,7 +17144,7 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
         `*Connected:*\n${connection.isEnabled ? 'Yes ✅' : 'No ❌'}\n\n` +
         `*Auto-reply:*\n${connection.autoReply ? 'ON ✅' : 'OFF'}\n\n` +
         `*Can reply on your behalf:*\n${connection.canReply ? 'Yes' : 'No — grant this right in Telegram settings'}\n\n` +
-        `*Business profile:*\n${connection.profile ? escapeMarkdown(connection.profile) : '_Not set — use /bizprofile to describe your business so replies sound like you._'}`,
+        `*Business profile note:*\n${connection.profile ? escapeMarkdown(connection.profile) : '_Not set — use /bizprofile to add a note to every auto-reply._'}`,
         parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZSTATUS ERROR:", err.message));
 });
 
@@ -17153,7 +17160,7 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
     }
 
     const businessConnections = await loadBusinessConnections();
-    const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
+    const connection = findBusinessConnectionFor(businessConnections, msg);
     if (!connection) {
         const notConnected = await buildBizNotConnectedView();
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
@@ -17164,7 +17171,7 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
     await saveBusinessConnections(businessConnections);
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption: mode === 'on'
-            ? `✅ *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗲𝗻𝗮𝗯𝗹𝗲𝗱*\n\nI'll now reply to your customers automatically when they message your Business account.\n\n${connection.profile ? "I'll use the business profile you set with /bizprofile to sound like you." : "Tip: set /bizprofile with a quick description of your business so my replies actually sound like you, instead of generic."}`
+            ? `✅ *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗲𝗻𝗮𝗯𝗹𝗲𝗱*\n\nI'll now send an instant reply to your customers when they message your Business account — a reliable fixed message, not AI-generated.\n\n${connection.profile ? "It'll include the note you set with /bizprofile." : "Tip: set /bizprofile to add a short note (e.g. hours, what you sell) to the end of every auto-reply."}`
             : "🔕 *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗱𝗶𝘀𝗮𝗯𝗹𝗲𝗱*\n\nI'll only notify you about new messages from now on — I won't reply for you.", parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZASSISTANT ERROR:", err.message));
 });
 
@@ -17173,7 +17180,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
     const businessConnections = await loadBusinessConnections();
-    const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
+    const connection = findBusinessConnectionFor(businessConnections, msg);
     if (!connection) {
         const notConnected = await buildBizNotConnectedView();
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
@@ -17182,9 +17189,9 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const description = match[1] ? match[1].trim() : null;
     if (!description) {
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption:
-            `*Invalid Input*\n\nPlease use \`/bizprofile <description>\`\n\n` +
-            `e.g. \`/bizprofile We sell handmade candles in Lagos, ship nationwide, and reply in a friendly, casual tone.\`\n\n` +
-            `${connection.profile ? `*Current profile:*\n${escapeMarkdown(connection.profile)}` : 'No profile set yet — the AI is replying generically until you set one.'}`,
+            `*Invalid Input*\n\nPlease use \`/bizprofile <note>\`\n\n` +
+            `e.g. \`/bizprofile We're open 9am-6pm Mon-Sat. Orders ship within 2 days.\`\n\n` +
+            `${connection.profile ? `*Current note:*\n${escapeMarkdown(connection.profile)}` : 'No note set yet — auto-replies are just the plain "thanks for your message" text until you set one.'}`,
             parse_mode: "Markdown", reply_markup: waChannelBtn
          });
     }
@@ -17194,9 +17201,9 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     await saveBusinessConnections(businessConnections);
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
-        `✅ *𝗕𝘂𝘀𝗶𝗻𝗲𝘀𝘀 𝗽𝗿𝗼𝗳𝗶𝗹𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
+        `✅ *𝗡𝗼𝘁𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
         `${escapeMarkdown(connection.profile)}\n\n` +
-        `From now on, auto-replies will use this to sound like you instead of a generic assistant.`,
+        `From now on, this gets added to the end of every auto-reply.`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
     }).catch(err => console.error("BIZPROFILE ERROR:", err.message));
 });
