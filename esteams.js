@@ -16988,76 +16988,113 @@ EsTeams.onText(/^\/renametopic(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 });
 
 //---------------- TELEGRAM BUSINESS ACCOUNT ASSISTANT ----------------//
-async function buildBizNotConnectedView() {
-    const caption =
-        "ℹ️ *No Telegram Business connection found for your account.*\n\n" +
-        "*How to link this bot:*\n\n" +
-        "1️⃣ Tap the button below to jump into Telegram *Settings*\n" +
-        "2️⃣ Tap *Account*\n" +
-        "3️⃣ Tap *Chat Automation*\n" +
-        "4️⃣ Select *ES TEAMS V1* and connect it\n\n" +
-        "Then come back here and try the command again.";
+const BUSINESS_FILE = './ES_TEAMS-MEDIA/business_connections.json';
 
-    return {
-        caption,
-        keyboard: {
-            inline_keyboard: [
-                [{ text: "🔗 𝗟𝗜𝗡𝗞 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗢𝗨𝗡𝗧", url: "tg://settings", style: "danger" }],
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }],
-            ],
-        },
-    };
-}
-
-const BUSINESS_DOC = doc(db, "botData", "businessConnections");
-
-async function loadBusinessConnections() {
+function loadBusinessConnections() {
     try {
-        const snap = await getDoc(BUSINESS_DOC);
-        if (snap.exists()) {
-            return snap.data().connections || {};
+        if (fs.existsSync(BUSINESS_FILE)) {
+            return JSON.parse(fs.readFileSync(BUSINESS_FILE, 'utf8'));
         }
-        await setDoc(BUSINESS_DOC, { connections: {} });
     } catch (err) {
         console.error("BUSINESS LOAD ERROR:", err.message);
     }
     return {};
 }
 
-async function saveBusinessConnections(data) {
+function saveBusinessConnections() {
     try {
-        await setDoc(BUSINESS_DOC, { connections: data });
+        fs.writeFileSync(BUSINESS_FILE, JSON.stringify(businessConnections, null, 2));
     } catch (err) {
         console.error("BUSINESS SAVE ERROR:", err.message);
     }
 }
 
-// Matches on userId OR userChatId (the private chat with the connection's
-// owner) rather than userId alone, so a lookup still works even if one of
-// those fields is ever missing/mismatched for a given connection.
-function findBusinessConnectionFor(businessConnections, msg) {
-    const list = Object.values(businessConnections);
-    console.error(`BIZ LOOKUP: from.id=${msg.from.id} chat.id=${msg.chat.id} storedConnections=${JSON.stringify(list.map(c => ({ userId: c.userId, userChatId: c.userChatId, isEnabled: c.isEnabled })))}`);
-    return list.find(c => c.userId === msg.from.id || c.userChatId === msg.chat.id);
+let businessConnections = loadBusinessConnections();
+
+async function buildBizNotConnectedView() {
+    let botUsername = '';
+    try {
+        botUsername = (await EsTeams.getMe()).username;
+    } catch {}
+
+    const caption =
+        "ℹ️ *No Telegram Business connection found for your account.*\n\n" +
+        "*How to link this bot:*\n\n" +
+        "1️⃣ Open Telegram *Settings*\n" +
+        "2️⃣ Tap *Account*\n" +
+        "3️⃣ Tap *Chat Automation*\n" +
+        "4️⃣ Select *ES TEAMS V1* and connect it\n\n" +
+        "Then send any message to your Business account and try the command again.";
+
+    const rows = [];
+    if (botUsername) {
+        rows.push([{ text: "🔗 𝗟𝗜𝗡𝗞 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗢𝗨𝗡𝗧", url: `https://t.me/${botUsername}` }]);
+    }
+    rows.push([{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]);
+
+    return { caption, keyboard: { inline_keyboard: rows } };
 }
 
-EsTeams.on('business_connection', async (connection) => {
+// Sends the "not connected" card, falling back to a plain text message if the
+// photo/button version is rejected — otherwise a single bad button means the
+// user sees nothing at all.
+async function sendBizNotConnected(chatId) {
+    const view = await buildBizNotConnectedView();
     try {
-        const businessConnections = await loadBusinessConnections();
+        return await EsTeams.sendPhoto(chatId, botImageUrl, {
+            caption: view.caption,
+            parse_mode: "Markdown",
+            reply_markup: view.keyboard
+        });
+    } catch (err) {
+        console.error("BIZ NOT-CONNECTED SEND ERROR:", err.message);
+        return EsTeams.sendMessage(chatId, view.caption, { parse_mode: "Markdown" }).catch(() => {});
+    }
+}
+
+function storeBusinessConnection(connection) {
+    const previous = businessConnections[connection.id];
+    businessConnections[connection.id] = {
+        id: connection.id,
+        userId: connection.user.id,
+        userChatId: connection.user_chat_id,
+        isEnabled: connection.is_enabled !== undefined ? !!connection.is_enabled : (previous?.isEnabled ?? true),
+        canReply: connection.rights?.can_reply ?? connection.can_reply ?? previous?.canReply ?? true,
+        autoReply: previous?.autoReply || false,
+        ownerName: connection.user.first_name || previous?.ownerName || '',
+        profile: previous?.profile || ''
+    };
+    saveBusinessConnections();
+    return businessConnections[connection.id];
+}
+
+// Asks Telegram directly about a connection we don't have stored yet. This is
+// what lets the bot recover after a restart without the owner re-linking:
+// the first business message that arrives re-registers the connection.
+async function recoverBusinessConnection(connectionId) {
+    try {
+        const fresh = await EsTeams.getBusinessConnection(connectionId);
+        if (fresh && fresh.user) {
+            console.error(`BIZ RECOVERED connection ${connectionId} for user ${fresh.user.id}`);
+            return storeBusinessConnection(fresh);
+        }
+    } catch (err) {
+        console.error("BIZ RECOVER ERROR:", err.message);
+    }
+    return null;
+}
+
+function findBusinessConnectionFor(msg) {
+    return Object.values(businessConnections)
+        .find(c => c.userId === msg.from.id || c.userChatId === msg.chat.id);
+}
+
+EsTeams.on('business_connection', (connection) => {
+    try {
         const previous = businessConnections[connection.id];
         const stateChanged = !previous || previous.isEnabled !== !!connection.is_enabled;
 
-        businessConnections[connection.id] = {
-            id: connection.id,
-            userId: connection.user.id,
-            userChatId: connection.user_chat_id,
-            isEnabled: !!connection.is_enabled,
-            canReply: connection.rights?.can_reply ?? true,
-            autoReply: previous?.autoReply || false,
-            ownerName: connection.user.first_name || previous?.ownerName || '',
-            profile: previous?.profile || ''
-        };
-        await saveBusinessConnections(businessConnections);
+        storeBusinessConnection(connection);
 
         if (!stateChanged) return;
 
@@ -17092,8 +17129,14 @@ function generateBusinessReply(connection) {
 EsTeams.on('business_message', async (msg) => {
     try {
         const connectionId = msg.business_connection_id;
-        const businessConnections = await loadBusinessConnections();
-        const connection = businessConnections[connectionId];
+        let connection = businessConnections[connectionId];
+
+        // Not stored (fresh start, wiped container, or we missed the original
+        // business_connection event) — ask Telegram who this belongs to and
+        // store it, so everything keeps working without a manual re-link.
+        if (!connection) {
+            connection = await recoverBusinessConnection(connectionId);
+        }
         if (!connection || !connection.isEnabled) return;
 
         const from = msg.from || {};
@@ -17131,12 +17174,10 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
-    const businessConnections = await loadBusinessConnections();
-    const connection = findBusinessConnectionFor(businessConnections, msg);
+    const connection = findBusinessConnectionFor(msg);
 
     if (!connection) {
-        const notConnected = await buildBizNotConnectedView();
-        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
+        return sendBizNotConnected(chatId);
     }
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
@@ -17159,16 +17200,14 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
          });
     }
 
-    const businessConnections = await loadBusinessConnections();
-    const connection = findBusinessConnectionFor(businessConnections, msg);
+    const connection = findBusinessConnectionFor(msg);
     if (!connection) {
-        const notConnected = await buildBizNotConnectedView();
-        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
+        return sendBizNotConnected(chatId);
     }
 
     connection.autoReply = mode === 'on';
     businessConnections[connection.id] = connection;
-    await saveBusinessConnections(businessConnections);
+    saveBusinessConnections();
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption: mode === 'on'
             ? `✅ *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗲𝗻𝗮𝗯𝗹𝗲𝗱*\n\nI'll now send an instant reply to your customers when they message your Business account — a reliable fixed message, not AI-generated.\n\n${connection.profile ? "It'll include the note you set with /bizprofile." : "Tip: set /bizprofile to add a short note (e.g. hours, what you sell) to the end of every auto-reply."}`
@@ -17179,11 +17218,9 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
 
-    const businessConnections = await loadBusinessConnections();
-    const connection = findBusinessConnectionFor(businessConnections, msg);
+    const connection = findBusinessConnectionFor(msg);
     if (!connection) {
-        const notConnected = await buildBizNotConnectedView();
-        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: notConnected.caption, parse_mode: "Markdown", reply_markup: notConnected.keyboard });
+        return sendBizNotConnected(chatId);
     }
 
     const description = match[1] ? match[1].trim() : null;
@@ -17198,7 +17235,7 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 
     connection.profile = description.slice(0, 600);
     businessConnections[connection.id] = connection;
-    await saveBusinessConnections(businessConnections);
+    saveBusinessConnections();
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption:
         `✅ *𝗡𝗼𝘁𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
