@@ -5337,6 +5337,51 @@ EsTeams.onText(/\/publish(?:\s+(.+))?/, async (msg, match) => {
   console.log(`✅ Broadcast complete: ${successCount}/${totalTargets} delivered successfully.`);
 });
 
+//======= SHARED FREE AI HELPER =================//
+// Used by /gpt, /chatbot, and the Business auto-reply. davidcyril's API is a
+// free, unofficial community wrapper with no uptime guarantee, so this tries
+// it first and falls back through other free/keyless providers (each with
+// one retry) before giving up. No single free provider can be guaranteed
+// reliable — this just improves the odds of getting a real answer instead of
+// silently falling back to canned text.
+async function askFreeAI(prompt, timeoutMs = 15000) {
+    const providers = [
+        async () => {
+            const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(prompt)}`, { signal: AbortSignal.timeout(timeoutMs) });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            if (!data?.success || !data?.response) throw new Error('empty response');
+            return data.response.trim();
+        },
+        async () => {
+            const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`, { signal: AbortSignal.timeout(timeoutMs) });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const textReply = (await res.text()).trim();
+            if (!textReply) throw new Error('empty response');
+            return textReply;
+        },
+        async () => {
+            const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=mistral`, { signal: AbortSignal.timeout(timeoutMs) });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const textReply = (await res.text()).trim();
+            if (!textReply) throw new Error('empty response');
+            return textReply;
+        }
+    ];
+
+    for (let i = 0; i < providers.length; i++) {
+        for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+                return await providers[i]();
+            } catch (err) {
+                console.error(`askFreeAI provider ${i + 1}/${providers.length} attempt ${attempt} ERROR:`, err.message);
+                if (attempt === 1) await new Promise(r => setTimeout(r, 700));
+            }
+        }
+    }
+    return null;
+}
+
 // AI Command
 EsTeams.onText(/\/gpt(?:\s+(.+))?/, async (msg, match) => {
     const chatId = msg.chat.id;
@@ -5369,16 +5414,12 @@ EsTeams.onText(/\/gpt(?:\s+(.+))?/, async (msg, match) => {
         await EsTeams.sendChatAction(chatId, 'typing');
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // ✅ Correct API URL and param
-        const apiUrl = `https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(query)}`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        if (!data.success || !data.response) {
-            throw new Error("Invalid AI response");
+        const aiResponse = await askFreeAI(query);
+        if (!aiResponse) {
+            throw new Error("All AI providers failed");
         }
 
-        const caption = `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗜*\n\n*Response:*\n${data.response}\n\n*𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦*`;
+        const caption = `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗜*\n\n*Response:*\n${aiResponse}\n\n*𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦*`;
 
         await EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption,
@@ -9940,10 +9981,7 @@ EsTeams.on("message", async (msg) => {
     try {
         const conversation = chatbotMemory[userId].map(m => `${m.role}: ${m.content}`).join("\n");
 
-        // ✅ Correct API endpoint and parameter
-        const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(conversation)}`);
-        const data = await res.json();
-        const aiResponse = data.response || "⚠️ Error fetching response.";
+        const aiResponse = await askFreeAI(conversation) || "⚠️ Sorry, I couldn't reach any AI provider right now. Please try again shortly.";
 
         chatbotMemory[userId].push({ role: "bot", content: aiResponse });
         fs.writeFileSync(CHATBOT_MEMORY_FILE, JSON.stringify(chatbotMemory, null, 2));
@@ -17030,30 +17068,8 @@ async function generateBusinessReply(connection, customerText) {
         : `You are personally replying to a customer on Telegram on behalf of ${connection.ownerName || 'the business owner'}. `;
     const instructions = `${persona}Reply naturally, warmly, and helpfully, the way a real person running this business would — not like a bot, and don't mention that you're an AI. Keep it short (1-4 sentences) unless the question genuinely needs more detail.\n\nCustomer's message: "${customerText}"\n\nYour reply:`;
 
-    try {
-        const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(instructions)}`, { signal: AbortSignal.timeout(15000) });
-        if (res.ok) {
-            const data = await res.json();
-            if (data?.success && data?.response) return data.response.trim();
-        }
-        console.error("BUSINESS AI (primary) returned no usable response, status:", res.status);
-    } catch (err) {
-        console.error("BUSINESS AI (primary) ERROR:", err.message);
-    }
-
-    try {
-        const url = `https://text.pollinations.ai/${encodeURIComponent(customerText)}?system=${encodeURIComponent(instructions)}&model=openai`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
-        if (res.ok) {
-            const fallbackReply = (await res.text()).trim();
-            if (fallbackReply) return fallbackReply;
-        }
-        console.error("BUSINESS AI (fallback) returned no usable response, status:", res.status);
-    } catch (err) {
-        console.error("BUSINESS AI (fallback) ERROR:", err.message);
-    }
-
-    return "Thanks for reaching out! I'll take a proper look and get back to you shortly.";
+    const reply = await askFreeAI(instructions);
+    return reply || "Thanks for reaching out! I'll take a proper look and get back to you shortly.";
 }
 
 EsTeams.on('business_message', async (msg) => {
