@@ -231,6 +231,7 @@ EsTeams.forEach(bot => {
     { command: 'reopentopic', description: 'Reopen the current forum topic' },
     { command: 'renametopic', description: 'Rename the current forum topic' },
     { command: 'bizassistant', description: 'Toggle Business auto-reply' },
+    { command: 'bizprofile', description: 'Describe your business for the AI' },
     { command: 'bizstatus', description: 'Check Business connection status' },
     { command: 'joke', description: 'Get a random joke' },
     { command: 'riddle', description: 'Get a random riddle' },
@@ -1499,6 +1500,7 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐛𝐨𝐭𝐢𝐧𝐟𝐨 ◁️❄️🕷️
 ┃ /𝐠𝐫𝐨𝐮𝐩𝐢𝐧𝐟𝐨 ◁️❄️🕷️
 ┃ /𝐛𝐢𝐳𝐚𝐬𝐬𝐢𝐬𝐭𝐚𝐧𝐭 ◁️❄️🕷️
+┃ /𝐛𝐢𝐳𝐩𝐫𝐨𝐟𝐢𝐥𝐞 ◁️❄️🕷️
 ┃ /𝐛𝐢𝐳𝐬𝐭𝐚𝐭𝐮𝐬 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
@@ -16925,7 +16927,9 @@ EsTeams.on('business_connection', (connection) => {
             userChatId: connection.user_chat_id,
             isEnabled: !!connection.is_enabled,
             canReply: connection.rights?.can_reply ?? true,
-            autoReply: previous?.autoReply || false
+            autoReply: previous?.autoReply || false,
+            ownerName: connection.user.first_name || previous?.ownerName || '',
+            profile: previous?.profile || ''
         };
         saveBusinessConnections(businessConnections);
 
@@ -16935,7 +16939,17 @@ EsTeams.on('business_connection', (connection) => {
         if (!stateChanged) return;
 
         const text = connection.is_enabled
-            ? `✅ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗔𝗦𝗦𝗜𝗦𝗧𝗔𝗡𝗧 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗*\n\nES TEAMS V1 is now linked to your Telegram Business account.\n\nBy default I only notify you *here, in this DM with me* about new customer messages — I won't touch your Business chats themselves.\n\nSend me \`/bizassistant on\` **right here in this chat** if you'd also like me to auto-reply to customers for you, or \`/bizstatus\` to check the connection anytime.\n\n⚠️ Commands like \`/bizassistant\` only work when sent directly to me in this chat — not inside your Business conversations with customers, those just get relayed to me as notifications.`
+            ? `✅ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗔𝗦𝗦𝗜𝗦𝗧𝗔𝗡𝗧 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗*\n\n` +
+              `ES TEAMS V1 is now linked to your Telegram Business account.\n\n` +
+              `By default I only notify you here, in this DM with me, about new customer messages. I won't touch your Business chats themselves.\n\n` +
+              `Here's how to set it up:\n\n` +
+              `1️⃣ \`/bizprofile <describe your business>\`\n` +
+              `Tell me what you do, so replies actually sound like you.\n\n` +
+              `2️⃣ \`/bizassistant on\`\n` +
+              `Turns on auto-reply for customer messages.\n\n` +
+              `3️⃣ \`/bizstatus\`\n` +
+              `Check your connection anytime.\n\n` +
+              `⚠️ These only work sent directly to me, right here — not inside your Business conversations with customers, those just get relayed to me as notifications.`
             : `❌ *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗧𝗨𝗥𝗡𝗘𝗗 𝗢𝗙𝗙*\n\nYour Telegram Business connection to ES TEAMS V1 was disabled from Telegram settings.`;
 
         EsTeams.sendMessage(connection.user_chat_id, text, { parse_mode: "Markdown", reply_markup: waChannelBtn }).catch(() => {});
@@ -16943,6 +16957,41 @@ EsTeams.on('business_connection', (connection) => {
         console.error("BUSINESS_CONNECTION ERROR:", err.message);
     }
 });
+
+// Builds a reply that actually sounds like the connected business owner,
+// using whatever context they've given us via /bizprofile, and tries a
+// second free AI provider before giving up if the first one fails.
+async function generateBusinessReply(connection, customerText) {
+    const persona = connection.profile
+        ? `You are personally replying to a customer on Telegram on behalf of ${connection.ownerName || 'the business owner'}. About this business, in the owner's own words: "${connection.profile}". `
+        : `You are personally replying to a customer on Telegram on behalf of ${connection.ownerName || 'the business owner'}. `;
+    const instructions = `${persona}Reply naturally, warmly, and helpfully, the way a real person running this business would — not like a bot, and don't mention that you're an AI. Keep it short (1-4 sentences) unless the question genuinely needs more detail.\n\nCustomer's message: "${customerText}"\n\nYour reply:`;
+
+    try {
+        const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(instructions)}`, { signal: AbortSignal.timeout(15000) });
+        if (res.ok) {
+            const data = await res.json();
+            if (data?.success && data?.response) return data.response.trim();
+        }
+        console.error("BUSINESS AI (primary) returned no usable response, status:", res.status);
+    } catch (err) {
+        console.error("BUSINESS AI (primary) ERROR:", err.message);
+    }
+
+    try {
+        const url = `https://text.pollinations.ai/${encodeURIComponent(customerText)}?system=${encodeURIComponent(instructions)}&model=openai`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+        if (res.ok) {
+            const fallbackReply = (await res.text()).trim();
+            if (fallbackReply) return fallbackReply;
+        }
+        console.error("BUSINESS AI (fallback) returned no usable response, status:", res.status);
+    } catch (err) {
+        console.error("BUSINESS AI (fallback) ERROR:", err.message);
+    }
+
+    return "Thanks for reaching out! I'll take a proper look and get back to you shortly.";
+}
 
 EsTeams.on('business_message', async (msg) => {
     try {
@@ -16965,18 +17014,15 @@ EsTeams.on('business_message', async (msg) => {
         const preview = text ? (text.length > 300 ? text.slice(0, 300) + '…' : text) : '[non-text message]';
 
         EsTeams.sendMessage(connection.userChatId,
-            `📩 *𝗡𝗘𝗪 𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘*\n\n*From:* ${from.first_name || 'Customer'}${from.username ? ' (@' + from.username + ')' : ''}\n\n${preview}`,
+            `📩 *𝗡𝗘𝗪 𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘*\n\n` +
+            `*From:* ${from.first_name || 'Customer'}${from.username ? ' (@' + from.username + ')' : ''}\n\n` +
+            `*Message:*\n${preview}`,
             { parse_mode: "Markdown" }
         ).catch(() => {});
 
         if (!connection.autoReply || !connection.canReply || !text) return;
 
-        let reply = "Thanks for your message! We'll get back to you shortly.";
-        try {
-            const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(text)}`);
-            const data = await res.json();
-            if (data?.success && data?.response) reply = data.response;
-        } catch {}
+        const reply = await generateBusinessReply(connection, text);
 
         await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId }).catch(() => {});
     } catch (err) {
@@ -16994,10 +17040,13 @@ EsTeams.onText(/^\/bizstatus$/i, async (msg) => {
         return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found.*\n\nTo link this bot: open Telegram Settings → Telegram Business → Chatbots → connect *this bot*.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
     }
 
-    EsTeams.sendPhoto(chatId, botImageUrl, { caption: `🔗 *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗦𝗧𝗔𝗧𝗨𝗦*\n\n` +
-        `*Connected:* ${connection.isEnabled ? 'Yes ✅' : 'No ❌'}\n` +
-        `*Auto-reply:* ${connection.autoReply ? 'ON ✅' : 'OFF'}\n` +
-        `*Can reply on your behalf:* ${connection.canReply ? 'Yes' : 'No (grant this right in Telegram settings)'}`, parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZSTATUS ERROR:", err.message));
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption:
+        `🔗 *𝗕𝗨𝗦𝗜𝗡𝗘𝗦𝗦 𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗜𝗢𝗡 𝗦𝗧𝗔𝗧𝗨𝗦*\n\n` +
+        `*Connected:*\n${connection.isEnabled ? 'Yes ✅' : 'No ❌'}\n\n` +
+        `*Auto-reply:*\n${connection.autoReply ? 'ON ✅' : 'OFF'}\n\n` +
+        `*Can reply on your behalf:*\n${connection.canReply ? 'Yes' : 'No — grant this right in Telegram settings'}\n\n` +
+        `*Business profile:*\n${connection.profile ? connection.profile : '_Not set — use /bizprofile to describe your business so replies sound like you._'}`,
+        parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZSTATUS ERROR:", err.message));
 });
 
 EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
@@ -17021,7 +17070,38 @@ EsTeams.onText(/^\/bizz?assistant(?:\s+(on|off))?$/i, async (msg, match) => {
     saveBusinessConnections(businessConnections);
 
     EsTeams.sendPhoto(chatId, botImageUrl, { caption: mode === 'on'
-            ? "✅ *Auto-reply enabled.* I'll now reply to your customers automatically when they message your Business account."
-            : "🔕 *Auto-reply disabled.* I'll only notify you about new messages from now on.", parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZASSISTANT ERROR:", err.message));
+            ? `✅ *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗲𝗻𝗮𝗯𝗹𝗲𝗱*\n\nI'll now reply to your customers automatically when they message your Business account.\n\n${connection.profile ? "I'll use the business profile you set with /bizprofile to sound like you." : "Tip: set /bizprofile with a quick description of your business so my replies actually sound like you, instead of generic."}`
+            : "🔕 *𝗔𝘂𝘁𝗼-𝗿𝗲𝗽𝗹𝘆 𝗱𝗶𝘀𝗮𝗯𝗹𝗲𝗱*\n\nI'll only notify you about new messages from now on — I won't reply for you.", parse_mode: "Markdown", reply_markup: waChannelBtn  }).catch(err => console.error("BIZASSISTANT ERROR:", err.message));
+});
+
+EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+
+    const connection = Object.values(businessConnections).find(c => c.userId === msg.from.id);
+    if (!connection) {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "ℹ️ *No Telegram Business connection found for your account.*\n\nLink this bot first via Telegram Settings → Telegram Business → Chatbots.", parse_mode: "Markdown", reply_markup: waChannelBtn  });
+    }
+
+    const description = match[1] ? match[1].trim() : null;
+    if (!description) {
+        return EsTeams.sendPhoto(chatId, botImageUrl, { caption:
+            `*Invalid Input*\n\nPlease use \`/bizprofile <description>\`\n\n` +
+            `e.g. \`/bizprofile We sell handmade candles in Lagos, ship nationwide, and reply in a friendly, casual tone.\`\n\n` +
+            `${connection.profile ? `*Current profile:*\n${connection.profile}` : 'No profile set yet — the AI is replying generically until you set one.'}`,
+            parse_mode: "Markdown", reply_markup: waChannelBtn
+         });
+    }
+
+    connection.profile = description.slice(0, 600);
+    businessConnections[connection.id] = connection;
+    saveBusinessConnections(businessConnections);
+
+    EsTeams.sendPhoto(chatId, botImageUrl, { caption:
+        `✅ *𝗕𝘂𝘀𝗶𝗻𝗲𝘀𝘀 𝗽𝗿𝗼𝗳𝗶𝗹𝗲 𝘀𝗮𝘃𝗲𝗱*\n\n` +
+        `${connection.profile}\n\n` +
+        `From now on, auto-replies will use this to sound like you instead of a generic assistant.`,
+        parse_mode: "Markdown", reply_markup: waChannelBtn
+    }).catch(err => console.error("BIZPROFILE ERROR:", err.message));
 });
 });
