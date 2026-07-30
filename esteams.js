@@ -5362,6 +5362,11 @@ function identityGuardAnswer(text) {
     return AI_IDENTITY_PATTERNS.some(re => re.test(clean)) ? AI_IDENTITY_ANSWER : null;
 }
 
+// Scans an AI-generated REPLY (not the customer's question) for any
+// self-identifying leak — e.g. the model breaking character and admitting
+// "I'm Claude, made by Anthropic" instead of roleplaying the business. If any
+// of these appear anywhere in the reply, the whole reply is discarded and
+// replaced, since a partially-redacted refusal still reads as broken/leaked.
 const AI_LEAK_KEYWORDS = [
     'claude', 'anthropic', 'chatgpt', 'chat gpt', 'openai', 'open ai',
     'gpt-3', 'gpt-4', 'gpt-5', 'gpt3', 'gpt4', 'gpt5', 'davidcyril',
@@ -17246,38 +17251,19 @@ function shouldGreetBusinessChat(connectionId, chatId) {
     return !last || (now - last) >= BIZ_GREET_WINDOW_MS;
 }
 
-const BIZ_MEMORY_TURNS = 5;
-const bizConversationMemory = new Map();
-
-function getBizMemory(connectionId, chatId) {
-    const key = `${connectionId}:${chatId}`;
-    if (!bizConversationMemory.has(key)) bizConversationMemory.set(key, []);
-    return bizConversationMemory.get(key);
-}
-
-function pushBizMemory(connectionId, chatId, role, content) {
-    const mem = getBizMemory(connectionId, chatId);
-    mem.push({ role, content });
-    while (mem.length > BIZ_MEMORY_TURNS * 2) mem.shift();
-}
-
-async function generateBusinessAiReply(connection, customerText, history) {
+async function generateBusinessAiReply(connection, customerText) {
     const guarded = identityGuardAnswer(customerText);
     if (guarded) return guarded;
 
     const about = connection.profile
         ? `About this business, in the owner's own words: "${connection.profile}".`
         : '';
-    const historyText = history && history.length
-        ? `\n\nEarlier in this conversation:\n${history.map(h => `${h.role === 'customer' ? 'Customer' : 'You'}: ${h.content}`).join('\n')}`
-        : '';
     const prompt =
         `You are the customer-support assistant replying on Telegram for ${connection.ownerName || 'this business'}. ${about} ` +
-        `Text back the way a real, friendly staff member would — casual, warm, natural, using contractions, no corporate or robotic phrasing. Keep it short (1-3 sentences) unless the question genuinely needs more. ` +
-        `Use the earlier conversation (if any) to follow up naturally on what the customer already said, instead of repeating yourself or treating each message as if it's the first. ` +
+        `Reply directly, warmly and helpfully to the customer's message below. Keep it short (1-4 sentences). ` +
         `Never say you are an AI language model and never mention any AI company or model name. ` +
-        `If asked who made you, only say you are a virtual business Ai created by ES TEAMS TECH.` +
-        `${historyText}\n\nCustomer's new message: "${customerText}"\n\nYour reply:`;
+        `If asked who made you, only say you are a virtual business Ai created by ES TEAMS TECH.\n\n` +
+        `Customer's message: "${customerText}"\n\nYour reply:`;
 
     const reply = await askFreeAI(prompt);
     if (!reply) return null;
@@ -17335,18 +17321,11 @@ EsTeams.on('business_message', async (msg) => {
             await EsTeams.sendChatAction(msg.chat.id, 'typing', { business_connection_id: connectionId });
         } catch {}
 
-        const history = getBizMemory(connectionId, msg.chat.id);
-        const reply = await generateBusinessAiReply(connection, text, history);
+        const reply = await generateBusinessAiReply(connection, text);
         if (!reply) {
             console.error("BIZ AUTOREPLY SKIPPED: all AI providers failed");
             return;
         }
-
-        const typingDelay = Math.min(4000, 800 + Math.min(reply.length, 200) * 15);
-        await new Promise(resolve => setTimeout(resolve, typingDelay));
-
-        pushBizMemory(connectionId, msg.chat.id, 'customer', text);
-        pushBizMemory(connectionId, msg.chat.id, 'assistant', reply);
 
         try {
             await EsTeams.sendMessage(msg.chat.id, reply, { business_connection_id: connectionId });
