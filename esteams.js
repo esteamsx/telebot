@@ -1797,6 +1797,33 @@ EsTeams.onText(/\/start/, async (msg) => {
         reply_markup: mainMenu.reply_markup
     });
 
+    // Telegram limits photo captions to 1024 characters. Some section menus
+    // (e.g. TOOLS, GROUP) build a caption longer than that, which makes
+    // editMessageCaption reject silently so the menu appears unresponsive.
+    // This helper edits the caption in place when it fits, and otherwise
+    // sends the content as a normal text message (4096-char limit) so the
+    // section still responds like every other menu.
+    const TELEGRAM_CAPTION_LIMIT = 1024;
+    const showSectionMenu = (chatId, messageId, caption, replyMarkup) => {
+        if (caption.length <= TELEGRAM_CAPTION_LIMIT) {
+            return EsTeams.editMessageCaption(caption, {
+                chat_id: chatId,
+                message_id: messageId,
+                parse_mode: "Markdown",
+                reply_markup: replyMarkup
+            }).catch(() =>
+                EsTeams.sendMessage(chatId, caption, {
+                    parse_mode: "Markdown",
+                    reply_markup: replyMarkup
+                })
+            );
+        }
+        return EsTeams.sendMessage(chatId, caption, {
+            parse_mode: "Markdown",
+            reply_markup: replyMarkup
+        });
+    };
+
     EsTeams.on("callback_query", (query) => {
     const data = query.data;
     const chatId = query.message.chat.id;
@@ -1907,12 +1934,7 @@ EsTeams.onText(/\/start/, async (msg) => {
     );
   }
   
-            EsTeams.editMessageCaption(messages.mainMenu + messages.ownerMenu + messages.gameMenu, {
-                chat_id: chatId,
-                message_id: messageId,
-                parse_mode: "Markdown",
-                reply_markup: mainMenu.reply_markup
-            });
+            showSectionMenu(chatId, messageId, messages.mainMenu + messages.ownerMenu + messages.gameMenu, mainMenu.reply_markup);
         } else if (data === "scrape_menu") {
             
   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
@@ -1995,12 +2017,7 @@ EsTeams.onText(/\/start/, async (msg) => {
     );
   }
   
-            EsTeams.editMessageCaption(messages.mainMenu + messages.ownerMenu + messages.toolsMenu, {
-                chat_id: chatId,
-                message_id: messageId,
-                parse_mode: "Markdown",
-                reply_markup: downloadMenu.reply_markup
-            });
+            showSectionMenu(chatId, messageId, messages.mainMenu + messages.ownerMenu + messages.toolsMenu, toolsMenu.reply_markup);
          } else if (data === "group_menu") {
              
   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
@@ -2017,12 +2034,7 @@ EsTeams.onText(/\/start/, async (msg) => {
     );
   }
   
-            EsTeams.editMessageCaption(messages.mainMenu + messages.ownerMenu + messages.groupMenu, {
-                chat_id: chatId,
-                message_id: messageId,
-                parse_mode: "Markdown",
-                reply_markup: groupMenu.reply_markup
-            });
+            showSectionMenu(chatId, messageId, messages.mainMenu + messages.ownerMenu + messages.groupMenu, groupMenu.reply_markup);
            } else if (data === "religion_menu") {
                
   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(query.from.id)) {
