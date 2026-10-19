@@ -39,6 +39,41 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 const app = express();
 app.use(bodyParser.json());
 
+const ES_TEAMS_API_BASE = "https://esteamstv.devs.surf";
+const ES_TEAMS_API_KEY = process.env.ES_TEAMS_API_KEY;
+
+async function esApiGet(endpoint, params = {}) {
+    const query = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ""))
+    ).toString();
+    const url = `${ES_TEAMS_API_BASE}${endpoint}${query ? `?${query}` : ""}`;
+    const res = await fetch(url, { headers: { "x-api-key": ES_TEAMS_API_KEY } });
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `ES TEAMS API responded ${res.status}`);
+        return data;
+    }
+    if (!res.ok) throw new Error(`ES TEAMS API responded ${res.status}`);
+    return Buffer.from(await res.arrayBuffer());
+}
+
+async function esApiPost(endpoint, body = {}) {
+    const res = await fetch(`${ES_TEAMS_API_BASE}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": ES_TEAMS_API_KEY },
+        body: JSON.stringify(body)
+    });
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `ES TEAMS API responded ${res.status}`);
+        return data;
+    }
+    if (!res.ok) throw new Error(`ES TEAMS API responded ${res.status}`);
+    return Buffer.from(await res.arrayBuffer());
+}
+
 //============= PORT CONFIG ===============//
 const PORT = process.env.PORT || 3000;
 
@@ -178,10 +213,10 @@ EsTeams.forEach(bot => {
 
 //============= GLOBAL CRASH GUARD ==============//
 process.on('unhandledRejection', (reason) => {
-  console.error('❌ [unhandledRejection]', reason);
+  console.error('❌ [unhandledRejection]', reason instanceof Error ? reason.message : reason);
 });
 process.on('uncaughtException', (err) => {
-  console.error('❌ [uncaughtException]', err);
+  console.error('❌ [uncaughtException]', err instanceof Error ? err.message : err);
 });
 
 //============= NATIVE TELEGRAM COMMAND MENU ==============//
@@ -251,7 +286,48 @@ EsTeams.forEach(bot => {
     { command: 'index', description: 'Crypto fear & greed index' },
     { command: 'balance', description: 'Check your wallet balance' },
     { command: 'fund', description: 'Fund your wallet' },
-    { command: 'airtime', description: 'Buy airtime' }
+    { command: 'airtime', description: 'Buy airtime' },
+    { command: 'twitter', description: 'Download a Twitter/X video' },
+    { command: 'facebook', description: 'Download a Facebook video' },
+    { command: 'instagram', description: 'Download Instagram media' },
+    { command: 'tiktok', description: 'Download a TikTok video' },
+    { command: 'play', description: 'Search and download a song' },
+    { command: 'video', description: 'Search and download a video' },
+    { command: 'ytdl', description: 'Download a YouTube video by link' },
+    { command: 'lyrics', description: 'Get lyrics for a song' },
+    { command: 'write', description: 'Write text on a book cover image' },
+    { command: 'flux', description: 'Generate an AI image (premium)' },
+    { command: 'ssweb', description: 'Screenshot a website' },
+    { command: 'removebg', description: 'Remove image background' },
+    { command: 'webdl', description: 'Download a file from a direct link' },
+    { command: 'apk', description: 'Search for an app APK' },
+    { command: 'gdrive', description: 'Get a Google Drive download link' },
+    { command: 'imgscan', description: 'Describe what is in an image' },
+    { command: 'ocr', description: 'Extract text from an image' },
+    { command: 'fakewapp', description: 'Generate a fake WhatsApp chat image' },
+    { command: 'tempmail', description: 'Create a temporary email' },
+    { command: 'checkmail', description: 'Check your temp mail inbox' },
+    { command: 'technews', description: 'Get a random tech news story' },
+    { command: 'currency', description: 'Convert between currencies' },
+    { command: 'summarize', description: 'Summarize a block of text' },
+    { command: 'chart', description: 'Generate a chart image' },
+    { command: 'linkpreview', description: 'Preview a link' },
+    { command: 'iplookup', description: 'Look up an IP address' },
+    { command: 'country', description: 'Get info about a country' },
+    { command: 'advice', description: 'Get a random piece of advice' },
+    { command: 'catfact', description: 'Get a random cat fact' },
+    { command: 'holidays', description: 'List public holidays for a country' },
+    { command: 'dogimage', description: 'Get a random dog picture' },
+    { command: 'quote', description: 'Get a random quote' },
+    { command: 'mcstatus', description: 'Check a Minecraft server status' },
+    { command: 'npm', description: 'Look up an npm package' },
+    { command: 'ytinfo', description: 'Get info about a YouTube video' },
+    { command: 'githubrepo', description: 'Look up a GitHub repository' },
+    { command: 'anime', description: 'Search for an anime' },
+    { command: 'wiki', description: 'Get a Wikipedia summary' },
+    { command: 'sportsteam', description: 'Look up a sports team' },
+    { command: 'videogen', description: 'Generate an AI video (premium)' },
+    { command: 'wacheck', description: 'Check if a number is on WhatsApp' }
   ];
 
   const ownerCommands = [
@@ -283,9 +359,13 @@ const ANTILINK_FILE = './ES_TEAMS-MEDIA/antilink.json';
 const START_TIME_FILE = 'ES_TEAMS-MEDIA/start_time.json';
 const TTT_FILE = './ES_TEAMS-MEDIA/ttt.json';
 const botImageUrl = 'https://files.catbox.moe/3jibot.jpg';
-const SITE_BASE = 'https://bot-connect.emmyhenztech.site';
-const USERNAME = 'peterchuks';
-const PASSWORD = 'Password';
+// EmmyHenz V4 site. Override with EMMYHENZ_BASE_URL if the owner moves the domain again.
+const SITE_BASE = (process.env.EMMYHENZ_BASE_URL || 'https://host.emmyhenztech.xyz').replace(/\/+$/, '');
+// Prefer environment variables. The literals below are legacy fallbacks: set the env vars, then delete them.
+const USERNAME = process.env.EMMYHENZ_USERNAME || 'peterchuks';
+const PASSWORD = process.env.EMMYHENZ_PASSWORD || 'Password';
+// Token issued by the site's Google/GitHub sign-in (the website stores it as localStorage "eh_tok").
+const SITE_TOKEN_ENV = process.env.EMMYHENZ_TOKEN || '';
 const BOT_USERNAME = "es_teams_bot";
 const reactions = ["😘", "❤️", "🤝", "🥰", "👏", "🙏", "😱", "🤯", "👍", "😍", "🤩", "🔥", "👌", "👨‍💻", "😁", "😢", "🎉", "🍾"];
 const fruits = ["🍎","🍌","🍓","🍉","🍍","🍊","🥝","🍇","🍐","🥭"];const REPO_PATH = "./"; 
@@ -302,7 +382,6 @@ if (!fs.existsSync(TTT_FILE)) fs.writeFileSync(TTT_FILE, '{}');
 //================= SESSIONS =================//
 const areactSessions = {};
 const supportSession = {};
-const sessionsLogo2 = {};
 let broadcastSession = {};
 let lastPrice = null;
 let btcFailStart = null;
@@ -318,7 +397,6 @@ const userCtimerSessions = {};
 const activeTimers = {};
 const cryptoSessions2 = {};
 const pnlSessions = {};
-const sessions = {}; 
 const receiptSteps = {}; 
 const tradeSessions = {}; 
 const memoryUsed = {}; 
@@ -327,7 +405,6 @@ const xoMemory = {};
 const tttLobbies = {};
 const airtimeSessions = {}; 
 const pinLocks = {};
-const ccgenSessions = {};
 const newFolderSessions = {};
 const userConfirming = {};
 const userCaptcha = {};
@@ -434,7 +511,25 @@ function welcomeCaption(mainText) {
   return `𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗔𝗨𝗧𝗢 𝗧𝗥𝗔𝗗𝗜𝗡𝗚\n\n${mainText}`;
 }
 
+// Secret-free description of an API failure (never includes tokens, passwords or headers).
+function describeApiError(err) {
+  const r = err?.response;
+  if (!r) return err?.code ? `${err.code}: ${err.message}` : (err?.message || 'Unknown error');
+  const d = r.data;
+  if (d && typeof d === 'object' && d.error) return `HTTP ${r.status}: ${d.error}`;
+  if (typeof d === 'string' && /<html|<!doctype/i.test(d)) {
+    return `HTTP ${r.status}: HTML instead of JSON (endpoint removed or bot-protection page)`;
+  }
+  return `HTTP ${r.status}`;
+}
+
 async function getToken(forceRefresh = false) {
+  // Preferred: token from the website's OAuth sign-in, supplied via EMMYHENZ_TOKEN.
+  if (SITE_TOKEN_ENV) {
+    if (forceRefresh) console.log('⚠️ EMMYHENZ_TOKEN was rejected (401). Sign in on the website again and update it.');
+    return SITE_TOKEN_ENV;
+  }
+
   if (!forceRefresh && cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
     return cachedToken;
   }
@@ -445,16 +540,16 @@ async function getToken(forceRefresh = false) {
       password: PASSWORD
     });
 
-    if (res.data.success) {
+    if (res.data && typeof res.data === 'object' && res.data.success && res.data.token) {
       cachedToken = res.data.token;
       tokenExpiry = Date.now() + (12 * 60 * 60 * 1000); 
       console.log('✅ Login successful, token cached for 12 hours');
       return cachedToken;
     } else {
-      throw new Error('Login failed: ' + (res.data.error || 'Unknown error'));
+      throw new Error('Login failed: ' + ((res.data && res.data.error) || 'unexpected response (is /api/login still supported?)'));
     }
   } catch (err) {
-    console.error('❌ Login error:', err.message);
+    console.error('❌ Login error:', describeApiError(err));
     throw err;
   }
 }
@@ -790,23 +885,28 @@ async function claimCoinsFromAccount(username, password) {
 
     const token = loginRes.data.token;
 
-    // Claim daily coin
-    const claimRes = await axios.post(
-      `${SITE_BASE}/api/claim-coin`,
-      {},
-      {
-        headers: {
-          "x-auth-token": token
-        },
-        timeout: 30000
-      }
-    );
+    // Claim daily coin. Live route on the current site: POST /api/tasks/daily/claim
+    // (x-auth-token, no body). Falls back to the legacy /api/claim-coin only if that route is gone.
+    const claimOpts = { headers: { "x-auth-token": token }, timeout: 30000 };
+    let claimRes;
+    try {
+      claimRes = await axios.post(`${SITE_BASE}/api/tasks/daily/claim`, null, claimOpts);
+    } catch (e) {
+      const st = e.response?.status;
+      if (st !== 404 && st !== 405) throw e;
+      claimRes = await axios.post(`${SITE_BASE}/api/claim-coin`, null, claimOpts);
+    }
+
+    if (!claimRes.data || typeof claimRes.data !== 'object') {
+      return { success: false, error: "Unexpected (non-JSON) claim response" };
+    }
 
     if (claimRes.data.success) {
       return {
         success: true,
         coinsClaimed:
           Number(
+            claimRes.data.reward ??
             claimRes.data.coinsClaimed ??
             claimRes.data.coin ??
             claimRes.data.coins ??
@@ -822,7 +922,7 @@ async function claimCoinsFromAccount(username, password) {
   } catch (err) {
     return {
       success: false,
-      error: err.response?.data?.error || err.message
+      error: describeApiError(err)
     };
   }
 }
@@ -831,13 +931,20 @@ async function claimCoinsFromAccount(username, password) {
 async function getAccountBalance() {
   try {
     const token = await getToken();
-    const res = await axios.get(`${SITE_BASE}/api/balance`, {
-      headers: { 'x-auth-token': token },
-      timeout: 30000
-    });
+    const headers = { 'x-auth-token': token };
+    try {
+      // Current site: GET /api/me -> { success, user: { coins, ... } }
+      const me = await axios.get(`${SITE_BASE}/api/me`, { headers, timeout: 30000 });
+      const coins = Number(me.data?.user?.coins);
+      if (me.data?.success && Number.isFinite(coins)) return coins;
+      throw new Error('Unexpected /api/me response');
+    } catch (e) {
+      if (e.response?.status !== 404) throw e;
+    }
+    const res = await axios.get(`${SITE_BASE}/api/balance`, { headers, timeout: 30000 });
     return res.data.balance ?? res.data.coins ?? 0;
   } catch (err) {
-    console.error('❌ Error getting account balance:', err.message);
+    console.error('❌ Error getting account balance:', describeApiError(err));
     return 0;
   }
 }
@@ -940,10 +1047,8 @@ cron.schedule('0 0 * * *', async () => {
 //============ SERVER HEALTH CHECK =================//
 async function checkServerHealth() {
   try {
-    const res = await axios.post(`${SITE_BASE}/api/login`, {
-      username: USERNAME,
-      password: PASSWORD
-    }, { 
+    // Unauthenticated status route used by the site itself (no credentials sent).
+    const res = await axios.get(`${SITE_BASE}/api/pages/status`, {
       timeout: 5000,
       validateStatus: function(status) {
         return status < 500 || status === 503;
@@ -955,6 +1060,10 @@ async function checkServerHealth() {
         isHealthy: false,
         reason: "Server unavailable"
       };
+    }
+
+    if (res.data && typeof res.data === 'object' && res.data.turnstileSiteKey) {
+      console.log('⚠️ Site has Cloudflare Turnstile enabled; channel-react requests from the bot may be rejected.');
     }
 
     return {
@@ -3021,11 +3130,9 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
     });
 
     try {
-        const apiUrl = `https://apis.davidcyril.name.ng/twitter?url=${encodeURIComponent(videoUrl)}`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        const data = await esApiGet("/api/v1/dev/twitter", { url: videoUrl });
 
-        if (!data.success || !data.video_hd) {
+        if (!data.download_url) {
             return EsTeams.editMessageText("⚠️ Invalid or unsupported Twitter URL. Please try another.", {
                 chat_id: chatId,
                 message_id: sentMessage.message_id,
@@ -3038,7 +3145,7 @@ EsTeams.onText(/^\/twitter (.+)$/, async (msg, match) => {
         }
 
         const videoPath = `ES_TEAMS-MEDIA/video/${chatId}.mp4`;
-        const videoResponse = await fetch(data.video_hd);
+        const videoResponse = await fetch(data.download_url);
         const videoBuffer = await videoResponse.arrayBuffer();
         const videoSizeMB = videoBuffer.byteLength / (1024 * 1024);
 
@@ -3139,12 +3246,11 @@ EsTeams.onText(/\/lyrics(?:\s(.+))?/, async (msg, match) => {
     const artist = best.artistName || "Unknown Artist";
     const title = best.trackName || songQuery;
 
-    const lyricsUrl = `https://apis.davidcyril.name.ng/lyrics2?t=${encodeURIComponent(title)}&a=${encodeURIComponent(artist)}`;
-    const lyricsRes = await axios.get(lyricsUrl, { timeout: 15000 }).catch(() => null);
+    const lyricsData = await esApiGet("/api/v1/dev/lyrics", { artist, title }).catch(() => null);
 
     await EsTeams.deleteMessage(chatId, waitMsg.message_id).catch(() => {});
 
-    if (!lyricsRes?.data?.lyrics) {
+    if (!lyricsData?.lyrics) {
       return EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `⚠️ Lyrics not found\n\nPlease try again!.`,
         parse_mode: "Markdown",
@@ -3152,7 +3258,7 @@ EsTeams.onText(/\/lyrics(?:\s(.+))?/, async (msg, match) => {
       });
     }
 
-    const fullLyrics = String(lyricsRes.data.lyrics).trim();
+    const fullLyrics = String(lyricsData.lyrics).trim();
     const filePath = `ES_TEAMS-MEDIA/${chatId}_lyrics.txt`;
     fs.writeFileSync(filePath, fullLyrics, "utf8");
 
@@ -3226,7 +3332,6 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         });
     }
 
-    const apiUrl = `https://apis.davidcyril.name.ng/generate/book?text=${encodeURIComponent(inputText)}&size=30`;
     const savePath = `ES_TEAMS-MEDIA/image/${userId}.jpg`;
 
     try {
@@ -3242,15 +3347,8 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
             fs.mkdirSync("ES_TEAMS-MEDIA/image", { recursive: true });
         }
 
-        const res = await fetch(apiUrl);
-        if (!res.ok) throw new Error("Failed to fetch image from API.");
-
-        const stream = fs.createWriteStream(savePath);
-        await new Promise((resolve, reject) => {
-            res.body.pipe(stream);
-            res.body.on("error", reject);
-            stream.on("finish", resolve);
-        });
+        const imageBuffer = await esApiGet("/api/v1/dev/book", { text: inputText });
+        fs.writeFileSync(savePath, imageBuffer);
 
         await EsTeams.sendPhoto(chatId, savePath, {
             caption: `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
@@ -3632,19 +3730,14 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
 
   try {
 
-    const response = await axios.get(
-      `https://apis.davidcyril.name.ng/download/tiktokv3?url=${encodeURIComponent(url)}`
-    );
+    const data = await esApiGet("/api/v1/dev/tiktok", { url });
 
-    const data = response.data;
-
-    if (!data.success || !data.video)
+    if (!data.download_url)
       throw new Error('Video download link not found.');
 
-    const videoUrl = data.video;
-    const audioUrl = data.audio;
-    const author = data.author || "Unknown";
-    const description = data.description || "No description";
+    const videoUrl = data.download_url;
+    const author = escapeMarkdown(data.author || "Unknown");
+    const description = escapeMarkdown(String(data.title || "No description").slice(0, 700));
 
     for (let step of steps) {
       await new Promise(r => setTimeout(r, 300));
@@ -3687,32 +3780,9 @@ EsTeams.onText(/^\/tiktok(?:\s+(.+))?$/, async (msg, match) => {
     let audioDownloadURL = null;
 
     try {
-      const audioResponse = await axios.get(audioUrl, {
-        responseType: 'arraybuffer',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Referer': 'https://www.tiktok.com/',
-          'Accept': 'audio/mpeg',
-          'Accept-Language': 'en-US,en;q=0.9'
-        }
-      });
-
-      const audioBuffer = Buffer.from(audioResponse.data);
-      const audioContentType = (audioResponse.headers['content-type'] || '').toLowerCase();
-      const looksValid = audioBuffer.length > 1000 &&
-        !audioContentType.includes('text') &&
-        !audioContentType.includes('json') &&
-        !audioContentType.includes('html');
-
-      let ffmpegSource;
-      if (looksValid) {
-        fs.writeFileSync(audioPath, audioBuffer);
-        ffmpegSource = audioPath;
-      } else {
-        // Bad/expired audio link — extract audio from the video instead.
-        fs.writeFileSync(videoPath, videoBuffer);
-        ffmpegSource = videoPath;
-      }
+      // Extract audio directly from the video we already downloaded.
+      fs.writeFileSync(videoPath, videoBuffer);
+      const ffmpegSource = videoPath;
 
       await new Promise((resolve, reject) => {
         ffmpeg(ffmpegSource)
@@ -3818,26 +3888,10 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   });
 
   try {
-    const formattedPrompt = encodeURIComponent(prompt.trim().replace(/\s+/g, '+'));
-    const apiUrl = `https://apis.davidcyril.name.ng/flux?prompt=${formattedPrompt}`;
+    const imageBuffer = await esApiGet("/api/v1/dev/imagegen", { prompt: prompt.trim() });
 
-    const response = await axios.get(apiUrl, {
-      responseType: 'arraybuffer',
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-        "Referer": "https://apis.davidcyril.name.ng/"
-      }
-    });
-
-    const contentType = response.headers['content-type'];
-    if (!contentType.startsWith('image/')) {
-      throw new Error("Invalid image received");
-    }
-
-    const fileExt = contentType.split('/')[1];
-    const imagePath = `ES_TEAMS-MEDIA/image/${chatId}_flux.${fileExt}`;
-    fs.writeFileSync(imagePath, response.data);
+    const imagePath = `ES_TEAMS-MEDIA/image/${chatId}_flux.png`;
+    fs.writeFileSync(imagePath, imageBuffer);
 
     await EsTeams.deleteMessage(chatId, waiting.message_id);
 
@@ -3900,18 +3954,10 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   });
 
   try {
-    const imageUrl = `https://apis.davidcyril.name.ng/ssweb?url=${encodeURIComponent(input)}&device=tablet`;
-
-    const response = await axios.get(imageUrl, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://apis.davidcyril.name.ng"
-      }
-    });
+    const imageBuffer = await esApiGet("/api/v1/dev/screenshot", { url: input });
 
     const imagePath = `ES_TEAMS-MEDIA/image/${chatId}_ssweb.jpg`;
-    fs.writeFileSync(imagePath, Buffer.from(response.data));
+    fs.writeFileSync(imagePath, imageBuffer);
 
     await EsTeams.deleteMessage(chatId, processing.message_id);
 
@@ -4212,11 +4258,11 @@ const waitingMsg = await EsTeams.sendMessage(chatId, "Processing Image. Please h
     const imageURL = catboxRes.data;
     fs.unlinkSync(imagePath);
 
-    const removeBGUrl = `https://apis.davidcyril.name.ng/removebg?url=${encodeURIComponent(imageURL)}`;
-    const removed = await axios.get(removeBGUrl, { responseType: "arraybuffer" });
+    const removed = await esApiPost("/api/v1/dev/bg-remove", { image_url: imageURL });
+    const removedRes = await axios.get(removed.image_url, { responseType: "arraybuffer" });
 
     const outputImagePath = `ES_TEAMS-MEDIA/image/${userId}_nobg.png`;
-    fs.writeFileSync(outputImagePath, removed.data);
+    fs.writeFileSync(outputImagePath, removedRes.data);
 
     await EsTeams.sendPhoto(chatId, outputImagePath, {
       caption: "✅ Background Removed Successfully!\n\n𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛",
@@ -4272,20 +4318,12 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     });
   }
 
-  const qrApi = `https://apis.davidcyril.name.ng/tools/qrcode?text=${encodeURIComponent(input)}`;
 const waitingMsg = await EsTeams.sendMessage(chatId, "Processing Qr. Please hold on...");
 
   try {
-    const res = await axios.get(qrApi, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://apis.davidcyril.name.ng/",
-        "Accept": "image/png,image/*"
-      }
-    });
+    const qrBuffer = await esApiGet("/api/v1/dev/qrcode", { text: input });
 
-    fs.writeFileSync(imagePath, res.data);
+    fs.writeFileSync(imagePath, qrBuffer);
 
     await EsTeams.sendPhoto(chatId, imagePath, {
       caption: "✅ QR CODE CREATED\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
@@ -4341,9 +4379,8 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const waitingMsg = await EsTeams.sendMessage(chatId, "⏳ Processing URL. Please hold on...");
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/tinyurl?url=${encodeURIComponent(url)}`;
-    const response = await axios.get(apiUrl);
-    const short = response.data.shortened_url;
+    const shortened = await esApiPost("/api/v1/dev/shorten", { url });
+    const short = shortened.short_url;
 
     await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
 
@@ -4411,21 +4448,15 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const waitingMsg = await EsTeams.sendMessage(chatId, "⛅ Processing weather data. Please hold on...");
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/weather?city=${encodeURIComponent(city)}`;
-    const response = await axios.get(apiUrl);
-    const data = response.data.data;
+    const data = await esApiGet("/api/v1/dev/weather", { location: city });
 
     const weatherReport = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗪𝗘𝗔𝗧𝗛𝗘𝗥 𝗗𝗜𝗦𝗣𝗟𝗔𝗬
 
-Location: ${data.location}, ${data.country}
-Weather: ${data.weather}
-Description: ${data.description}
-Temperature: ${data.temperature}
-Feels Like: ${data.feels_like}
-Pressure: ${data.pressure}
-Humidity: ${data.humidity}
-Wind Speed: ${data.wind_speed}
-Coordinates: Latitude ${data.coordinates.latitude}, Longitude ${data.coordinates.longitude}
+Location: ${data.location}
+Condition: ${data.condition}
+Temperature: ${data.temperature_c} C
+Wind Speed: ${data.windspeed_kmh} km/h
+Observed At: ${data.observed_at}
 
 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛`;
 
@@ -4480,14 +4511,12 @@ EsTeams.onText(/^\/tempmail(?:\s(.+))?$/, async (msg, match) => {
     );
 
     try {
-        const apiUrl = "https://apis.davidcyril.name.ng/temp-mail";
-        const res = await axios.get(apiUrl);
-        const data = res.data;
+        const data = await esApiPost("/api/v1/dev/tempmail/create", {});
 
         const output =
 `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗧𝗘𝗠𝗣 𝗠𝗔𝗜𝗟
 
-⏳ Expires At: ${data.expires_at}
+📧 Email: ${data.email}
 
 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛`;
 
@@ -4506,7 +4535,7 @@ EsTeams.onText(/^\/tempmail(?:\s(.+))?$/, async (msg, match) => {
                     [
                         {
                             text: "𝗖𝗢𝗣𝗬 𝗠𝗔𝗜𝗟 𝗞𝗘𝗬",
-                            copy_text: { text: data.session_id }
+                            copy_text: { text: data.token }
                         }
                     ],
                     [
@@ -4568,11 +4597,9 @@ EsTeams.onText(/^\/checkmail(?:\s(.+))?$/, async (msg, match) => {
   const waitingMsg = await EsTeams.sendMessage(chatId, "📨 Checking mail inbox. Please hold on...");
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/temp-mail/inbox?id=${sessionId}`;
-    const res = await axios.get(apiUrl);
-    const data = res.data;
+    const list = await esApiGet("/api/v1/dev/tempmail/inbox", { token: sessionId });
 
-    if (!data.success || !data.messages || data.messages.length === 0) {
+    if (!list.messages || list.messages.length === 0) {
       await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
       return EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗔𝗜𝗟 𝗜𝗡𝗕𝗢𝗫\n\nInbox is empty or session invalid.\n\n𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛",
@@ -4586,15 +4613,15 @@ EsTeams.onText(/^\/checkmail(?:\s(.+))?$/, async (msg, match) => {
 
     await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
 
-    for (let i = 0; i < data.messages.length; i++) {
-      const mail = data.messages[i];
+    for (let i = 0; i < list.messages.length; i++) {
+      const summary = list.messages[i];
+      const mail = await esApiGet("/api/v1/dev/tempmail/message", { token: sessionId, id: summary.id }).catch(() => summary);
       const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗔𝗜𝗟 𝗜𝗡𝗕𝗢𝗫
 
 Mail ${i + 1}:
-From: ${mail.fromAddr}
-To: ${mail.toAddr}
-Subject: ${mail.headerSubject}
-Text: ${mail.text}
+From: ${mail.from}
+Subject: ${mail.subject}
+Text: ${mail.text || summary.intro || "(no preview available)"}
 
 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛`;
 
@@ -4602,7 +4629,6 @@ Text: ${mail.text}
         caption,
         reply_markup: {
           inline_keyboard: [
-            [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗧𝗧𝗔𝗖𝗛𝗠𝗘𝗡𝗧", url: mail.downloadUrl }],
             [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
@@ -4657,14 +4683,11 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const waitingMsg = await EsTeams.sendMessage(chatId, "📖 Processing Bible passage. Please hold on...");
 
   try {
-    const encoded = encodeURIComponent(passage);
-    const apiUrl = `https://apis.davidcyril.name.ng/bible?reference=${encoded}`;
-    const response = await axios.get(apiUrl);
-    const result = response.data;
+    const result = await esApiGet("/api/v1/dev/bible", { reference: passage });
 
     await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
 
-    if (!result.success || !result.text) {
+    if (!result.text) {
       return EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `❌ Could not retrieve Bible passage.
 
@@ -4739,13 +4762,11 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   const waitingMsg = await EsTeams.sendMessage(chatId, "📖 Processing Surah. Please hold on...");
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/quran?surah=${surahNumber}`;
-    const response = await axios.get(apiUrl);
-    const result = response.data;
+    const result = await esApiGet("/api/v1/dev/quran", { reference: `${surahNumber}:1` });
 
     await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
 
-    if (!result.success || !result.surah) {
+    if (!result.text) {
       return EsTeams.sendPhoto(chatId, botImageUrl, {
         caption: `❌ Could not retrieve Surah.
 
@@ -4758,22 +4779,17 @@ Please check the number and try again.`,
       });
     }
 
-    const surah = result.surah;
-
     return EsTeams.sendPhoto(chatId, botImageUrl, {
       caption: `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗤𝗨𝗥𝗔𝗡 𝗥𝗘𝗔𝗗𝗘𝗥
 
-𝐒𝐮𝐫𝐚𝐡: ${surah.name.english} (${surah.name.arabic})
-𝐀𝐲𝐚𝐡𝐬: ${surah.ayahCount}
-𝐓𝐲𝐩𝐞: ${surah.type}
+𝐒𝐮𝐫𝐚𝐡: ${result.surah || surahNumber}
+𝐀𝐲𝐚𝐡: ${result.numberInSurah || 1}
 
-𝐓𝐚𝐟𝐬𝐢𝐫:
-${surah.tafsir.id}
+${result.text}
 
 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛`,
       reply_markup: {
         inline_keyboard: [
-          [{ text: "🎧 𝗠𝗣3 𝗥𝗘𝗖𝗜𝗧𝗔𝗧𝗜𝗢𝗡", url: surah.recitation }],
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
@@ -5477,20 +5493,9 @@ function sanitizeAiReply(reply) {
 async function askFreeAI(prompt, timeoutMs = 15000) {
     const providers = [
         async () => {
-            const res = await fetch(`https://apis.davidcyril.name.ng/ai/claude-opus-4.5?prompt=${encodeURIComponent(prompt)}`, { signal: AbortSignal.timeout(timeoutMs) });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json = await res.json();
-            const out = json?.data || json?.response || json?.result;
-            if (!out) throw new Error('empty response');
-            return String(out).trim();
-        },
-        async () => {
-            const res = await fetch(`https://apis.davidcyril.name.ng/ai/gpt4omini?text=${encodeURIComponent(prompt)}`, { signal: AbortSignal.timeout(timeoutMs) });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            const out = data?.data || data?.response;
-            if (!out) throw new Error('empty response');
-            return String(out).trim();
+            const data = await esApiPost("/api/v1/dev/ai", { prompt });
+            if (!data.response) throw new Error('empty response');
+            return String(data.response).trim();
         },
         async () => {
             const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}?model=openai`, { signal: AbortSignal.timeout(timeoutMs) });
@@ -5920,25 +5925,11 @@ EsTeams.onText(/\/facebook(?:\s+(.+))?/, async (msg, match) => {
   });
 
   try {
-    const apiRes = await fetch(`https://apis.davidcyril.name.ng/facebook?url=${encodeURIComponent(url)}&apikey=`);
-    const json = await apiRes.json();
+    const json = await esApiGet("/api/v1/dev/facebook", { url });
 
-    const downloads = json?.result?.downloads;
-    if (!downloads || (!downloads.hd?.url && !downloads.sd?.url)) {
-      return EsTeams.editMessageText("⚠️ Could not fetch video link. Try another URL.", {
-        chat_id: chatId,
-        message_id: waiting.message_id,
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-    }
-
-    const videoUrl = downloads.hd?.url || downloads.sd?.url;
+    const videoUrl = json.hd_download_url || json.sd_download_url;
     if (!videoUrl) {
-      return EsTeams.editMessageText("⚠️ No downloadable video found.", {
+      return EsTeams.editMessageText("⚠️ Could not fetch video link. Try another URL.", {
         chat_id: chatId,
         message_id: waiting.message_id,
         reply_markup: {
@@ -6062,13 +6053,11 @@ EsTeams.onText(/^\/instagram(?:\s+(.+))?$/, async (msg, match) => {
 
   try {
 
-    const res = await axios.get(
-      `https://apis.davidcyril.name.ng/instagram?url=${encodeURIComponent(url)}`
-    );
+    const data = await esApiGet("/api/v1/dev/instagram", { url });
 
-    const videoUrl = res.data?.result?.video;
+    const videoUrl = data.download_url;
 
-    if (!res.data.success || !videoUrl)
+    if (!videoUrl)
       throw new Error('No downloadable link found.');
 
     const filePath = `ES_TEAMS-MEDIA/video/${chatId}.mp4`;
@@ -6546,108 +6535,12 @@ EsTeams.onText(/^\/scanqr$/, async (msg) => {
       }
     });
 
-  } catch (err) {
-    console.error(err);
+    } catch (err) {
+    console.error("QR scan error:", err.message);
     await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
     return EsTeams.sendPhoto(chatId, botImageUrl, {
       caption: '❌ An error occurred while processing the QR code. Please try again later.',
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-});
-
-//XVIDEO  DOWNLOADER
-EsTeams.onText(/\/xsearch(?:\s(.+))?/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id.toString();
-  const isPremium = premiumUsers.includes(userId);
-  const query = match[1];
-
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
-    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  // PREMIUM CHECK
-  if (!isPremium) {
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `💎 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗣𝗥𝗘𝗠𝗜𝗨𝗠*\n\nThis command is only available for premium users.\n\n💰 Price: ₦5000`,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠', callback_data: 'pay_5000' }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29" }]
-        ]
-      }
-    });
-  }
-
-  if (!query) {
-    return EsTeams.sendMessage(chatId, "❌ Invalid Input\n\nPlease use /xsearch <search term>.", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  const wait = await EsTeams.sendMessage(chatId, "Searching for your X Video. Please hold on...");
-
-  try {
-    const api = await axios.get(`https://apis.davidcyril.name.ng/search/xvideo?text=${encodeURIComponent(query)}`);
-    const result = api.data.result;
-
-    if (!result || result.length === 0) {
-      await EsTeams.deleteMessage(chatId, wait.message_id);
-      return EsTeams.sendMessage(chatId, "❌ No video found for your search.", {
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-    }
-
-    const random = result[Math.floor(Math.random() * result.length)];
-    const title = random.title || "ES TEAMS XVIDEO";
-    const duration = random.duration || "Unknown";
-    const quality = random.quality || "Unknown";
-    const thumbnail = random.thumbnail || "https://i.ibb.co/SwL0Xmw/ES-TEAMS-TELEBOT.jpg";
-    const url = random.url;
-
-    await EsTeams.deleteMessage(chatId, wait.message_id);
-
-    await EsTeams.sendPhoto(chatId, thumbnail, {
-      caption: `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗫𝗩𝗜𝗗𝗘𝗢 𝗦𝗘𝗔𝗥𝗖𝗛\n\n*Title:* ${title}\n*Duration:* ${duration}\n*Quality:* ${quality}`,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "▶️ 𝗪𝗔𝗧𝗖𝗛 𝗩𝗜𝗗𝗘𝗢", url: url }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-
-  } catch (err) {
-    console.error("XVIDEO ERROR:", err.message);
-    await EsTeams.deleteMessage(chatId, wait.message_id);
-
-    EsTeams.sendMessage(chatId, "⚠️ Failed to process the video. Try again later.", {
-      parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
@@ -6738,10 +6631,9 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
 
     const techMessage = await EsTeams.sendMessage(chatId, "🔄 *Searching for available News. Please Wait...*", { parse_mode: "Markdown" });
 
-    const response = await fetch("https://apis.davidcyril.name.ng/random/technews");
-    const data = await response.json();
+    const data = await esApiGet("/api/v1/dev/technews", { limit: 5 });
 
-    if (!data.status || !data.result) {
+    if (!data.stories || !data.stories.length) {
       await EsTeams.deleteMessage(chatId, techMessage.message_id);
 
       return EsTeams.sendMessage(chatId, "❌ Failed to fetch Tech News. Please try again later.", {
@@ -6753,16 +6645,14 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
       });
     }
 
-    const { title, link, image, description } = data.result;
+    const story = data.stories[Math.floor(Math.random() * data.stories.length)];
 
-    const descSentences = description.split('. ').slice(0, 2).join('. ') + '.';
-
-    const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗧𝗘𝗖𝗛 𝗡𝗘𝗪𝗦\n\n𝗧𝗶𝘁𝗹𝗲:*${title}*\n\n${descSentences}\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`;
+    const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗧𝗘𝗖𝗛 𝗡𝗘𝗪𝗦\n\n𝗧𝗶𝘁𝗹𝗲:*${story.title}*\n\n👤 By: ${story.author || "Unknown"}\n⭐ Score: ${story.score}\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`;
 
     const buttons = {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "🌐 𝗩𝗜𝗘𝗪 𝗔𝗥𝗧𝗜𝗖𝗟𝗘", url: link }],
+          [{ text: "🌐 𝗩𝗜𝗘𝗪 𝗔𝗥𝗧𝗜𝗖𝗟𝗘", url: story.url }],
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       },
@@ -6771,10 +6661,7 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
 
     await EsTeams.deleteMessage(chatId, techMessage.message_id);
 
-    return EsTeams.sendPhoto(chatId, image, {
-      caption,
-      ...buttons
-    });
+    return EsTeams.sendMessage(chatId, caption, buttons);
 
   } catch (err) {
     console.error(err.message);
@@ -6789,216 +6676,7 @@ EsTeams.onText(/^\/technews$/, async (msg) => {
   }
 });
 
-//SPOTIFY COMMAND
-EsTeams.onText(/^\/spotify(?: (.+))?$/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const spotifyUrl = match[1];
 
-if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
-    return EsTeams.sendMessage(msg.chat.id, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-        parse_mode: "Markdown",
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-            ]
-        }
-    });
-}
-
-  if (!spotifyUrl || !spotifyUrl.startsWith("https://open.spotify.com/track/")) {
-    return EsTeams.sendMessage(chatId, "❌ *Invalid Command*\n\nPlease use /spotify <Spotify URL>", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  try {
-    const processingMessage = await EsTeams.sendMessage(chatId, "🔄 *Processing your Spotify Track...*", { parse_mode: "Markdown" });
-
-    const response = await fetch(`https://apis.davidcyril.name.ng/spotifydl?url=${encodeURIComponent(spotifyUrl)}`);
-    const data = await response.json();
-
-    await EsTeams.deleteMessage(chatId, processingMessage.message_id);
-
-    if (!data || !data.success) {
-      return EsTeams.sendMessage(chatId, "❌ Failed to process Spotify track. Please try again later.", {
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-    }
-
-    const { title, duration, channel, thumbnail, DownloadLink } = data;
-
-    const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗦𝗣𝗢𝗧𝗜𝗙𝗬 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n𝗧𝗶𝘁𝗹𝗲: *${title}*\n𝗗𝘂𝗿𝗮𝘁𝗶𝗼𝗻: *${duration}*\n𝗔𝘂𝘁𝗵𝗼𝗿: *${channel}*\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`;
-
-    const buttons = {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "🎵 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗡𝗢𝗪", url: DownloadLink }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      },
-      parse_mode: "Markdown"
-    };
-
-    return EsTeams.sendPhoto(chatId, thumbnail, {
-      caption,
-      ...buttons
-    });
-
-  } catch (err) {
-    console.error(err.message);
-    return EsTeams.sendMessage(chatId, "❌ Failed to process Spotify track. Please try again later.", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-});
-
-//CCGEN COMMAND
-EsTeams.onText(/^\/ccgen$/i, async (msg) => {
-  const chatId = msg.chat.id;
-
-  if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-
-  // Set session and auto-select MasterCard
-  ccgenSessions[chatId] = { step: "awaiting_amount", msgIds: [], type: "MasterCard" };
-
-  const res = await EsTeams.sendPhoto(chatId, botImageUrl, {
-    caption: `✅ *MasterCard selected!*\n\nPlease enter the amount of cards to generate.\n\nℹ️ *Input only:* \`5\` or \`10\``,
-    parse_mode: "Markdown",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_ccgen" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-
-  ccgenSessions[chatId].msgIds.push(res.message_id);
-});
-
-EsTeams.on("message", async (msg) => {
-  const chatId = msg.chat.id;
-  const text = msg.text?.trim();
-  if (!text || !ccgenSessions[chatId]) return;
-
-  const session = ccgenSessions[chatId];
-  session.msgIds.push(msg.message_id);
-
-  if (session.step === "awaiting_amount") {
-    const amount = parseInt(text, 10);
-    if (amount !== 5 && amount !== 10) {
-      const err = await EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: "❌ Invalid amount.\n\nPlease enter *5* or *10* only.",
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_ccgen" }],
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-      session.msgIds.push(err.message_id);
-      return;
-    }
-
-    // Show generating message
-    const loading = await EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "🔄 Generating cards... Please wait",
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_ccgen" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-
-    session.msgIds.push(loading.message_id);
-
-    try {
-      const res = await fetch(
-        `https://apis.davidcyril.name.ng/tools/ccgen?type=${encodeURIComponent(session.type)}&amount=${amount}`
-      );
-
-      const data = await res.json();
-      if (!data.status || !data.cards) throw new Error("API error");
-
-      let caption = `💳 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗖𝗚𝗘𝗡 𝗥𝗘𝗦𝗨𝗟𝗧 (${session.type})*\n\n`;
-      for (const card of data.cards) {
-        caption += `👤 *𝗡𝗮𝗺𝗲:* ${card.name}\n💳 *𝗖𝗮𝗿𝗱:* \`${card.number}\`\n🔐 *𝗖𝗩𝗩:* \`${card.cvv}\`\n📅 *𝗘𝘅𝗽𝗶𝗿𝘆:* \`${card.expiry}\`\n\n`;
-      }
-      caption += "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ";
-
-      // Delete all temp messages
-      for (let id of session.msgIds) {
-        try { await EsTeams.deleteMessage(chatId, id); } catch {}
-      }
-
-      delete ccgenSessions[chatId];
-      return EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption,
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-
-    } catch (e) {
-      await EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: "❌ Error generating cards. Please try again later.",
-        parse_mode: "Markdown",
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-          ]
-        }
-      });
-
-      delete ccgenSessions[chatId];
-    }
-  }
-});
-
-EsTeams.on("callback_query", async (query) => {
-  const chatId = query.message.chat.id;
-  const msgId = query.message.message_id;
-
-  if (query.data === "cancel_ccgen" && ccgenSessions[chatId]) {
-    const session = ccgenSessions[chatId];
-    for (let id of session.msgIds) {
-      try { await EsTeams.deleteMessage(chatId, id); } catch {}
-    }
-
-    await EsTeams.deleteMessage(chatId, msgId).catch(() => {});
-    delete ccgenSessions[chatId];
-
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗖 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥\n\n𝗦𝘁𝗮𝘁𝘂𝘀: Cancelled",
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-});
 
 //FAKEWAPP COMMAND
 EsTeams.onText(/^\/fakewapp(?: (.+))?/, async (msg, match) => {
@@ -7044,24 +6722,8 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   });
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/canvas/fakewa?name=${encodeURIComponent(name.trim())}&number=${encodeURIComponent(number)}&status=${encodeURIComponent(status)}`;
-    
-    const writer = fs.createWriteStream(filePath);
-    const response = await axios({
-      url: apiUrl,
-      method: "GET",
-      responseType: "stream",
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Referer": "https://www.google.com/",
-        "Accept": "*/*"
-      }
-    });
-    response.data.pipe(writer);
-    await new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    });
+    const imageBuffer = await esApiGet("/api/v1/dev/fakewa", { name: name.trim(), number, status });
+    fs.writeFileSync(filePath, imageBuffer);
 
     await EsTeams.deleteMessage(chatId, wait.message_id);
 
@@ -7085,82 +6747,6 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         inline_keyboard: [
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
-      }
-    });
-  }
-});
-
-//WHATSAPP CHANNEL STALK COMMAND 
-EsTeams.onText(/\/wastalk(?: (.+))?/, async (msg, match) => {
-  let chatId = msg.chat.id;
-  let url = match[1];
-
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
-    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-  }
-
-  if (!url || !url.includes("whatsapp.com/channel/")) {
-    return EsTeams.sendMessage(chatId, "❌ Invalid Input\n\nPlease use /wastalk <WhatsApp Channel URL>", {
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-  }
-
-  let waitMsg = await EsTeams.sendMessage(chatId, "⏳ Processing info please wait...", {
-    reply_markup: {
-      inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-    }
-  });
-
-  try {
-    let response = await axios.get(`https://apis.davidcyril.name.ng/stalk/wa?url=${encodeURIComponent(url)}`, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept": "application/json",
-        "Referer": "https://www.google.com"
-      },
-      httpsAgent: new (await import('https')).Agent({ rejectUnauthorized: false }),
-      timeout: 10000
-    });
-
-    let data = response.data;
-
-    if (!data || !data.title || !data.followers || !data.followersCount) {
-      throw new Error("Incomplete data received");
-    }
-
-    let caption = `*𝐄𝐒 𝐓𝐄𝐀𝐌𝐒 𝐕𝟏 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐒𝐓𝐀𝐋𝐊𝐄𝐑*\n\n` +
-                  `*Channel Name:* ${data.title}\n` +
-                  `*Followers:* ${data.followers}\n` +
-                  `*Number:* ${data.followersCount}\n` +
-                  `*Description:*\n${data.description}\n\n` +
-                  `*ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ*`;
-
-    await EsTeams.deleteMessage(chatId, waitMsg.message_id);
-
-    // ✅ Use the local image path here
-    await EsTeams.sendPhoto(chatId, "ES_TEAMS-MEDIA/image/ES_TEAMS.jpg", {
-      caption,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
-      }
-    });
-
-  } catch (err) {
-    console.error("❌ WAStalk Error:", err.message || err);
-
-    try { await EsTeams.deleteMessage(chatId, waitMsg.message_id); } catch {}
-
-    await EsTeams.sendMessage(chatId, "❌ Failed to fetch channel info. Please ensure the link is valid and try again.", {
-      reply_markup: {
-        inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]
       }
     });
   }
@@ -7449,317 +7035,6 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   }
 });
 
-//JAIL COMMAND 
-EsTeams.onText(/\/jail/, async (msg) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id;
-  const reply = msg.reply_to_message;
-
-if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
-    return EsTeams.sendMessage(msg.chat.id, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-        parse_mode: "Markdown",
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-            ]
-        }
-    });
-}
-
-  if (!reply || !reply.photo) {
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "❌ Please *reply to an image* with `/jail`.",
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  const processing = await EsTeams.sendMessage(chatId, `⛓️ Processing your image...`, {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-
-  try {
-    // Download photo
-    const fileId = reply.photo.pop().file_id;
-    const fileLink = await EsTeams.getFileLink(fileId);
-    const response = await axios.get(fileLink, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0"
-      }
-    });
-
-    const inputPath = `ES_TEAMS-MEDIA/image/${userId}.jpg`;
-    fs.writeFileSync(inputPath, response.data);
-
-    // Upload to Catbox
-    const formData = new FormData();
-    formData.append("fileToUpload", fs.createReadStream(inputPath));
-    formData.append("reqtype", "fileupload");
-
-    const catRes = await axios.post("https://catbox.moe/user/api.php", formData, {
-      headers: formData.getHeaders()
-    });
-
-    const catboxUrl = catRes.data;
-    console.log("Catbox URL:", catboxUrl);
-
-    if (!catboxUrl.startsWith("https://files.catbox.moe")) {
-      throw new Error(`Catbox upload failed: ${catboxUrl}`);
-    }
-
-    // Process with Jail API
-    const jailUrl = `https://apis.davidcyril.name.ng/canvas/jail?image=${encodeURIComponent(catboxUrl)}`;
-    console.log("Jail API URL:", jailUrl);
-
-    const jailRes = await axios.get(jailUrl, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://www.google.com",
-        "Accept": "image/*"
-      }
-    });
-
-    const outputPath = `ES_TEAMS-MEDIA/image/${userId}_jail.jpg`;
-    fs.writeFileSync(outputPath, jailRes.data);
-
-    await EsTeams.deleteMessage(chatId, processing.message_id);
-
-    await EsTeams.sendPhoto(chatId, outputPath, {
-      caption: `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ`,
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-
-    fs.unlinkSync(inputPath);
-    fs.unlinkSync(outputPath);
-
-  } catch (err) {
-    console.error("❌ Jail command error:", err.message || err);
-
-    if (err.response) {
-      console.error("❌ API response error:", err.response.status, err.response.data);
-    }
-
-    try { await EsTeams.deleteMessage(chatId, processing.message_id); } catch {}
-
-    await EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `❌ *Failed to process the image.*\n\n_Error:_ ${err.message || "Unknown error"}`,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-});
-
-//LOGO1 COMMAND
-EsTeams.onText(/^\/logo$/, async (msg) => {
-  const chatId = msg.chat.id;
-  
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
-    return EsTeams.sendMessage(msg.chat.id, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-        parse_mode: "Markdown",
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-            ]
-        }
-    });
-}
-
-  sessions[chatId] = { step: 1 };
-  await EsTeams.sendPhoto(chatId, botImageUrl, {
-    caption: "𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗟𝗢𝗚𝗢 𝗠𝗔𝗞𝗘𝗥\n\nPlease send a wallpaper or background picture.",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_bg" }],
-        [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-});
-
-EsTeams.on("callback_query", async (query) => {
-  const chatId = query.message.chat.id;
-  const messageId = query.message.message_id;
-  const session = sessions[chatId];
-  if (!session) return;
-
-  if (query.data === "cancel") {
-    delete sessions[chatId];
-    await EsTeams.deleteMessage(chatId, messageId);
-    return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ Session cancelled." });
-  }
-
-  if (query.data === "skip_bg" && session.step === 1) {
-    session.bgUrl = "https://i.pinimg.com/736x/2f/9c/95/2f9c955cbc2dc6038b4d8a6f23271771.jpg";
-    session.step = 2;
-    await EsTeams.deleteMessage(chatId, messageId);
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗟𝗢𝗚𝗢 𝗠𝗔𝗞𝗘𝗥\n\nPlease send a header name for your logo.",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "⏭️ 𝗦𝗞𝗶𝗣", callback_data: "skip_name" }],
-          [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  if (query.data === "skip_name" && session.step === 2) {
-    session.name = "ES TEAMS TECH";
-    session.step = 3;
-    await EsTeams.deleteMessage(chatId, messageId);
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗟𝗢𝗚𝗢 𝗠𝗔𝗞𝗘𝗥\n\nPlease send a sub-text for your logo.",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_sub" }],
-          [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  if (query.data === "skip_sub" && session.step === 3) {
-    session.subtitle = "Testing";
-    return processLogo(chatId); 
-  }
-});
-
-EsTeams.on("message", async (msg) => {
-  const chatId = msg.chat.id;
-  const session = sessions[chatId];
-  if (!session) return;
-
-  if (session.step === 1 && msg.photo) {
-    const fileId = msg.photo[msg.photo.length - 1].file_id;
-    const fileUrl = await EsTeams.getFileLink(fileId);
-    const imagePath = path.join(`ES_TEAMS-MEDIA/image/${chatId}_bg.jpg`);
-    const resp = await fetch(fileUrl);
-    const buffer = await resp.buffer();
-    fs.writeFileSync(imagePath, buffer);
-
-    const formData = new FormData();
-    formData.append("fileToUpload", fs.createReadStream(imagePath));
-    formData.append("reqtype", "fileupload");
-
-    const upRes = await fetch("https://catbox.moe/user/api.php", { method: "POST", body: formData });
-    session.bgUrl = await upRes.text();
-    fs.unlinkSync(imagePath);
-
-    session.step = 2;
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗟𝗢𝗚𝗢 𝗠𝗔𝗞𝗘𝗥\n\nPlease send a header name for your logo.",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_name" }],
-          [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  if (session.step === 2 && msg.text) {
-    session.name = msg.text;
-    session.step = 3;
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗟𝗢𝗚𝗢 𝗠𝗔𝗞𝗘𝗥\n\nPlease send a sub-text for your logo.",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "⏭️ 𝗦𝗞𝗜𝗣", callback_data: "skip_sub" }],
-          [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  if (session.step === 3 && msg.text) {
-    session.subtitle = msg.text;
-    return processLogo(chatId);
-  }
-});
-
-async function processLogo(chatId) {
-  const session = sessions[chatId];
-  if (!session) return;
-
-  const processMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
-    caption: "🖼️ Processing your logo, please hold on...",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-
-  try {
-    const apiUrl = `https://apis.davidcyril.name.ng/canvas/quote?image=${encodeURIComponent(
-      session.bgUrl
-    )}&text=${encodeURIComponent(
-      session.name
-    )}&font=Times%20New%20Roman&name=${encodeURIComponent(
-      session.subtitle
-    )}`;
-
-    const resp = await axios.get(apiUrl, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        Referer: "https://apis.davidcyril.name.ng",
-        Accept: "*/*"
-      }
-    });
-
-    const outPath = `ES_TEAMS-MEDIA/image/${chatId}_logo1.png`;
-    fs.writeFileSync(outPath, resp.data);
-
-    await EsTeams.deleteMessage(chatId, processMsg.message_id);
-    delete sessions[chatId];
-
-    await EsTeams.sendPhoto(chatId, outPath, {
-      caption: "✅ 𝗬𝗢𝗨𝗥 𝗟𝗢𝗚𝗢 𝗜𝗦 𝗥𝗘𝗔𝗗𝗬\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-
-    fs.unlinkSync(outPath);
-
-  } catch (err) {
-    await EsTeams.deleteMessage(chatId, processMsg.message_id);
-    return EsTeams.sendMessage(chatId, "❌ Failed to process the logo. Please try again.", {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-}
-
 // WEBSITE DOWNLOADER
 EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
   const chatId = msg.chat.id;
@@ -7808,27 +7083,17 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
   });
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/tools/downloadweb?url=${encodeURIComponent(url)}`;
-    const response = await axios.get(apiUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json",
-        "Referer": "https://apis.davidcyril.name.ng"
-      },
-      timeout: 10000
-    });
+    const data = await esApiGet("/api/v1/dev/downloadweb", { url });
 
-    if (response.data?.response?.downloadUrl) {
-      const downloadUrl = response.data.response.downloadUrl;
-
+    if (data.finalUrl) {
       await EsTeams.deleteMessage(chatId, waitMsg.message_id);
 
       return EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗪𝗘𝗕𝗦𝗜𝗧𝗘 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\nStatus: Success\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
+        caption: `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗪𝗘𝗕𝗦𝗜𝗧𝗘 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\nStatus: Success\nType: ${data.contentType}\nSize: ${data.size}\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ`,
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗨𝗥𝗟", url: downloadUrl }],
+            [{ text: "📥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗨𝗥𝗟", url: data.finalUrl }],
             [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
@@ -7851,142 +7116,6 @@ EsTeams.onText(/^\/webdl(?:\s+(.*))?$/, async (msg, match) => {
     });
   }
 });
-
-//LOGO2 COMMAND
-EsTeams.onText(/^\/logo2$/, async (msg) => {
-  const chatId = msg.chat.id;
-
-  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
-    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  sessionsLogo2[chatId] = { step: 1 };
-  return EsTeams.sendPhoto(chatId, botImageUrl, {
-    caption: "𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗟𝗢𝗚𝗢\n\nPlease send an image to use as background.",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_logo2" }],
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-});
-
-EsTeams.on("message", async (msg) => {
-  const chatId = msg.chat.id;
-  const session2 = sessionsLogo2[chatId]; 
-  if (!session2) return;
-
-  if (session2.step === 1 && msg.photo) {
-    const fileId = msg.photo[msg.photo.length - 1].file_id;
-    const fileUrl = await EsTeams.getFileLink(fileId);
-    const imagePath = path.join(`ES_TEAMS-MEDIA/image/${chatId}_bg2_temp.jpg`);
-
-    const resp = await fetch(fileUrl);
-    const buffer = await resp.buffer();
-    fs.writeFileSync(imagePath, buffer);
-
-    const formData = new FormData();
-    formData.append("fileToUpload", fs.createReadStream(imagePath));
-    formData.append("reqtype", "fileupload");
-
-    const upRes = await fetch("https://catbox.moe/user/api.php", { method: "POST", body: formData });
-    session2.bgUrl2 = await upRes.text();
-    fs.unlinkSync(imagePath); 
-
-    session2.step = 2;
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "𝗣𝗜𝗖𝗧𝗨𝗥𝗘 𝗥𝗘𝗖𝗘𝗜𝗩𝗘𝗗 ✅\n\nPlease send the text caption you’d like on your logo.",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "❌ 𝗖𝗔𝗡𝗖𝗘𝗟", callback_data: "cancel_logo2" }],
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  if (session2.step === 2 && msg.text) {
-    session2.caption2 = msg.text;
-    return processLogo2(chatId);
-  }
-});
-
-EsTeams.on("callback_query", async (query) => {
-  const chatId = query.message.chat.id;
-  const messageId = query.message.message_id;
-  const session2 = sessionsLogo2[chatId];
-  if (!session2) return;
-
-  if (query.data === "cancel_logo2") {
-    delete sessionsLogo2[chatId];
-    await EsTeams.deleteMessage(chatId, messageId);
-    return EsTeams.sendPhoto(chatId, botImageUrl, { caption: "❌ Session cancelled." });
-  }
-});
-
-async function processLogo2(chatId) {
-  const session2 = sessionsLogo2[chatId];
-  if (!session2) return;
-
-  const processMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
-    caption: "🖼️ Processing your logo 2, please hold on...",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-
-  try {
-    const apiUrl = `https://apis.davidcyril.name.ng/canvas/gun?image=${encodeURIComponent(
-      session2.bgUrl2
-    )}&text=${encodeURIComponent(session2.caption2)}`;
-
-    const resp = await axios.get(apiUrl, {
-      responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        Referer: "https://apis.davidcyril.name.ng",
-        Accept: "*/*"
-      }
-    });
-
-    const outputPath = `ES_TEAMS-MEDIA/image/${chatId}_logo2_final.png`;
-    fs.writeFileSync(outputPath, resp.data);
-
-    await EsTeams.deleteMessage(chatId, processMsg.message_id);
-
-    await EsTeams.sendPhoto(chatId, outputPath, {
-      caption: "✅ 𝗬𝗢𝗨𝗥 𝗟𝗢𝗚𝗢 𝗜𝗦 𝗥𝗘𝗔𝗗𝗬\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-
-    fs.unlinkSync(outputPath);
-
-    delete sessionsLogo2[chatId]; 
-  } catch (error) {
-    await EsTeams.deleteMessage(chatId, processMsg.message_id);
-    return EsTeams.sendMessage(chatId, "❌ Failed to process the logo. Please try again.", {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-}
 
 // CRYPTO COMMAND
 EsTeams.onText(/^\/crypto$/, async (msg) => {
@@ -9671,75 +8800,6 @@ async function getFutures(pair) {
   return parseFloat(json.result.list[0].lastPrice);
 }
 
-// WA CHANNEL COMMAND
-EsTeams.onText(/^\/wachannel(?:\s+(.+))?$/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const url = match[1];
-
-if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
-        return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly Check back later ...", {
-            parse_mode: "Markdown",
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-                ]
-            }
-        });
-    }
-    
-  if (!url) {
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: "❌ *𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗙𝗼𝗿𝗺𝗮𝘁*\n\nPlease use `/wachannel LINK`.",
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-
-  const wait = await EsTeams.sendMessage(chatId, "🔄 *𝗣𝗿𝗼𝗰𝗲𝘀𝘀𝗶𝗻𝗴...*", {
-    parse_mode: "Markdown",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-      ]
-    }
-  });
-
-  try {
-    const res = await axios.get(`https://apis.davidcyril.name.ng/stalk/wa?url=${encodeURIComponent(url)}`);
-    const data = res.data;
-
-    const safeDescription = data.description.replace(/[_*`]/g, '');
-
-    await EsTeams.deleteMessage(chatId, wait.message_id);
-
-    await EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗪𝗔 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗦𝗧𝗔𝗟𝗞𝗘𝗥*\n\n*Title:* ${data.title}\n\n*Followers:* ${data.followers}\n\n*Description:* ${safeDescription}\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ`,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: url }]
-        ]
-      }
-    });
-
-  } catch (err) {
-    await EsTeams.deleteMessage(chatId, wait.message_id);
-    await EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `❌ *𝗙𝗮𝗶𝗹𝗲𝗱 𝘁𝗼 𝗳𝗲𝘁𝗰𝗵 𝗱𝗮𝘁𝗮.*\n\n${err.message}`,
-      parse_mode: "Markdown",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-        ]
-      }
-    });
-  }
-});
-
 // TIKTOK STALK COMMAND
 EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
   const chatId = msg.chat.id;
@@ -9781,9 +8841,7 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
   });
 
   try {
-    const res = await axios.get(`https://apis.davidcyril.name.ng/tiktokStalk?q=${encodeURIComponent(username)}`);
-    const user = res.data.data.user;
-    const stats = res.data.data.stats;
+    const user = await esApiGet("/api/v1/dev/tiktokstalk", { username });
 
     await EsTeams.deleteMessage(chatId, wait.message_id);
 
@@ -9791,16 +8849,14 @@ EsTeams.onText(/^\/ttstalk(?:\s+(.+))?$/, async (msg, match) => {
       `*Username:* ${user.uniqueId}\n` +
       `*Nickname:* ${user.nickname}\n` +
       `*Verified:* ${user.verified ? "Yes ✅" : "No ❌"}\n` +
-      (user.signature ? `*Bio:* ${user.signature}\n` : "") +
-      `*Followers:* ${stats.followerCount.toLocaleString()}\n` +
-      `*Following:* ${stats.followingCount}\n` +
-      `*Likes:* ${stats.heartCount.toLocaleString()}\n` +
-      `*Videos:* ${stats.videoCount}\n` +
-      `*Region:* ${user.region}\n` +
-      (user.bioLink?.link ? `*Website:* ${user.bioLink.link}\n` : "") +
+      (user.bio ? `*Bio:* ${user.bio}\n` : "") +
+      `*Followers:* ${Number(user.followers || 0).toLocaleString()}\n` +
+      `*Following:* ${user.following}\n` +
+      `*Likes:* ${Number(user.likes || 0).toLocaleString()}\n` +
+      `*Videos:* ${user.videos}\n` +
       `\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ`;
 
-    await EsTeams.sendPhoto(chatId, user.avatarLarger, {
+    await EsTeams.sendPhoto(chatId, user.avatar, {
       caption,
       parse_mode: "Markdown",
       reply_markup: {
@@ -9870,8 +8926,7 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
   }
 
   try {
-    const res = await axios.get(`https://apis.davidcyril.name.ng/igstalk?username=${encodeURIComponent(username)}`);
-    const data = res.data;
+    const data = await esApiGet("/api/v1/dev/igstalk", { username });
 
     if (waitMessage) {
       try {
@@ -9881,14 +8936,12 @@ EsTeams.onText(/^\/igstalk(?:\s+(.+))?$/, async (msg, match) => {
     }
 
     const caption = `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗡𝗦𝗧𝗔𝗚𝗥𝗔𝗠 𝗦𝗧𝗔𝗟𝗞𝗘𝗥*\n\n` +
-      `*Username:* ${data.usrname}\n` +
-      `*Posts:* ${data.status.post}\n` +
-      `*Followers:* ${data.status.follower}\n` +
-      `*Following:* ${data.status.following}\n` +
-      `*Bio:* ${data.desk}\n\n` +
+      `*Username:* ${data.username}\n` +
+      `*Name:* ${data.name}\n` +
+      `*Bio:* ${data.bio || "(none)"}\n\n` +
       `ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ`;
 
-    await EsTeams.sendPhoto(chatId, data.pp, {
+    await EsTeams.sendPhoto(chatId, data.avatar || botImageUrl, {
       caption,
       parse_mode: "Markdown",
       reply_markup: {
@@ -11706,13 +10759,11 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
 
         const catboxUrl = await uploadRes.text();
 
-        const apiUrl = `https://apis.davidcyril.name.ng/imgscan?url=${encodeURIComponent(catboxUrl)}`;
-        const scanRes = await fetch(apiUrl);
-        const data = await scanRes.json();
+        const data = await esApiGet("/api/v1/dev/imgscan", { url: catboxUrl });
 
-        if (!data.success || !data.result) throw new Error("Image scan failed");
+        if (!data.description) throw new Error("Image scan failed");
 
-        const caption = `*𝐄𝐒 𝐓𝐄𝐀𝐌𝐒 𝐕𝟏 𝐀𝐍𝐀𝐋𝐘𝐙𝐄𝐑*\n\n*Result:*\n${data.result}\n\n*ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ*`;
+        const caption = `*𝐄𝐒 𝐓𝐄𝐀𝐌𝐒 𝐕𝟏 𝐀𝐍𝐀𝐋𝐘𝐙𝐄𝐑*\n\n*Result:*\n${data.description}\n\n*ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ*`;
 
         await EsTeams.sendPhoto(chatId, "https://files.catbox.moe/3jibot.jpg", {
             caption,
@@ -12079,25 +11130,23 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
   });
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/download/apk?text=${encodeURIComponent(query)}`;
-    const response = await fetch(apiUrl);
-    const data = await response.json();
+    const data = await esApiGet("/api/v1/dev/apk", { query });
 
-    if (!data.success || !data.download_link) {
+    if (!data.infoPage) {
       await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
       return EsTeams.sendMessage(chatId, "🚫 *APK not found.* Please try another name.", { parse_mode: "Markdown" });
     }
 
-    const { apk_name, thumbnail, download_link } = data;
+    const { name: apk_name, icon: thumbnail, infoPage } = data;
 
     await EsTeams.deleteMessage(chatId, waitingMsg.message_id);
 
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-      caption: `📦App Name: ${apk_name}\n\nPlease click the button below to download the APK.`,
+    return EsTeams.sendPhoto(chatId, thumbnail || botImageUrl, {
+      caption: `📦App Name: ${apk_name}\n\nPlease click the button below to open the download page.`,
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗔𝗣𝗞", url: download_link }],
+          [{ text: "⬇️ 𝗢𝗣𝗘𝗡 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗣𝗔𝗚𝗘", url: infoPage }],
           [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
         ]
       }
@@ -12295,11 +11344,9 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
   const waitingMsg = await EsTeams.sendMessage(chatId, "⏳ Processing Google Drive link...");
 
   try {
-    const apiUrl = `https://apis.davidcyril.name.ng/gdrive?url=${encodeURIComponent(inputUrl)}`;
-    const response = await axios.get(apiUrl);
-    const data = response.data;
+    const data = await esApiGet("/api/v1/dev/gdrive", { url: inputUrl });
 
-    if (!data.success) {
+    if (!data.downloadLink) {
       throw new Error("API returned failure");
     }
 
@@ -12307,7 +11354,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
     const logEntry = `
 Name: ${data.name}
 Size: ${data.size}
-Link: ${data.download_link}
+Link: ${data.downloadLink}
 Date: ${new Date().toLocaleString()}
 -----------------------------`;
     fs.appendFileSync(driveLogPath, logEntry);
@@ -12317,15 +11364,9 @@ Date: ${new Date().toLocaleString()}
     const mime = data.mimeType || "";
     const fileName = data.name || "Unknown";
     const fileSize = data.size || "Unknown";
-    const link = data.download_link;
+    const link = data.downloadLink;
 
-    // Extract fileId for thumbnail
-    const fileIdMatch = inputUrl.match(/\/d\/(.*?)\//);
-    const fileId = fileIdMatch ? fileIdMatch[1] : null;
-
-    const thumbnail = fileId
-      ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`
-      : botImageUrl;
+    const thumbnail = data.thumbnail || botImageUrl;
 
     // 🖼 IMAGE
     if (mime.startsWith("image/")) {
@@ -13596,6 +12637,7 @@ EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
 
     async function playSong() {
       let typingInterval;
+      try {
 
       // ----- Loading bar animation only -----
       let loadingMsg = await EsTeams.sendMessage(chatId, "⏳ Fetching your song...\n▰▱▱▱▱▱▱");
@@ -13614,18 +12656,15 @@ EsTeams.onText(/\/play(?:\s(.+))?/, async (msg, match) => {
 
       typingInterval = setInterval(() => EsTeams.sendChatAction(chatId, "upload_audio"), 2000);
 
-      const api = `https://apis.davidcyril.name.ng/song?query=${encodeURIComponent(query)}`;
-      let res;
-      try { res = await axios.get(api, { timeout: 90000 }); }
-      catch { res = await axios.get(api, { timeout: 120000 }); }
+      const data = await esApiGet("/api/v1/dev/mp3", { query });
 
       clearInterval(typingInterval);
 
-      if (!res.data?.status || !res.data?.result?.audio?.download_url)
+      if (!data?.download_url)
     throw new Error("Unable to fetch song.");
 
-      const { title, thumbnail, audio } = res.data.result;
-      const download = audio.download_url;
+      const { title, thumbnail } = data;
+      const download = data.download_url;
       const lyricsId = Math.random().toString(36).substring(2, 10);
       lyricsMap.set(lyricsId, title);
 
@@ -13676,10 +12715,22 @@ if (stats.size < 50000) {
       });
 
       fs.unlinkSync(filePath);
+      } catch (err) {
+        if (typingInterval) clearInterval(typingInterval);
+        console.error("playSong error:", err.message);
+        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch this song right now. Please try again.*", {
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
+            ]
+          }
+        });
+      }
     }
 
   } catch (err) {
-    if (typingInterval) clearInterval(typingInterval);
+    console.error("play command error:", err.message);
     EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch this song right now. Please try again.*", {
       parse_mode: "Markdown",
       reply_markup: {
@@ -13723,19 +12774,18 @@ EsTeams.on("callback_query", async (query) => {
         title = parts.slice(1).join("-").trim();
       }
 
-      const lyricsUrl = `https://apis.davidcyril.name.ng/lyrics2?t=${encodeURIComponent(title)}&a=${encodeURIComponent(artist)}`;
-      const res = await axios.get(lyricsUrl, { timeout: 15000 });
+      const lyricsData = await esApiGet("/api/v1/dev/lyrics", { artist, title });
 
       await EsTeams.deleteMessage(chatId, waitMsg.message_id).catch(() => {});
 
-      if (!res.data?.lyrics) {
+      if (!lyricsData?.lyrics) {
         return EsTeams.sendPhoto(chatId, botImageUrl, {
           caption: "⚠️ Lyrics not found.",
           parse_mode: "Markdown"
         });
       }
 
-      const fullLyrics = res.data.lyrics.trim();
+      const fullLyrics = lyricsData.lyrics.trim();
 
       const preview = fullLyrics.length > 900
         ? fullLyrics.slice(0, 900) + "\n\n...(truncated)"
@@ -13832,37 +12882,14 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
         async function downloadVideo() {
             const searchMessage = await EsTeams.sendMessage(chatId, "🔄 *Searching for your video. Please Wait...*", { parse_mode: "Markdown" });
 
-            const apiUrl = `https://apis.davidcyril.name.ng/song?query=${encodeURIComponent(query)}`;
-            
-            const response = await axios.get(apiUrl, { timeout: 60000 }).catch(() => null);
-            const data = response?.data;
+            const data = await esApiGet("/api/v1/dev/mp4", { query }).catch(() => null);
 
-            if (!data || !data.status || !data.result) {
+            if (!data || !data.download_url) {
                 return EsTeams.sendMessage(chatId, "🚫 *Error fetching video details from API.* Please try again later.", { parse_mode: "Markdown" });
             }
 
-            const { title, thumbnail, published, video: videoData } = data.result;
-            
-            // --- TARGETED SAVENOW.TO LINK FILTERING ---
-            let download_url = "";
-
-            if (videoData?.download_url && videoData.download_url.includes("savenow.to")) {
-                download_url = videoData.download_url;
-            } else {
-                const fallbackUrls = [
-                    videoData?.download_url,
-                    data.result?.video_url,
-                    data.result?.download_url
-                ].filter(url => url && url.includes("savenow.to"));
-
-                if (fallbackUrls.length > 0) {
-                    download_url = fallbackUrls[0];
-                }
-            }
-
-            if (!download_url) {
-                return EsTeams.sendMessage(chatId, "❌ *Could not isolate the secure savenow.to video link.* Please try another title.", { parse_mode: "Markdown" });
-            }
+            const { title, thumbnail } = data;
+            const download_url = data.download_url;
 
             // Make sure file system directory path exists cleanly
             if (!fs.existsSync("./ES_TEAMS-MEDIA/video")) {
@@ -13880,9 +12907,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
                     timeout: 240000, // Boosted to 4 minutes to support bigger files safely
                     headers: {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-                        "Accept": "*/*",
-                        "Origin": "https://savenow.to",
-                        "Referer": "https://savenow.to/"
+                        "Accept": "*/*"
                     }
                 });
 
@@ -13898,7 +12923,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
                 await EsTeams.editMessageMedia({
                     type: "photo",
                     media: thumbnail,
-                    caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥*\n\n🎬 *Title:* _${title}_\n📅 *Released:* _${published}_\n💼 *Status:* _Premium_\n\n📥 *Uploading video to Telegram...*\n\n*ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ*`,
+                    caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥*\n\n🎬 *Title:* _${title}_\n💼 *Status:* _Premium_\n\n📥 *Uploading video to Telegram...*\n\n*ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ*`,
                     parse_mode: "Markdown"
                 }, {
                     chat_id: chatId,
@@ -13914,8 +12939,13 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
                 await EsTeams.sendVideo(chatId, filePath, { caption: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ" });
 
             } catch (dlError) {
-                console.error("Download Stream Error Details:", dlError.message);
-                await EsTeams.sendMessage(chatId, "❌ *Failed to stream video.* The download server blocked the request. Try another keyword.", { parse_mode: "Markdown" });
+                const status = dlError.response ? dlError.response.status : null;
+                console.error("Download Stream Error Details:", status, dlError.message);
+                const reason = status === 403 ? "The download link expired. Try again."
+                    : status === 429 ? "Too many downloads right now. Wait a moment and try again."
+                    : status ? `The download server returned an error (status ${status}).`
+                    : "The download server did not respond in time.";
+                await EsTeams.sendMessage(chatId, `❌ *Failed to stream video.* ${reason}`, { parse_mode: "Markdown" });
             } finally {
                 // Always scrub file assets out of local container directory when finished
                 if (fs.existsSync(filePath)) {
@@ -13925,7 +12955,7 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
         }
 
     } catch (error) {
-        console.error("General error handling in video layout execution block:", error);
+        console.error("General error handling in video layout execution block:", error.message);
         EsTeams.sendMessage(chatId, "⚠️ *An unexpected processing error occurred.* Please try again later.", { parse_mode: "Markdown" });
     }
 });
@@ -14931,18 +13961,20 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
     try {
         const searchMessage = await EsTeams.sendMessage(chatId, "🔄 *Fetching your video info...*", { parse_mode: "Markdown" });
 
-        const apiUrl = `https://apis.davidcyril.name.ng/download/ytmp4?url=${encodeURIComponent(link)}&apikey=`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        const data = await esApiGet("/api/v1/dev/mp4", { query: link });
 
-        if (!data.success || !data.result || typeof data.result.download_url !== "string") {
+        if (!data || typeof data.download_url !== "string") {
             return EsTeams.sendMessage(chatId, "🚫 *Error fetching video.* Please try again later.", { parse_mode: "Markdown" });
         }
 
-        const { download_url, title, thumbnail, quality } = data.result;
+        const { download_url, title, thumbnail } = data;
+        const quality = "audio+video";
         const filePath = `./ES_TEAMS-MEDIA/video/${chatId}.mp4`;
 
         const videoStream = await fetch(download_url);
+        if (!videoStream.ok) {
+            throw new Error(`Video download failed with status ${videoStream.status}`);
+        }
         const fileStream = fs.createWriteStream(filePath);
 
         await new Promise((resolve, reject) => {
@@ -14971,7 +14003,7 @@ if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(msg.from.id)) {
         fs.unlinkSync(filePath);
 
     } catch (error) {
-        console.error("Error in /ytdl command:", error);
+        console.error("Error in /ytdl command:", error.message);
         EsTeams.sendMessage(chatId, "⚠️ *An error occurred.* Please try again later.", { parse_mode: "Markdown" });
     }
 });
@@ -17492,5 +16524,353 @@ EsTeams.onText(/^\/bizprofile(?:\s+([\s\S]+))?$/i, async (msg, match) => {
         `From now on, this gets added to the end of every auto-reply.`,
         parse_mode: "Markdown", reply_markup: waChannelBtn
     }).catch(err => console.error("BIZPROFILE ERROR:", err.message));
+});
+EsTeams.onText(/^\/ocr$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const reply = msg.reply_to_message;
+    if (!reply || !reply.photo) {
+        return EsTeams.sendMessage(chatId, "❌ Reply to an image with /ocr to extract its text.", { reply_markup: waChannelBtn });
+    }
+    const wait = await EsTeams.sendMessage(chatId, "🔎 Reading text from image...");
+    try {
+        const fileId = reply.photo[reply.photo.length - 1].file_id;
+        const fileLink = await EsTeams.getFileLink(fileId);
+        const data = await esApiGet("/api/v1/dev/ocr", { url: fileLink });
+        await EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+        const text = data.text && data.text.trim() ? data.text.trim() : "(no text found)";
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗢𝗖𝗥\n\n${text}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        await EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/currency(?:\s+(\d+(?:\.\d+)?)\s+([a-zA-Z]{3})\s+([a-zA-Z]{3}))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!match[1]) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /currency <amount> <from> <to>\n\nExample: /currency 100 USD NGN", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/currency", { amount: match[1], from: match[2], to: match[3] });
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗨𝗥𝗥𝗘𝗡𝗖𝗬\n\n${data.amount} ${data.from} = ${data.result} ${data.to}\nRate: ${data.rate}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/summarize(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const text = match[1]?.trim();
+    if (!text) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /summarize <text>", { reply_markup: waChannelBtn });
+    }
+    const wait = await EsTeams.sendMessage(chatId, "🧠 Summarizing...");
+    try {
+        const data = await esApiPost("/api/v1/dev/summarize", { text });
+        await EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗦𝗨𝗠𝗠𝗔𝗥𝗬\n\n${data.summary}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        await EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/chart(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = match[1]?.trim();
+    if (!input) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /chart <type>|<title>|<labels>|<data>\n\nExample: /chart bar|Sales|Jan,Feb,Mar|10,20,30", { reply_markup: waChannelBtn });
+    }
+    const parts = input.split("|").map((p) => p.trim());
+    const [type, title, labels, data] = parts;
+    try {
+        const result = await esApiPost("/api/v1/dev/chart", { type: type || "bar", title, labels, data });
+        return EsTeams.sendPhoto(chatId, result.chart_url, { caption: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗛𝗔𝗥𝗧", reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/linkpreview(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const url = match[1];
+    if (!url) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /linkpreview <url>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/linkpreview", { url });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗟𝗜𝗡𝗞 𝗣𝗥𝗘𝗩𝗜𝗘𝗪\n\n${data.title || "(no title)"}\n${data.description || ""}`;
+        if (data.image) {
+            return EsTeams.sendPhoto(chatId, data.image, { caption, reply_markup: waChannelBtn });
+        }
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/iplookup(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const ip = match[1];
+    if (!ip) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /iplookup <ip address>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/iplookup", { ip });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗜𝗣 𝗟𝗢𝗢𝗞𝗨𝗣\n\nIP: ${data.ip}\nCity: ${data.city || "Unknown"}\nRegion: ${data.region || "Unknown"}\nCountry: ${data.country || "Unknown"}\nISP: ${data.isp || "Unknown"}`;
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/country(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const name = match[1]?.trim();
+    if (!name) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /country <name>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/country", { name });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗢𝗨𝗡𝗧𝗥𝗬 𝗜𝗡𝗙𝗢\n\nName: ${data.name}\nCapital: ${data.capital}\nRegion: ${data.region}\nPopulation: ${Number(data.population || 0).toLocaleString()}\nCurrency: ${data.currency}`;
+        if (data.flag) {
+            return EsTeams.sendPhoto(chatId, data.flag, { caption, reply_markup: waChannelBtn });
+        }
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/advice$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    try {
+        const data = await esApiGet("/api/v1/dev/advice", {});
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗗𝗩𝗜𝗖𝗘\n\n${data.advice}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/catfact$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    try {
+        const data = await esApiGet("/api/v1/dev/catfact", {});
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗖𝗔𝗧 𝗙𝗔𝗖𝗧\n\n${data.fact}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/holidays(?:\s+([\s\S]+)\s+(\d{4}))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!match[1]) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /holidays <country code> <year>\n\nExample: /holidays NG 2026", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/holidays", { country: match[1].trim(), year: match[2] });
+        if (!data.holidays || !data.holidays.length) {
+            return EsTeams.sendMessage(chatId, "❌ No holidays found for that country and year.", { reply_markup: waChannelBtn });
+        }
+        const list = data.holidays.slice(0, 15).map((h) => `${h.date} - ${h.name}`).join("\n");
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗣𝗨𝗕𝗟𝗜𝗖 𝗛𝗢𝗟𝗜𝗗𝗔𝗬𝗦\n\n${list}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/dogimage$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    try {
+        const data = await esApiGet("/api/v1/dev/dogimage", {});
+        return EsTeams.sendPhoto(chatId, data.url, { caption: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗥𝗔𝗡𝗗𝗢𝗠 𝗗𝗢𝗚", reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/quote$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    try {
+        const data = await esApiGet("/api/v1/dev/quote", {});
+        return EsTeams.sendMessage(chatId, `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗤𝗨𝗢𝗧𝗘\n\n"${data.text}"\n— ${data.author || "Unknown"}`, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/mcstatus(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const address = match[1];
+    if (!address) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /mcstatus <server address>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/minecraft", { address });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗠𝗜𝗡𝗘𝗖𝗥𝗔𝗙𝗧 𝗦𝗧𝗔𝗧𝗨𝗦\n\nServer: ${address}\nOnline: ${data.online ? "Yes ✅" : "No ❌"}\nPlayers: ${data.players?.online ?? "N/A"}/${data.players?.max ?? "N/A"}\nVersion: ${data.version || "Unknown"}`;
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/npm(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const pkg = match[1];
+    if (!pkg) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /npm <package name>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/npm", { package: pkg });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗡𝗣𝗠 𝗣𝗔𝗖𝗞𝗔𝗚𝗘\n\nName: ${data.name}\nVersion: ${data.version}\nDescription: ${data.description || "N/A"}\nLicense: ${data.license || "N/A"}`;
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/ytinfo(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const url = match[1];
+    if (!url) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /ytinfo <youtube url>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/youtube", { url });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗜𝗡𝗙𝗢\n\nTitle: ${data.title}\nChannel: ${data.channel || data.author}\nDuration: ${data.duration}\nViews: ${Number(data.views || 0).toLocaleString()}`;
+        return EsTeams.sendPhoto(chatId, data.thumbnail || botImageUrl, { caption, reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/githubrepo(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const repo = match[1];
+    if (!repo) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /githubrepo <owner/repo>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/githubrepo", { repo });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗚𝗜𝗧𝗛𝗨𝗕 𝗥𝗘𝗣𝗢\n\nName: ${data.full_name || repo}\nStars: ${data.stars}\nForks: ${data.forks}\nLanguage: ${data.language || "N/A"}\nDescription: ${data.description || "N/A"}`;
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/anime(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const query = match[1]?.trim();
+    if (!query) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /anime <name>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/anime", { query });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗡𝗜𝗠𝗘 𝗦𝗘𝗔𝗥𝗖𝗛\n\nTitle: ${data.title}\nEpisodes: ${data.episodes || "N/A"}\nStatus: ${data.status || "N/A"}\nScore: ${data.score || "N/A"}\n\n${data.synopsis || ""}`;
+        if (data.image) {
+            return EsTeams.sendPhoto(chatId, data.image, { caption, reply_markup: waChannelBtn });
+        }
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/wiki(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const title = match[1]?.trim();
+    if (!title) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /wiki <topic>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/wikipedia", { title });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗪𝗜𝗞𝗜𝗣𝗘𝗗𝗜𝗔\n\n${data.title}\n\n${data.summary || data.extract}`;
+        if (data.thumbnail) {
+            return EsTeams.sendPhoto(chatId, data.thumbnail, { caption, reply_markup: waChannelBtn });
+        }
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/sportsteam(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const name = match[1]?.trim();
+    if (!name) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /sportsteam <team name>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/sportsteam", { name });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗦𝗣𝗢𝗥𝗧𝗦 𝗧𝗘𝗔𝗠\n\nName: ${data.name}\nSport: ${data.sport || "N/A"}\nLeague: ${data.league || "N/A"}\nCountry: ${data.country || "N/A"}`;
+        if (data.badge) {
+            return EsTeams.sendPhoto(chatId, data.badge, { caption, reply_markup: waChannelBtn });
+        }
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/videogen(?:\s+([\s\S]+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id.toString();
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!premiumUsers.includes(userId)) {
+        return EsTeams.sendPhoto(chatId, botImageUrl, {
+            caption: "💎 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗣𝗥𝗘𝗠𝗜𝗨𝗠*\n\nThis command is only available for premium users.\n\n💰 Price: ₦5000",
+            parse_mode: "Markdown",
+            reply_markup: { inline_keyboard: [[{ text: "𝗝𝗢𝗜𝗡 𝗣𝗥𝗘𝗠𝗜𝗨𝗠", callback_data: "pay_5000" }], waChannelBtn.inline_keyboard[0]] }
+        });
+    }
+    const prompt = match[1]?.trim();
+    if (!prompt) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /videogen <prompt>", { reply_markup: waChannelBtn });
+    }
+    const wait = await EsTeams.sendMessage(chatId, "🎬 Generating your video. This can take a while...");
+    try {
+        const data = await esApiPost("/api/v1/dev/videogen", { prompt });
+        await EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+        return EsTeams.sendVideo(chatId, data.video_url, { caption: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗔𝗜 𝗩𝗜𝗗𝗘𝗢", reply_markup: waChannelBtn });
+    } catch (err) {
+        await EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
+});
+
+EsTeams.onText(/^\/wacheck(?:\s+(\S+))?$/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const number = match[1];
+    if (!number) {
+        return EsTeams.sendMessage(chatId, "❌ Usage: /wacheck <number with country code>", { reply_markup: waChannelBtn });
+    }
+    try {
+        const data = await esApiGet("/api/v1/dev/wa-check", { number });
+        const caption = `𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗘𝗖𝗞\n\nNumber: ${number}\nRegistered: ${data.registered ? "Yes ✅" : "No ❌"}`;
+        return EsTeams.sendMessage(chatId, caption, { reply_markup: waChannelBtn });
+    } catch (err) {
+        return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
+    }
 });
 });

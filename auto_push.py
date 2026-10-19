@@ -7,7 +7,7 @@ import subprocess
 # -----------------------------
 # Paths
 # -----------------------------
-REPO_PATH = "/data/data/com.termux/files/home/storage/shared/Download/TELEBOTX"
+REPO_PATH = "/data/data/com.termux/files/home/storage/shared/Download/TELEBOX"
 os.chdir(REPO_PATH)
 
 # -----------------------------
@@ -46,17 +46,15 @@ def remove_git_lock():
 # -----------------------------
 def run_git(command):
     remove_git_lock()
-
     result = subprocess.run(
         command,
+        cwd=REPO_PATH,
         capture_output=True,
         text=True
     )
-
     if result.returncode != 0:
         print("❌ Git Error:", result.stderr.strip())
         return None
-
     print("✅", " ".join(command))
     return result.stdout.strip()
 
@@ -64,17 +62,23 @@ def run_git(command):
 # Setup repo
 # -----------------------------
 def setup_repo():
-    if not os.path.exists(".git"):
+    if not os.path.exists(os.path.join(REPO_PATH, ".git")):
         print("🔧 Initializing repo...")
-        run_git(["git", "init"])
+        if run_git(["git", "init"]) is None:
+            return False
         run_git(["git", "branch", "-M", "main"])
-        run_git([
-            "git",
-            "remote",
-            "add",
-            "origin",
-            "https://github.com/esteamsx/telebot.git"
-        ])
+        remote_check = subprocess.run(
+            ["git", "remote", "get-url", "origin"],
+            cwd=REPO_PATH,
+            capture_output=True,
+            text=True
+        )
+        if remote_check.returncode != 0:
+            run_git([
+                "git", "remote", "add", "origin",
+                "https://github.com/esteamsx/telebot.git"
+            ])
+    return True
 
 # -----------------------------
 # Git helpers
@@ -88,7 +92,14 @@ def git_pull():
 
 def git_add():
     print("📌 Adding files...")
-    return run_git(["git", "add", "."])
+    return run_git([
+        "git", "add", "-A", "--", ".",
+        ":(exclude)*.tmp",
+        ":(exclude)*.temp",
+        ":(exclude)*.swp",
+        ":(exclude)*~",
+        ":(exclude).DS_Store"
+    ])
 
 def git_commit():
     print("📝 Committing...")
@@ -103,7 +114,9 @@ def git_push():
 # -----------------------------
 print("🚀 Watching folder for changes...")
 
-setup_repo()
+if not setup_repo():
+    print("❌ Failed to initialize repository.")
+    raise SystemExit(1)
 
 git_running = False
 
@@ -116,60 +129,54 @@ while True:
                 "-e",
                 "modify,create,delete,move",
                 "--exclude",
-                r"(^|/)\.git(/|$)|\.swp$|\.tmp$|~$|\.DS_Store",
+                r"(^|/)\.git(/|$)|\.tmp$|\.temp$|\.swp$|~$|\.DS_Store$",
                 "."
             ],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
 
-        # Prevent multiple Git operations at once
+        # Prevent multiple Git operations at once.
         if git_running:
             continue
-
         git_running = True
 
-        # Give editors a moment to finish writing
+        # Give applications/editors time to finish writing files.
         time.sleep(2)
-
         status = git_status()
-
+        if status is None:
+            git_running = False
+            continue
         if not status:
             git_running = False
             continue
 
         print("\n📁 Change detected!")
-
-        # Stage
         if git_add() is None:
             git_running = False
             continue
 
-        # Commit
-        commit = git_commit()
+        staged = run_git(["git", "diff", "--cached", "--name-only"])
+        if staged is None or not staged:
+            print("ℹ️ Nothing to commit.")
+            git_running = False
+            continue
 
+        commit = git_commit()
         if commit is None:
             git_running = False
             continue
 
-        committed = "nothing to commit" not in commit.lower()
-
-        # Pull (rebase) now that the working tree is clean
+        # Pull latest GitHub changes.
         if git_pull() is None:
             git_running = False
             continue
 
-        if not committed:
-            git_running = False
-            continue
-
-        # Push
         if git_push() is None:
             git_running = False
             continue
 
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
         send_telegram(
             f"""✅ PUSH SUCCESSFUL
 
@@ -178,15 +185,12 @@ while True:
 📂 Repository synced successfully.
 """
         )
-
         print("📲 Telegram notification sent!")
-
         git_running = False
 
     except KeyboardInterrupt:
         print("\n🛑 Stopped.")
         break
-
     except Exception as e:
         git_running = False
         print("🔥 ERROR:", e)
