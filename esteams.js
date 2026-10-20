@@ -361,11 +361,8 @@ const TTT_FILE = './ES_TEAMS-MEDIA/ttt.json';
 const botImageUrl = 'https://files.catbox.moe/3jibot.jpg';
 // EmmyHenz V4 site. Override with EMMYHENZ_BASE_URL if the owner moves the domain again.
 const SITE_BASE = (process.env.EMMYHENZ_BASE_URL || 'https://host.emmyhenztech.xyz').replace(/\/+$/, '');
-// Prefer environment variables. The literals below are legacy fallbacks: set the env vars, then delete them.
-const USERNAME = process.env.EMMYHENZ_USERNAME || 'peterchuks';
-const PASSWORD = process.env.EMMYHENZ_PASSWORD || 'Password';
-// Token issued by the site's Google/GitHub sign-in (the website stores it as localStorage "eh_tok").
-const SITE_TOKEN_ENV = (process.env.EMMYHENZ_TOKEN || '').trim().replace(/^bearer\s+/i, '').replace(/^["']+|["']+$/g, '').trim();
+// Website accounts come from the env vars EMMYHENZ_TOKEN, EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ...
+// (each is the 'eh_tok' value of one Google/GitHub sign-in). See the EMMYHENZ ACCOUNTS section below.
 const BOT_USERNAME = "es_teams_bot";
 const reactions = ["😘", "❤️", "🤝", "🥰", "👏", "🙏", "😱", "🤯", "👍", "😍", "🤩", "🔥", "👌", "👨‍💻", "😁", "😢", "🎉", "🍾"];
 const fruits = ["🍎","🍌","🍓","🍉","🍍","🍊","🥝","🍇","🍐","🥭"];const REPO_PATH = "./"; 
@@ -511,14 +508,6 @@ function welcomeCaption(mainText) {
   return `𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗔𝗨𝗧𝗢 𝗧𝗥𝗔𝗗𝗜𝗡𝗚\n\n${mainText}`;
 }
 
-// The site now answers HTTP 410 "Password login is closed" (Google/GitHub sign-in only).
-// Once seen, the bot stops trying username/password logins (generated accounts) instead of failing 30+ times per run.
-let passwordLoginClosed = false;
-function noteLoginClosed(err) {
-  if (err?.response?.status === 410) passwordLoginClosed = true;
-}
-const LOGIN_CLOSED_MSG = "The site closed password login (Google/GitHub only), so generated accounts cannot sign in.";
-
 // Secret-free description of an API failure (never includes tokens, passwords or headers).
 function describeApiError(err) {
   const r = err?.response;
@@ -532,282 +521,231 @@ function describeApiError(err) {
   return `HTTP ${r.status}`;
 }
 
-async function getToken(forceRefresh = false) {
-  // Preferred: token from the website's OAuth sign-in, supplied via EMMYHENZ_TOKEN.
-  if (SITE_TOKEN_ENV) {
-    if (forceRefresh) console.log('⚠️ EMMYHENZ_TOKEN was rejected (401). Sign in on the website again and update it.');
-    return SITE_TOKEN_ENV;
-  }
-
-  if (!forceRefresh && cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
-    return cachedToken;
-  }
-
-  try {
-    const res = await axios.post(`${SITE_BASE}/api/login`, {
-      username: USERNAME,
-      password: PASSWORD
-    });
-
-    if (res.data && typeof res.data === 'object' && res.data.success && res.data.token) {
-      cachedToken = res.data.token;
-      tokenExpiry = Date.now() + (12 * 60 * 60 * 1000); 
-      console.log('✅ Login successful, token cached for 12 hours');
-      return cachedToken;
-    } else {
-      throw new Error('Login failed: ' + ((res.data && res.data.error) || 'unexpected response (is /api/login still supported?)'));
-    }
-  } catch (err) {
-    noteLoginClosed(err);
-    console.error('❌ Login error:', describeApiError(err));
-    throw err;
-  }
+// Token of the Main account (EMMYHENZ_TOKEN). Used by the /topup command.
+async function getToken() {
+  const main = emmyAccounts[0];
+  if (!main) throw new Error('EMMYHENZ_TOKEN is not set');
+  return main.token;
 }
 
-// One-time startup check of EMMYHENZ_TOKEN (prints only OK / the reason, never the token).
+// ============ EMMYHENZ ACCOUNTS (EMMYHENZ_TOKEN, EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ...) ============ //
+// Each token is one website account. The site lets each account react once per hour, so more
+// accounts = more reacts per hour. Tokens are never printed, logged or sent to Telegram.
+function cleanSiteToken(v) {
+  return String(v || '').trim().replace(/^bearer\s+/i, '').replace(/^["']+|["']+$/g, '').trim();
+}
+
+function loadEmmyAccounts(env = process.env) {
+  const found = [];
+  for (const [key, val] of Object.entries(env)) {
+    const m = /^EMMYHENZ_TOKEN(\d*)$/.exec(key);
+    const token = m ? cleanSiteToken(val) : '';
+    if (token) found.push({ n: m[1] === '' ? 0 : parseInt(m[1], 10), token });
+  }
+  found.sort((a, b) => a.n - b.n);
+  const seen = new Set();
+  return found
+    .filter(f => !seen.has(f.token) && seen.add(f.token))
+    .map(f => ({
+      n: f.n,
+      label: f.n === 0 ? 'Main' : `Account ${f.n}`,
+      token: f.token,
+      balance: null,   // last known coin balance
+      nextAt: 0,       // time (ms) this account may react again; 0 = free now
+      invalid: false,  // true when the site rejected the token (expired / logged out)
+      error: '',       // last problem (never contains the token)
+      busy: false,     // true while a react request is running on this account
+      checkedAt: 0
+    }));
+}
+
+const emmyAccounts = loadEmmyAccounts();
+const STATUS_TTL = 30 * 1000;
+const REACT_QUEUE_MSG = "⏳ Service is on queue, please try again later.";
+const cleanReason = (s) => String(s || '').replace(/[*_`\[\]]/g, '').slice(0, 160);
+
+function fmtWait(ms) {
+  const m = Math.max(1, Math.ceil(ms / 60000));
+  return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m} min`;
+}
+
+// Asks the site for the account's coins (/api/me) and its react timer (/api/channel-react/status).
+async function refreshAccount(acc, force = false) {
+  if (!force && acc.checkedAt && Date.now() - acc.checkedAt < STATUS_TTL) return acc;
+  const opts = { headers: { 'x-auth-token': acc.token }, timeout: 20000 };
+  const [me, st] = await Promise.allSettled([
+    axios.get(`${SITE_BASE}/api/me`, opts),
+    axios.get(`${SITE_BASE}/api/channel-react/status`, opts)
+  ]);
+  acc.checkedAt = Date.now();
+
+  if ([me, st].some(r => r.status === 'rejected' && r.reason?.response?.status === 401)) {
+    acc.invalid = true;
+    acc.error = 'token expired or logged out';
+    return acc;
+  }
+  acc.invalid = false;
+
+  if (me.status === 'fulfilled' && me.value.data?.success) {
+    const coins = Number(me.value.data.user?.coins);
+    if (Number.isFinite(coins)) acc.balance = coins;
+    acc.error = '';
+  } else if (me.status === 'rejected') {
+    acc.error = cleanReason(describeApiError(me.reason));
+  }
+
+  if (st.status === 'fulfilled' && st.value.data?.success) {
+    const t = st.value.data.nextAt ? Date.parse(st.value.data.nextAt) : 0;
+    acc.nextAt = t > Date.now() ? t : 0;
+  }
+  return acc;
+}
+
+async function refreshAllAccounts(force = false) {
+  await Promise.all(emmyAccounts.map(a => refreshAccount(a, force)));
+}
+
+const isAccountFree = (a) => !a.invalid && !a.busy && !(a.nextAt && a.nextAt > Date.now());
+
+// Total coins across all usable accounts (last known values).
+function sumBalances() {
+  return emmyAccounts.reduce((sum, a) => sum + ((!a.invalid && Number.isFinite(a.balance)) ? a.balance : 0), 0);
+}
+
+function queueMessage() {
+  const waits = emmyAccounts.filter(a => !a.invalid && a.nextAt > Date.now()).map(a => a.nextAt - Date.now());
+  return waits.length ? `${REACT_QUEUE_MSG} Next slot in about ${fmtWait(Math.min(...waits))}.` : REACT_QUEUE_MSG;
+}
+
+// Used by /wareact BEFORE asking for payment: is any account free right now?
+async function getReactAvailability() {
+  if (!emmyAccounts.length) return { configured: false, usable: 0, free: 0 };
+  await refreshAllAccounts();
+  const usable = emmyAccounts.filter(a => !a.invalid);
+  return { configured: true, usable: usable.length, free: usable.filter(isAccountFree).length };
+}
+
+// Startup check: prints only OK / the reason, never a token.
 (async () => {
-  if (!SITE_TOKEN_ENV) {
-    console.log('ℹ️ EMMYHENZ_TOKEN is not set - the site no longer allows password login, so set it to use the main account.');
+  if (!emmyAccounts.length) {
+    console.log('ℹ️ No EMMYHENZ_TOKEN set - add EMMYHENZ_TOKEN (and EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ... for more accounts).');
     return;
   }
-  try {
-    const r = await axios.get(`${SITE_BASE}/api/me`, { headers: { 'x-auth-token': SITE_TOKEN_ENV }, timeout: 20000 });
-    console.log(r.data?.success ? `✅ EmmyHenz token accepted (coins: ${r.data.user?.coins ?? '?'})` : '⚠️ EmmyHenz token check: unexpected response');
-  } catch (err) {
-    console.log('❌ EmmyHenz token check failed:', describeApiError(err));
+  await refreshAllAccounts(true);
+  for (const a of emmyAccounts) {
+    console.log(a.invalid || a.balance === null
+      ? `❌ EmmyHenz ${a.label}: ${a.error || 'could not read account'}`
+      : `✅ EmmyHenz ${a.label} token accepted (coins: ${a.balance})`);
   }
+  if (emmyAccounts.some(a => !a.invalid && a.balance !== null)) await saveTotalCoins(sumBalances());
 })();
 
-//========== CHANNEL REACT FUNCTION (AUTO SWITCH ACCOUNTS) ==========//
+//========== CHANNEL REACT FUNCTION (USES ANY FREE EMMYHENZ ACCOUNT) ==========//
 async function sendChannelReact(link, emoji = null) {
-
-  // Body mirrors the website's Reactions form: { link, emoji, random, useMode }.
-  // (The site may also require a Cloudflare Turnstile "cfToken"; a bot cannot supply one.)
-  const payload = {
-    link,
-    emoji,
-    random: !emoji,
-    useMode: 'coin'
-  };
-
-  // Last server-side reason a react was refused (shown to the user if every account fails).
-  let lastReason = '';
-  const noteReason = (err) => {
-    const d = err?.response?.data;
-    const raw = err?.response?.status === 401
-      ? 'Bot session expired - admin must update the EmmyHenz token'
-      : ((d && typeof d === 'object' && d.error) ? d.error : describeApiError(err));
-    lastReason = String(raw).replace(/[*_`\[\]]/g, '').slice(0, 160);
-  };
-
-  async function reactWithToken(token) {
-    const res = await axios.post(
-      `${SITE_BASE}/api/channel-react`,
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token
-        },
-        timeout: 30000
-      }
-    );
-
-    // The site reports the outcome in the body ({ success, error, cooldown, ... }).
-    if (!res.data || typeof res.data !== 'object' || res.data.success !== true) {
-      const e = new Error((res.data && res.data.error) || 'React was not accepted by the site');
-      e.response = { status: 422, data: res.data };
-      throw e;
-    }
-    return res;
+  if (!emmyAccounts.length) {
+    return { success: false, message: "❌ No EmmyHenz account is set up. Admin: add EMMYHENZ_TOKEN." };
   }
 
+  // Check every account first (server-checked): each can only react once per hour.
+  await refreshAllAccounts();
+
+  if (!emmyAccounts.some(a => !a.invalid)) {
+    return { success: false, message: "❌ Could not send reactions: Bot session expired - admin must update the EmmyHenz token" };
+  }
+
+  // Body mirrors the website's Reactions form.
+  const payload = { link, emoji, random: !emoji, useMode: 'coin' };
   const doneMsg = (d) => d.reactionsSent > 0 ? `✅ Done! ${Number(d.reactionsSent).toLocaleString()} reactions sent` : "✅ Done!";
 
-  //================ MAIN ACCOUNT =================//
-  try {
-    let token = await getToken();
+  let lastReason = '';
+  let hardFailure = false; // something other than "account is waiting for its hourly slot"
 
+  for (const acc of emmyAccounts) {
+    if (!isAccountFree(acc)) continue;
+    acc.busy = true; // reserve it so a second request picks a different account
     try {
-      const res = await reactWithToken(token);
+      const res = await axios.post(`${SITE_BASE}/api/channel-react`, payload, {
+        headers: { "Content-Type": "application/json", "x-auth-token": acc.token },
+        timeout: 30000
+      });
+      const d = res.data;
+
+      if (!d || typeof d !== 'object' || d.success !== true) {
+        if (d && d.cooldown) {
+          acc.nextAt = (d.nextAt && Date.parse(d.nextAt)) || Date.now() + 60 * 60 * 1000;
+        } else {
+          hardFailure = true;
+          lastReason = cleanReason((d && d.error) || 'React was not accepted by the site');
+        }
+        continue;
+      }
+
+      // The wait starts on a real success. Premium accounts have no hourly wait.
+      acc.nextAt = d.nextAt ? (Date.parse(d.nextAt) || 0) : 0;
+      if (acc.nextAt <= Date.now()) acc.nextAt = d.premium ? 0 : Date.now() + 60 * 60 * 1000;
+      if (Number.isFinite(Number(d.coinsLeft))) acc.balance = Number(d.coinsLeft);
+      acc.checkedAt = Date.now();
 
       return {
         success: true,
-        message: doneMsg(res.data),
-        emojisUsed: res.data.emojisUsed || [],
-        coinsLeft: res.data.coinsLeft || 0,
-        account: "main"
+        message: doneMsg(d),
+        emojisUsed: d.emojisUsed || [],
+        coinsLeft: sumBalances(), // total coins across all accounts
+        account: acc.label
       };
-
     } catch (err) {
-
-      // Refresh expired token
+      const d = err.response?.data;
       if (err.response?.status === 401) {
-        token = await getToken(true);
-
-        const retry = await reactWithToken(token);
-
-        return {
-          success: true,
-          message: doneMsg(retry.data),
-          emojisUsed: retry.data.emojisUsed || [],
-          coinsLeft: retry.data.coinsLeft || 0,
-          account: "main"
-        };
-      }
-
-      // Main account has no coins
-      noteReason(err);
-      if (err.response?.status === 403) {
-        console.log("⚠️ Main account has no coins. Switching to generated accounts...");
+        acc.invalid = true;
+        acc.error = 'token expired or logged out';
+        hardFailure = true;
+        lastReason = 'Bot session expired - admin must update the EmmyHenz token';
+      } else if (d && typeof d === 'object' && d.cooldown) {
+        acc.nextAt = (d.nextAt && Date.parse(d.nextAt)) || Date.now() + 60 * 60 * 1000;
       } else {
-        throw err;
+        hardFailure = true;
+        lastReason = cleanReason((d && d.error) || describeApiError(err));
       }
-    }
-
-  } catch (err) {
-    noteReason(err);
-    console.log("⚠️ Main account unavailable:", describeApiError(err));
-  }
-
-  //================ GENERATED ACCOUNTS =================//
-
-  if (passwordLoginClosed) {
-    return {
-      success: false,
-      message: `❌ Could not send reactions: ${lastReason || LOGIN_CLOSED_MSG}`
-    };
-  }
-
-  const accounts = await getGeneratedAccounts();
-
-  if (!accounts.length) {
-    return {
-      success: false,
-      message: lastReason
-        ? `❌ Could not send reactions: ${lastReason}`
-        : "❌ No generated accounts available."
-    };
-  }
-
-  for (const account of accounts) {
-
-    try {
-
-      const login = await axios.post(
-        `${SITE_BASE}/api/login`,
-        {
-          username: account.username,
-          password: account.password
-        }
-      );
-
-      if (!login.data || !login.data.success) {
-        console.log(`⚠️ Login failed for ${account.username}`);
-        continue;
-      }
-
-      const token = login.data.token;
-
-      try {
-
-        const res = await reactWithToken(token);
-
-        console.log(`✅ Successfully used generated account: ${account.username}`);
-
-        return {
-          success: true,
-          message: doneMsg(res.data),
-          emojisUsed: res.data.emojisUsed || [],
-          coinsLeft: res.data.coinsLeft || 0,
-          account: account.username
-        };
-
-      } catch (err) {
-
-        noteReason(err);
-        if (err.response?.status === 403) {
-          console.log(`⚠️ ${account.username} has no coins. Trying next account...`);
-          continue;
-        }
-
-        if (err.response?.status === 401) {
-          console.log(`⚠️ ${account.username} token expired.`);
-          continue;
-        }
-
-        console.log(`⚠️ ${account.username}: ${describeApiError(err)}`);
-        continue;
-      }
-
-    } catch (err) {
-      console.log(`⚠️ Couldn't login to ${account.username}: ${describeApiError(err)}`);
-      noteLoginClosed(err);
-      if (passwordLoginClosed) break; // site closed password login - no point trying the rest
-      continue;
+      console.log(`⚠️ ${acc.label}: ${describeApiError(err)}`);
+    } finally {
+      acc.busy = false;
     }
   }
 
-  //================ ALL ACCOUNTS EXHAUSTED =================//
-
-  return {
-    success: false,
-    message: lastReason
-      ? `❌ Could not send reactions: ${lastReason}`
-      : (passwordLoginClosed ? `❌ Could not send reactions: ${LOGIN_CLOSED_MSG}` : "❌ All accounts have exhausted their coins.")
-  };
+  if (!hardFailure) return { success: false, queue: true, message: queueMessage() };
+  return { success: false, message: `❌ Could not send reactions: ${lastReason}` };
 }
 
-//========== GENERATED COINS FUNCTIONS ==========//
-async function getTotalCoinsFromAllAccounts() {
+//========== TOTAL COINS (ALL ACCOUNTS) - SAVED IN FIRESTORE ==========//
+async function loadStoredTotalCoins() {
   try {
-    const coinsRef = doc(db, "generatedCoins", "stats");
-    const snapshot = await getDoc(coinsRef);
-
-    if (!snapshot.exists()) {
-      await setDoc(coinsRef, {
-        totalCoins: 0,
-        updatedAt: Date.now()
-      });
-      return 0;
-    }
-
-    return Number(snapshot.data().totalCoins) || 0;
+    const snapshot = await getDoc(doc(db, "generatedCoins", "stats"));
+    return snapshot.exists() ? (Number(snapshot.data().totalCoins) || 0) : 0;
   } catch (err) {
-    console.error("❌ Error getting total coins:", err.message);
+    console.error("❌ Error reading stored total coins:", err.message);
     return 0;
   }
 }
 
-async function addGeneratedCoins(coins) {
+async function saveTotalCoins(total) {
   try {
-    coins = Number(coins) || 0;
-
-    if (coins <= 0) return false;
-
-    const coinsRef = doc(db, "generatedCoins", "stats");
-    const snapshot = await getDoc(coinsRef);
-
-    if (!snapshot.exists()) {
-      await setDoc(coinsRef, {
-        totalCoins: coins,
-        updatedAt: Date.now()
-      });
-    } else {
-      const currentCoins = Number(snapshot.data().totalCoins) || 0;
-
-      await updateDoc(coinsRef, {
-        totalCoins: currentCoins + coins,
-        updatedAt: Date.now()
-      });
-    }
-
-    console.log(`💎 Added ${coins} generated coins`);
+    await setDoc(doc(db, "generatedCoins", "stats"), { totalCoins: Number(total) || 0, updatedAt: Date.now() }, { merge: true });
     return true;
   } catch (err) {
-    console.error("❌ Error updating total coins:", err.message);
+    console.error("❌ Error saving total coins:", err.message);
     return false;
   }
+}
+
+// Live total across all accounts (and saves it). Falls back to the saved total if the site can't be reached.
+async function getTotalCoins(force = false) {
+  await refreshAllAccounts(force);
+  if (!emmyAccounts.some(a => !a.invalid && Number.isFinite(a.balance))) {
+    return { total: await loadStoredTotalCoins(), stale: true };
+  }
+  const total = sumBalances();
+  await saveTotalCoins(total);
+  return { total, stale: false };
 }
 
 //========== WAREACT COOLDOWN FUNCTIONS ==========//
@@ -862,178 +800,29 @@ async function refundWareactStars(userId, chargeId) {
   }
 }
 
-//=============== GENERATED ACCOUNTS  ================//
-async function getGeneratedAccounts() {
-  try {
-    const ref = doc(db, "generatedAccounts", "list");
-    const snapshot = await getDoc(ref);
-    if (!snapshot.exists()) return [];
-    return snapshot.data().accounts || [];
-  } catch (err) {
-    console.error("❌ Error getting generated accounts:", err.message);
-    return [];
-  }
-}
-
-// ============ CREATE ACCT. FUNCTION ========= //
-async function registerNewAccount() {
-  const username = `es_${crypto.randomBytes(4).toString("hex")}`;
-  const password = crypto.randomBytes(6).toString("hex");
-
-  const email = `${username}@gmail.com`;
-
-  try {
-    const res = await axios.post(
-      `${SITE_BASE}/api/register`,
-      {
-        username,
-        email,
-        password,
-        referralCode: null
-      },
-      {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        timeout: 30000
-      }
-    );
-
-    if (!res.data.success) {
-      return {
-        success: false,
-        error: res.data.error || "Registration failed"
-      };
-    }
-
-    const ref = doc(db, "generatedAccounts", "list");
-    const snapshot = await getDoc(ref);
-
-    const newAccount = {
-      username,
-      password,
-      email,
-      createdAt: Date.now()
-    };
-
-    if (!snapshot.exists()) {
-      await setDoc(ref, {
-        accounts: [newAccount]
-      });
-    } else {
-      await updateDoc(ref, {
-        accounts: arrayUnion(newAccount)
-      });
-    }
-
-    console.log(`✅ Generated account: ${username}`);
-
-    return {
-      success: true,
-      username,
-      password,
-      email
-    };
-  } catch (err) {
-    noteLoginClosed(err);
-    console.error(
-      "❌ Registration failed:",
-      err.response?.data || err.message
-    );
-
-    return {
-      success: false,
-      error: err.response?.data?.error || err.message
-    };
-  }
-}
-
-// ============ CLAIM DAILY COINS FUNCTION ========= //
-async function claimCoinsFromAccount(username, password) {
-  if (passwordLoginClosed) {
-    return { success: false, error: LOGIN_CLOSED_MSG };
-  }
-  try {
-    // Login
-    const loginRes = await axios.post(`${SITE_BASE}/api/login`, {
-      username,
-      password
-    });
-
-    if (!loginRes.data || typeof loginRes.data !== 'object') {
-      return {
-        success: false,
-        error: "Login not supported: site returned a web page instead of JSON (/api/login may have been removed)"
-      };
-    }
-
-    if (!loginRes.data.success) {
-      return {
-        success: false,
-        error: loginRes.data.error || "Login failed"
-      };
-    }
-
-    const token = loginRes.data.token;
-
-    // Claim daily coin. Live route on the current site: POST /api/tasks/daily/claim
-    // (x-auth-token, no body). Falls back to the legacy /api/claim-coin only if that route is gone.
-    const claimOpts = { headers: { "x-auth-token": token }, timeout: 30000 };
-    let claimRes;
+// ============ CLAIM DAILY COINS (ALL ACCOUNTS) ========= //
+// Live route on the current site: POST /api/tasks/daily/claim (x-auth-token, no body).
+async function claimAllAccounts() {
+  const results = [];
+  for (const acc of emmyAccounts) {
     try {
-      claimRes = await axios.post(`${SITE_BASE}/api/tasks/daily/claim`, null, claimOpts);
-    } catch (e) {
-      const st = e.response?.status;
-      if (st !== 404 && st !== 405) throw e;
-      claimRes = await axios.post(`${SITE_BASE}/api/claim-coin`, null, claimOpts);
+      const res = await axios.post(`${SITE_BASE}/api/tasks/daily/claim`, null, {
+        headers: { 'x-auth-token': acc.token },
+        timeout: 30000
+      });
+      if (res.data && res.data.success) {
+        results.push({ label: acc.label, success: true, coins: Number(res.data.reward ?? 0) || 0 });
+      } else {
+        results.push({ label: acc.label, success: false, error: cleanReason((res.data && res.data.error) || 'Claim failed') });
+      }
+    } catch (err) {
+      if (err.response?.status === 401) acc.invalid = true, acc.error = 'token expired or logged out';
+      results.push({ label: acc.label, success: false, error: err.response?.status === 401 ? 'Token expired or logged out' : cleanReason(describeApiError(err)) });
     }
-
-    if (!claimRes.data || typeof claimRes.data !== 'object') {
-      return { success: false, error: "Unexpected (non-JSON) claim response" };
-    }
-
-    if (claimRes.data.success) {
-      return {
-        success: true,
-        coinsClaimed:
-          Number(
-            claimRes.data.reward ??
-            claimRes.data.coinsClaimed ??
-            claimRes.data.coin ??
-            claimRes.data.coins ??
-            1
-          )
-      };
-    }
-
-    return {
-      success: false,
-      error: claimRes.data.error || "Claim failed"
-    };
-  } catch (err) {
-    noteLoginClosed(err);
-    return {
-      success: false,
-      error: describeApiError(err)
-    };
+    await new Promise(r => setTimeout(r, 500));
   }
-}
-
-// Daily claim for the main account (the EMMYHENZ_TOKEN account) - the only account that can still sign in.
-async function claimMainAccount() {
-  if (!SITE_TOKEN_ENV) return { success: false, error: 'EMMYHENZ_TOKEN is not set' };
-  try {
-    const res = await axios.post(`${SITE_BASE}/api/tasks/daily/claim`, null, {
-      headers: { 'x-auth-token': SITE_TOKEN_ENV },
-      timeout: 30000
-    });
-    if (res.data && res.data.success) {
-      return { success: true, coinsClaimed: Number(res.data.reward ?? 0) || 0 };
-    }
-    return { success: false, error: (res.data && res.data.error) || 'Claim failed' };
-  } catch (err) {
-    return { success: false, error: describeApiError(err) };
-  }
+  const { total } = await getTotalCoins(true);
+  return { results, total, claimed: results.reduce((s, r) => s + (r.success ? r.coins : 0), 0) };
 }
 
 // ============ ACCT BALANCE FUNCTION ========= //
@@ -1119,51 +908,16 @@ async function deleteTopupCode(topupCode) {
   }
 }
 
-// ============ CROW JOB FUNCTION ========= //
-cron.schedule('0 */12 * * *', async () => {
-  console.log('⏰ 12-hour interval triggered - Creating new account...');
-  if (passwordLoginClosed) {
-    console.log('⏭️ Skipped: the site closed password login/sign-up (Google/GitHub only).');
-    return;
-  }
-  try {
-    const result = await registerNewAccount();
-    if (result.success) {
-      console.log(`✅ New account created automatically: ${result.username}`);
-    } else {
-      console.log(`❌ Failed to create account: ${result.error}`);
-    }
-  } catch (err) {
-    console.error('❌ Error in 12-hour cron job:', err.message);
-  }
-});
-
+// ============ CRON JOB FUNCTION ========= //
 cron.schedule('0 0 * * *', async () => {
   console.log('⏰ 24-hour interval triggered - Claiming coins from all accounts...');
   try {
-    const mainClaim = await claimMainAccount();
-    console.log(mainClaim.success
-      ? `✅ Main account claimed ${mainClaim.coinsClaimed} coins`
-      : `⚠️ Main account claim: ${mainClaim.error}`);
-
-    const accounts = await getGeneratedAccounts();
-    console.log(`📊 Processing ${accounts.length} accounts for coin claim...`);
-    
-    for (const account of accounts) {
-      const claimResult = await claimCoinsFromAccount(account.username, account.password);
-      if (claimResult.success) {
-  console.log(`✅ Claimed ${claimResult.coinsClaimed} coins from ${account.username}`);
-
-  await addGeneratedCoins(claimResult.coinsClaimed || 0);
-      } else {
-        console.log(`⚠️ Could not claim coins from ${account.username}: ${claimResult.error}`);
-      }
-      // Small delay betwe
-      await new Promise(r => setTimeout(r, 2000));
+    if (!emmyAccounts.length) return console.log('ℹ️ No EmmyHenz accounts configured.');
+    const { results, total } = await claimAllAccounts();
+    for (const r of results) {
+      console.log(r.success ? `✅ ${r.label}: +${r.coins} coins` : `⚠️ ${r.label}: ${r.error}`);
     }
-    
-    const totalCoins = await getTotalCoinsFromAllAccounts();
-    console.log(`💎 Total coins available: ${totalCoins}`);
+    console.log(`💎 Total coins available: ${total}`);
   } catch (err) {
     console.error('❌ Error in 24-hour cron job:', err.message);
   }
@@ -12273,6 +12027,16 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, "❌ *Invalid channel post link*\n\nSend the link of a specific post, e.g.\n`/wareact https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29/5696`", { parse_mode: "Markdown" });
   }
 
+  // Check every EmmyHenz account first: each one can only react once per hour.
+  const availability = await getReactAvailability();
+  if (!availability.configured || availability.usable === 0) {
+    console.log('⚠️ No active EmmyHenz account (check the EMMYHENZ_TOKEN values).');
+    return EsTeams.sendMessage(chatId, "⚠️ Reaction service is temporarily unavailable. Please try again later.");
+  }
+  if (availability.free === 0) {
+    return EsTeams.sendMessage(chatId, queueMessage());
+  }
+
   if (!CONFIG.OWNER_IDS.includes(userId)) {  
     const cooldown = await checkWareactCooldown(userId);  
   
@@ -12382,8 +12146,6 @@ async function processWareactInner(chatId, channelLink, userId, paidChargeId = n
       }  
     }  
   
-    const totalGeneratedCoins = await getTotalCoinsFromAllAccounts();  
-  
     const result = await sendChannelReact(channelLink);  
   
     try {  
@@ -12399,8 +12161,7 @@ async function processWareactInner(chatId, channelLink, userId, paidChargeId = n
         ? result.emojisUsed.join(" ")  
         : "👍";  
   
-      const mainAccountCoins = result.coinsLeft || 0;  
-      const totalCoinsAvailable = mainAccountCoins + totalGeneratedCoins;  
+      const totalCoinsAvailable = result.coinsLeft || 0; // total across all accounts  
   
       await EsTeams.sendPhoto(chatId, botImageUrl, {  
         caption: `*✅ 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗥𝗘𝗔𝗖𝗧 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*  
@@ -12428,7 +12189,7 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
           : `\n\n⚠️ Could not auto-refund your Stars. Please contact the admin.`;
       }
       await EsTeams.sendPhoto(chatId, botImageUrl, {  
-        caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}${refundNote}`,  
+        caption: `${result.queue ? '⏳ *𝗦𝗘𝗥𝗩𝗜𝗖𝗘 𝗕𝗨𝗦𝗬*' : '❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*'}\n\n${result.message}${refundNote}`,  
         parse_mode: "Markdown",  
         reply_markup: {  
           inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
@@ -12532,45 +12293,29 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
   }
 
   try {
-    const accounts = await getGeneratedAccounts();
-    const totalCoins = await getTotalCoinsFromAllAccounts();
-
-    let accountsList = `*📊 Generated Accounts Statistics*\n\n`;
-    accountsList += `👥 Total Accounts: \`${accounts.length}\`\n`;
-    let mainBalanceText;
-    try { mainBalanceText = String(await fetchMainBalance()); } catch (e) { mainBalanceText = "unavailable"; }
-    accountsList += `🏦 Main Account Balance: \`${mainBalanceText}\`\n`;
-    accountsList += `💎 Total Generated Coins: \`${totalCoins}\`\n\n`;
-    accountsList += `*Generated Accounts:*\n\n`;
-
-    if (accounts.length === 0) {
-      accountsList += `No accounts generated yet.`;
-    } else {
-      const lastAccounts = accounts.slice(-5).reverse();
-
-       lastAccounts.forEach((acc, idx) => {
-        const createdDate = acc.createdAt
-          ? new Date(acc.createdAt).toLocaleDateString()
-          : "Unknown";
-
-        accountsList += `${idx + 1}. \`${acc.username}\`\n`;
-        accountsList += `   📅 Created: \`${createdDate}\`\n\n`;
-      });
-
-     if (accounts.length > 5) {
-  accountsList += `...and ${accounts.length - 5} more accounts`;
-}
+    if (!emmyAccounts.length) {
+      return EsTeams.sendMessage(chatId, "ℹ️ No EmmyHenz account is set up. Add EMMYHENZ_TOKEN (and EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ... for more).");
     }
 
-    await EsTeams.sendMessage(chatId, accountsList, {
-      parse_mode: "Markdown",
-    });
+    const { total, stale } = await getTotalCoins(true);
+
+    let text = `*📊 EmmyHenz Accounts*\n\n`;
+    for (const a of emmyAccounts) {
+      const icon = a.n === 0 ? "🏦" : "👤";
+      if (a.invalid) {
+        text += `${icon} ${a.label} — ❌ token expired\n`;
+        continue;
+      }
+      const coins = Number.isFinite(a.balance) ? `\`${a.balance}\` coins` : "coins unknown";
+      const free = a.nextAt > Date.now() ? `⏳ free in ${fmtWait(a.nextAt - Date.now())}` : "🟢 free";
+      text += `${icon} ${a.label} — ${coins} — ${free}\n`;
+    }
+    text += `\n💎 *Total Coins:* \`${total}\`${stale ? " _(last saved)_" : ""}`;
+
+    await EsTeams.sendMessage(chatId, text, { parse_mode: "Markdown" });
   } catch (err) {
     console.error("Accstats error:", err.message);
-
-    await EsTeams.sendMessage(chatId, `❌ Error: \`${err.message}\``, {
-      parse_mode: "Markdown",
-    });
+    await EsTeams.sendMessage(chatId, `❌ Error: \`${cleanReason(err.message)}\``, { parse_mode: "Markdown" });
   }
 });
 
@@ -12583,64 +12328,27 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
     return EsTeams.sendMessage(chatId, "❌ Admin command only!");
   }
 
-  const loading = await EsTeams.sendMessage(
-    chatId,
-    "⏳ Claiming coins from all accounts..."
-  );
+  if (!emmyAccounts.length) {
+    return EsTeams.sendMessage(chatId, "ℹ️ No EmmyHenz account is set up. Add EMMYHENZ_TOKEN (and EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ... for more).");
+  }
+
+  const loading = await EsTeams.sendMessage(chatId, "⏳ Claiming coins from all accounts...");
 
   try {
-    const mainClaim = await claimMainAccount();
-    const mainLine = mainClaim.success
-      ? `🏦 Main account: +${mainClaim.coinsClaimed} coins`
-      : `🏦 Main account: ${String(mainClaim.error || "failed").replace(/[*_`\[\]]/g, "").slice(0, 120)}`;
+    const { results, total, claimed } = await claimAllAccounts();
 
-    const accounts = await getGeneratedAccounts();
-
-    let totalClaimed = 0;
-    let successCount = 0;
-    let failedCount = 0;
-    let firstFailReason = "";
-
-    for (const account of accounts) {
-      const claimResult = await claimCoinsFromAccount(
-        account.username,
-        account.password
-      );
-
-      if (claimResult.success) {
-        const claimed = Number(claimResult.coinsClaimed || 0);
-
-        totalClaimed += claimed;
-        successCount++;
-
-        await addGeneratedCoins(claimed);
-
-        console.log(`✅ ${account.username}: +${claimed} coins`);
-      } else {
-        failedCount++;
-        if (!firstFailReason) firstFailReason = String(claimResult.error || "").replace(/[*_`\[\]]/g, "").slice(0, 120);
-        console.log(`❌ ${account.username}: ${claimResult.error}`);
-      }
-
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-
-    const totalCoins = await getTotalCoinsFromAllAccounts();
+    const lines = results.slice(0, 20).map((r) =>
+      r.success ? `✅ ${r.label}: +${r.coins} coins` : `❌ ${r.label}: ${r.error}`
+    ).join("\n");
 
     await EsTeams.editMessageText(
 `✅ *Coin Claiming Complete*
 
-👥 Total Accounts: ${accounts.length}
+${lines}
 
-✅ Successful: ${successCount}
+💰 Coins Claimed This Run: ${claimed}
 
-❌ Failed: ${failedCount}${failedCount && firstFailReason ? `\n\n⚠️ Reason: ${firstFailReason}` : ""}
-
-${mainLine}
-
-💰 Coins Claimed This Run: ${totalClaimed}
-
-💎 Total Generated Coins: ${totalCoins}`,
+💎 Total Coins: ${total}`,
       {
         chat_id: chatId,
         message_id: loading.message_id,
@@ -12651,7 +12359,7 @@ ${mainLine}
     console.error("Claimall error:", err);
 
     await EsTeams.editMessageText(
-      `❌ Error: ${err.message}`,
+      `❌ Error: ${cleanReason(err.message)}`,
       {
         chat_id: chatId,
         message_id: loading.message_id,
@@ -12672,14 +12380,6 @@ EsTeams.onText(/^\/nextcron$/, async (msg) => {
 
   const now = new Date();
 
-  const next12 = new Date(now);
-  if (now.getHours() < 12) {
-    next12.setHours(12, 0, 0, 0);
-  } else {
-    next12.setDate(next12.getDate() + 1);
-    next12.setHours(0, 0, 0, 0);
-  }
-
   const next24 = new Date(now);
   next24.setDate(next24.getDate() + 1);
   next24.setHours(0, 0, 0, 0);
@@ -12687,9 +12387,6 @@ EsTeams.onText(/^\/nextcron$/, async (msg) => {
   await EsTeams.sendMessage(
     chatId,
     `🕒 *𝗖𝗥𝗢𝗡 𝗦𝗖𝗛𝗘𝗗𝗨𝗟𝗘*
-
-👤 Create Account (12h):
-\`${next12.toLocaleString()}\`
 
 💎 Claim Coins (24h):
 \`${next24.toLocaleString()}\``,
