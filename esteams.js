@@ -365,7 +365,7 @@ const SITE_BASE = (process.env.EMMYHENZ_BASE_URL || 'https://host.emmyhenztech.x
 const USERNAME = process.env.EMMYHENZ_USERNAME || 'peterchuks';
 const PASSWORD = process.env.EMMYHENZ_PASSWORD || 'Password';
 // Token issued by the site's Google/GitHub sign-in (the website stores it as localStorage "eh_tok").
-const SITE_TOKEN_ENV = process.env.EMMYHENZ_TOKEN || '';
+const SITE_TOKEN_ENV = (process.env.EMMYHENZ_TOKEN || '').trim().replace(/^bearer\s+/i, '').replace(/^["']+|["']+$/g, '').trim();
 const BOT_USERNAME = "es_teams_bot";
 const reactions = ["😘", "❤️", "🤝", "🥰", "👏", "🙏", "😱", "🤯", "👍", "😍", "🤩", "🔥", "👌", "👨‍💻", "😁", "😢", "🎉", "🍾"];
 const fruits = ["🍎","🍌","🍓","🍉","🍍","🍊","🥝","🍇","🍐","🥭"];const REPO_PATH = "./"; 
@@ -511,9 +511,18 @@ function welcomeCaption(mainText) {
   return `𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗧𝗢 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗔𝗨𝗧𝗢 𝗧𝗥𝗔𝗗𝗜𝗡𝗚\n\n${mainText}`;
 }
 
+// The site now answers HTTP 410 "Password login is closed" (Google/GitHub sign-in only).
+// Once seen, the bot stops trying username/password logins (generated accounts) instead of failing 30+ times per run.
+let passwordLoginClosed = false;
+function noteLoginClosed(err) {
+  if (err?.response?.status === 410) passwordLoginClosed = true;
+}
+const LOGIN_CLOSED_MSG = "The site closed password login (Google/GitHub only), so generated accounts cannot sign in.";
+
 // Secret-free description of an API failure (never includes tokens, passwords or headers).
 function describeApiError(err) {
   const r = err?.response;
+  if (r?.status === 401) return 'HTTP 401: Unauthorized (token expired or logged out - get a fresh EMMYHENZ_TOKEN)';
   if (!r) return err?.code ? `${err.code}: ${err.message}` : (err?.message || 'Unknown error');
   const d = r.data;
   if (d && typeof d === 'object' && d.error) return `HTTP ${r.status}: ${d.error}`;
@@ -549,22 +558,50 @@ async function getToken(forceRefresh = false) {
       throw new Error('Login failed: ' + ((res.data && res.data.error) || 'unexpected response (is /api/login still supported?)'));
     }
   } catch (err) {
+    noteLoginClosed(err);
     console.error('❌ Login error:', describeApiError(err));
     throw err;
   }
 }
 
+// One-time startup check of EMMYHENZ_TOKEN (prints only OK / the reason, never the token).
+(async () => {
+  if (!SITE_TOKEN_ENV) {
+    console.log('ℹ️ EMMYHENZ_TOKEN is not set - the site no longer allows password login, so set it to use the main account.');
+    return;
+  }
+  try {
+    const r = await axios.get(`${SITE_BASE}/api/me`, { headers: { 'x-auth-token': SITE_TOKEN_ENV }, timeout: 20000 });
+    console.log(r.data?.success ? `✅ EmmyHenz token accepted (coins: ${r.data.user?.coins ?? '?'})` : '⚠️ EmmyHenz token check: unexpected response');
+  } catch (err) {
+    console.log('❌ EmmyHenz token check failed:', describeApiError(err));
+  }
+})();
+
 //========== CHANNEL REACT FUNCTION (AUTO SWITCH ACCOUNTS) ==========//
 async function sendChannelReact(link, emoji = null) {
 
+  // Body mirrors the website's Reactions form: { link, emoji, random, useMode }.
+  // (The site may also require a Cloudflare Turnstile "cfToken"; a bot cannot supply one.)
   const payload = {
     link,
     emoji,
-    random: !emoji
+    random: !emoji,
+    useMode: 'coin'
+  };
+
+  // Last server-side reason a react was refused (shown to the user if every account fails).
+  let lastReason = '';
+  const noteReason = (err) => {
+    const d = err?.response?.data;
+    const raw = err?.response?.status === 401
+      ? 'Bot session expired - admin must update the EmmyHenz token'
+      : ((d && typeof d === 'object' && d.error) ? d.error : describeApiError(err));
+    lastReason = String(raw).replace(/[*_`\[\]]/g, '').slice(0, 160);
   };
 
   async function reactWithToken(token) {
-    return axios.post(
+    const res = await axios.post(
       `${SITE_BASE}/api/channel-react`,
       payload,
       {
@@ -575,7 +612,17 @@ async function sendChannelReact(link, emoji = null) {
         timeout: 30000
       }
     );
+
+    // The site reports the outcome in the body ({ success, error, cooldown, ... }).
+    if (!res.data || typeof res.data !== 'object' || res.data.success !== true) {
+      const e = new Error((res.data && res.data.error) || 'React was not accepted by the site');
+      e.response = { status: 422, data: res.data };
+      throw e;
+    }
+    return res;
   }
+
+  const doneMsg = (d) => d.reactionsSent > 0 ? `✅ Done! ${Number(d.reactionsSent).toLocaleString()} reactions sent` : "✅ Done!";
 
   //================ MAIN ACCOUNT =================//
   try {
@@ -586,7 +633,7 @@ async function sendChannelReact(link, emoji = null) {
 
       return {
         success: true,
-        message: "✅ Done!",
+        message: doneMsg(res.data),
         emojisUsed: res.data.emojisUsed || [],
         coinsLeft: res.data.coinsLeft || 0,
         account: "main"
@@ -602,7 +649,7 @@ async function sendChannelReact(link, emoji = null) {
 
         return {
           success: true,
-          message: "✅ Done!",
+          message: doneMsg(retry.data),
           emojisUsed: retry.data.emojisUsed || [],
           coinsLeft: retry.data.coinsLeft || 0,
           account: "main"
@@ -610,6 +657,7 @@ async function sendChannelReact(link, emoji = null) {
       }
 
       // Main account has no coins
+      noteReason(err);
       if (err.response?.status === 403) {
         console.log("⚠️ Main account has no coins. Switching to generated accounts...");
       } else {
@@ -618,17 +666,27 @@ async function sendChannelReact(link, emoji = null) {
     }
 
   } catch (err) {
-    console.log("⚠️ Main account unavailable:", err.message);
+    noteReason(err);
+    console.log("⚠️ Main account unavailable:", describeApiError(err));
   }
 
   //================ GENERATED ACCOUNTS =================//
+
+  if (passwordLoginClosed) {
+    return {
+      success: false,
+      message: `❌ Could not send reactions: ${lastReason || LOGIN_CLOSED_MSG}`
+    };
+  }
 
   const accounts = await getGeneratedAccounts();
 
   if (!accounts.length) {
     return {
       success: false,
-      message: "❌ No generated accounts available."
+      message: lastReason
+        ? `❌ Could not send reactions: ${lastReason}`
+        : "❌ No generated accounts available."
     };
   }
 
@@ -644,7 +702,7 @@ async function sendChannelReact(link, emoji = null) {
         }
       );
 
-      if (!login.data.success) {
+      if (!login.data || !login.data.success) {
         console.log(`⚠️ Login failed for ${account.username}`);
         continue;
       }
@@ -659,7 +717,7 @@ async function sendChannelReact(link, emoji = null) {
 
         return {
           success: true,
-          message: "✅ Done!",
+          message: doneMsg(res.data),
           emojisUsed: res.data.emojisUsed || [],
           coinsLeft: res.data.coinsLeft || 0,
           account: account.username
@@ -667,6 +725,7 @@ async function sendChannelReact(link, emoji = null) {
 
       } catch (err) {
 
+        noteReason(err);
         if (err.response?.status === 403) {
           console.log(`⚠️ ${account.username} has no coins. Trying next account...`);
           continue;
@@ -677,12 +736,14 @@ async function sendChannelReact(link, emoji = null) {
           continue;
         }
 
-        console.log(`⚠️ ${account.username}: ${err.message}`);
+        console.log(`⚠️ ${account.username}: ${describeApiError(err)}`);
         continue;
       }
 
     } catch (err) {
-      console.log(`⚠️ Couldn't login to ${account.username}: ${err.message}`);
+      console.log(`⚠️ Couldn't login to ${account.username}: ${describeApiError(err)}`);
+      noteLoginClosed(err);
+      if (passwordLoginClosed) break; // site closed password login - no point trying the rest
       continue;
     }
   }
@@ -691,7 +752,9 @@ async function sendChannelReact(link, emoji = null) {
 
   return {
     success: false,
-    message: "❌ All accounts have exhausted their coins."
+    message: lastReason
+      ? `❌ Could not send reactions: ${lastReason}`
+      : (passwordLoginClosed ? `❌ Could not send reactions: ${LOGIN_CLOSED_MSG}` : "❌ All accounts have exhausted their coins.")
   };
 }
 
@@ -749,6 +812,7 @@ async function addGeneratedCoins(coins) {
 
 //========== WAREACT COOLDOWN FUNCTIONS ==========//
 const WAREACT_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
+const WAREACT_STARS = 15; // Telegram Stars charged for each extra use inside the 24h window
 
 async function checkWareactCooldown(userId) {
   try {
@@ -779,6 +843,22 @@ async function saveWareactTime(userId) {
     await setDoc(cooldownRef, { lastUsed: Date.now() });
   } catch (err) {
     console.error("❌ Error saving wareact time:", err.message);
+  }
+}
+
+// Refunds a Telegram Stars payment (used when a paid react could not be delivered).
+async function refundWareactStars(userId, chargeId) {
+  if (!userId || !chargeId) return false;
+  try {
+    const r = await axios.post(
+      `https://api.telegram.org/bot${tokens[0]}/refundStarPayment`,
+      { user_id: userId, telegram_payment_charge_id: chargeId },
+      { timeout: 15000 }
+    );
+    return !!(r.data && r.data.ok);
+  } catch (err) {
+    console.error('❌ Stars refund failed:', err.response?.data?.description || err.code || 'request error');
+    return false;
   }
 }
 
@@ -855,6 +935,7 @@ async function registerNewAccount() {
       email
     };
   } catch (err) {
+    noteLoginClosed(err);
     console.error(
       "❌ Registration failed:",
       err.response?.data || err.message
@@ -869,12 +950,22 @@ async function registerNewAccount() {
 
 // ============ CLAIM DAILY COINS FUNCTION ========= //
 async function claimCoinsFromAccount(username, password) {
+  if (passwordLoginClosed) {
+    return { success: false, error: LOGIN_CLOSED_MSG };
+  }
   try {
     // Login
     const loginRes = await axios.post(`${SITE_BASE}/api/login`, {
       username,
       password
     });
+
+    if (!loginRes.data || typeof loginRes.data !== 'object') {
+      return {
+        success: false,
+        error: "Login not supported: site returned a web page instead of JSON (/api/login may have been removed)"
+      };
+    }
 
     if (!loginRes.data.success) {
       return {
@@ -920,6 +1011,7 @@ async function claimCoinsFromAccount(username, password) {
       error: claimRes.data.error || "Claim failed"
     };
   } catch (err) {
+    noteLoginClosed(err);
     return {
       success: false,
       error: describeApiError(err)
@@ -927,9 +1019,27 @@ async function claimCoinsFromAccount(username, password) {
   }
 }
 
-// ============ ACCT BALANCE FUNCTION ========= //
-async function getAccountBalance() {
+// Daily claim for the main account (the EMMYHENZ_TOKEN account) - the only account that can still sign in.
+async function claimMainAccount() {
+  if (!SITE_TOKEN_ENV) return { success: false, error: 'EMMYHENZ_TOKEN is not set' };
   try {
+    const res = await axios.post(`${SITE_BASE}/api/tasks/daily/claim`, null, {
+      headers: { 'x-auth-token': SITE_TOKEN_ENV },
+      timeout: 30000
+    });
+    if (res.data && res.data.success) {
+      return { success: true, coinsClaimed: Number(res.data.reward ?? 0) || 0 };
+    }
+    return { success: false, error: (res.data && res.data.error) || 'Claim failed' };
+  } catch (err) {
+    return { success: false, error: describeApiError(err) };
+  }
+}
+
+// ============ ACCT BALANCE FUNCTION ========= //
+async function fetchMainBalance() {
+  // Throws on failure so callers can tell "0 coins" from "could not read balance".
+  {
     const token = await getToken();
     const headers = { 'x-auth-token': token };
     try {
@@ -943,6 +1053,12 @@ async function getAccountBalance() {
     }
     const res = await axios.get(`${SITE_BASE}/api/balance`, { headers, timeout: 30000 });
     return res.data.balance ?? res.data.coins ?? 0;
+  }
+}
+
+async function getAccountBalance() {
+  try {
+    return await fetchMainBalance();
   } catch (err) {
     console.error('❌ Error getting account balance:', describeApiError(err));
     return 0;
@@ -1006,6 +1122,10 @@ async function deleteTopupCode(topupCode) {
 // ============ CROW JOB FUNCTION ========= //
 cron.schedule('0 */12 * * *', async () => {
   console.log('⏰ 12-hour interval triggered - Creating new account...');
+  if (passwordLoginClosed) {
+    console.log('⏭️ Skipped: the site closed password login/sign-up (Google/GitHub only).');
+    return;
+  }
   try {
     const result = await registerNewAccount();
     if (result.success) {
@@ -1021,6 +1141,11 @@ cron.schedule('0 */12 * * *', async () => {
 cron.schedule('0 0 * * *', async () => {
   console.log('⏰ 24-hour interval triggered - Claiming coins from all accounts...');
   try {
+    const mainClaim = await claimMainAccount();
+    console.log(mainClaim.success
+      ? `✅ Main account claimed ${mainClaim.coinsClaimed} coins`
+      : `⚠️ Main account claim: ${mainClaim.error}`);
+
     const accounts = await getGeneratedAccounts();
     console.log(`📊 Processing ${accounts.length} accounts for coin claim...`);
     
@@ -12122,7 +12247,7 @@ Click Proceed to Continue`,
 EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {  
   const chatId = msg.chat.id;  
   const userId = msg.from.id;  
-  const channelLink = match[1];  
+  const channelLink = match[1] ? match[1].trim() : match[1];  
     
   if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {  
     return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly check back later...", {  
@@ -12143,6 +12268,11 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
     });  
   }  
   
+  // Must be a link to a specific channel post (same format the website asks for).
+  if (!/whatsapp\.com\/channel\/[A-Za-z0-9_-]+\/\d+/i.test(channelLink)) {
+    return EsTeams.sendMessage(chatId, "❌ *Invalid channel post link*\n\nSend the link of a specific post, e.g.\n`/wareact https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29/5696`", { parse_mode: "Markdown" });
+  }
+
   if (!CONFIG.OWNER_IDS.includes(userId)) {  
     const cooldown = await checkWareactCooldown(userId);  
   
@@ -12156,7 +12286,7 @@ EsTeams.onText(/^\/wareact(?:\s+(.+))?$/, async (msg, match) => {
   
 Your daily free limit has been used.  
   
-Pay *1* Star to continue the service.  
+Pay *${WAREACT_STARS}* Stars to continue the service.  
   
 ⏰ *Next Free Use In:* ${hours}h ${minutes}m  
   
@@ -12183,18 +12313,43 @@ Tap the button below`,
   await processWareact(chatId, channelLink, userId);  
 });  
   
-async function processWareact(chatId, channelLink, userId) {  
+const wareactInFlight = new Set();
+async function processWareact(chatId, channelLink, userId, paidChargeId = null) {
+  if (userId && wareactInFlight.has(userId)) {
+    let note = "";
+    if (paidChargeId) {
+      note = (await refundWareactStars(userId, paidChargeId))
+        ? ` Your ${WAREACT_STARS} Stars were refunded.`
+        : " Please contact the admin about your Stars.";
+    }
+    return EsTeams.sendMessage(chatId, `⏳ Your previous reaction request is still processing. Please wait for it to finish.${note}`).catch(() => {});
+  }
+  if (userId) wareactInFlight.add(userId);
+  try {
+    return await processWareactInner(chatId, channelLink, userId, paidChargeId);
+  } finally {
+    if (userId) wareactInFlight.delete(userId);
+  }
+}
+
+async function processWareactInner(chatId, channelLink, userId, paidChargeId = null) {  
   let loading = await EsTeams.sendMessage(chatId, "⏳ Processing...\n▰▱▱▱▱▱▱");  
   
   const health = await checkServerHealth();  
   
   if (!health.isHealthy) {  
+    let healthRefundNote = "";
+    if (paidChargeId) {
+      healthRefundNote = (await refundWareactStars(userId, paidChargeId))
+        ? `\n\n⭐ Your ${WAREACT_STARS} Stars have been refunded.`
+        : `\n\n⚠️ Could not auto-refund your Stars. Please contact the admin.`;
+    }
     try {  
       await EsTeams.deleteMessage(chatId, loading.message_id);  
     } catch (e) {}  
   
     await EsTeams.sendPhoto(chatId, botImageUrl, {  
-      caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.`,  
+      caption: `⚠️ *𝗦𝗘𝗥𝗩𝗘𝗥 𝗨𝗡𝗔𝗩𝗔𝗜𝗟𝗔𝗕𝗟𝗘*\n\n${health.reason}\n\nPlease try again later.${healthRefundNote}`,  
       parse_mode: "Markdown",  
       reply_markup: {  
         inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
@@ -12236,7 +12391,7 @@ async function processWareact(chatId, channelLink, userId) {
     } catch (e) {}  
   
     if (result.success) {  
-      if (userId) {  
+      if (userId && !paidChargeId) { // a paid use must not restart the free 24h window  
         await saveWareactTime(userId);  
       }  
   
@@ -12266,8 +12421,14 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
         }  
       });  
     } else {  
+      let refundNote = "";
+      if (paidChargeId) {
+        refundNote = (await refundWareactStars(userId, paidChargeId))
+          ? `\n\n⭐ Your ${WAREACT_STARS} Stars have been refunded.`
+          : `\n\n⚠️ Could not auto-refund your Stars. Please contact the admin.`;
+      }
       await EsTeams.sendPhoto(chatId, botImageUrl, {  
-        caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}`,  
+        caption: `❌ *𝗥𝗘𝗔𝗖𝗧 𝗙𝗔𝗜𝗟𝗘𝗗*\n\n${result.message}${refundNote}`,  
         parse_mode: "Markdown",  
         reply_markup: {  
           inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
@@ -12276,13 +12437,19 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
     }  
   } catch (err) {  
     console.error('Command error:', err.message);  
+    let errRefundNote = "";
+    if (paidChargeId) {
+      errRefundNote = (await refundWareactStars(userId, paidChargeId))
+        ? `\n\n⭐ Your ${WAREACT_STARS} Stars have been refunded.`
+        : `\n\n⚠️ Could not auto-refund your Stars. Please contact the admin.`;
+    }
       
     try {  
       await EsTeams.deleteMessage(chatId, loading.message_id);  
     } catch (e) {}  
   
     await EsTeams.sendPhoto(chatId, botImageUrl, {  
-      caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\``,  
+      caption: `❌ *𝗘𝗥𝗥𝗢𝗥*\n\n\`${err.message}\`${errRefundNote}`,  
       parse_mode: "Markdown",  
       reply_markup: {  
         inline_keyboard: [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]]  
@@ -12293,7 +12460,12 @@ _𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘�
   
 EsTeams.on("callback_query", async (query) => {  
   const data = query.data;  
-  if (!data.startsWith("wareact_pay_")) return;  
+  if (!data.startsWith("wareact_pay_")) return;
+
+  // No saved request (e.g. bot restarted): do not take payment for nothing.
+  if (!userPendingReactions.has(query.from.id)) {
+    return EsTeams.answerCallbackQuery(query.id, { text: "Session expired. Send /wareact <link> again.", show_alert: true }).catch(() => {});
+  }  
   
   const userId = query.from.id;  
   const chatId = query.message.chat.id;  
@@ -12309,7 +12481,7 @@ EsTeams.on("callback_query", async (query) => {
       [  
         {  
           label: "ES TEAMS REACTIONS",  
-          amount: 1  
+          amount: WAREACT_STARS  
         }  
       ]  
     );  
@@ -12321,65 +12493,33 @@ EsTeams.on("callback_query", async (query) => {
   }  
 });  
   
-EsTeams.on("successful_payment", async (msg) => {  
-  const userId = msg.from.id;  
-  const chatId = msg.chat.id;  
-    
-  const pending = userPendingReactions.get(userId);  
-  
-  if (pending) {  
-    try {  
-      await EsTeams.deleteMessage(chatId, pending.paymentMsgId);  
-    } catch (e) {}  
-  
-    userPendingReactions.delete(userId);  
-    await processWareact(chatId, pending.channelLink, userId);  
-  }  
-});
+EsTeams.on("successful_payment", async (msg) => {
+  const sp = msg.successful_payment;
+  // Only handle wareact invoices here (payload is "wareact_<userId>_<time>").
+  if (!sp || !String(sp.invoice_payload || "").startsWith("wareact_")) return;
 
-// ============ CREATE ACC COMMAND ========= //
-EsTeams.onText(/^\/createacc$/, async (msg) => {
-  const chatId = msg.chat.id;
   const userId = msg.from.id;
+  const chatId = msg.chat.id;
+  const chargeId = sp.telegram_payment_charge_id;
 
-  if (!CONFIG.OWNER_IDS.includes(userId)) {
-    return EsTeams.sendMessage(chatId, "❌ Admin command only!");
+  const pending = userPendingReactions.get(userId);
+
+  if (!pending) {
+    const ok = await refundWareactStars(userId, chargeId);
+    return EsTeams.sendMessage(
+      chatId,
+      ok
+        ? "⚠️ Your session expired, so your Stars were refunded. Please send /wareact <link> again."
+        : "⚠️ Your session expired. Please contact the admin for a refund."
+    ).catch(() => {});
   }
-
-  const loading = await EsTeams.sendMessage(chatId, "⏳ Creating account...");
 
   try {
-    const result = await registerNewAccount();
-    
-    if (result.success) {
-      await EsTeams.editMessageText(
-        `✅ *Account Created Successfully*\n\n📝 Username: \`${result.username}\`\n🔐 Password: \`${result.password}\`\n📧 Email: \`${result.email}\``,
-        {
-          chat_id: chatId,
-          message_id: loading.message_id,
-          parse_mode: "Markdown"
-        }
-      );
-    } else {
-      await EsTeams.editMessageText(
-        `❌ Account creation failed: ${result.error}`,
-        {
-          chat_id: chatId,
-          message_id: loading.message_id,
-          parse_mode: "Markdown"
-        }
-      );
-    }
-  } catch (err) {
-    await EsTeams.editMessageText(
-      `❌ Error: ${err.message}`,
-      {
-        chat_id: chatId,
-        message_id: loading.message_id,
-        parse_mode: "Markdown"
-      }
-    );
-  }
+    await EsTeams.deleteMessage(chatId, pending.paymentMsgId);
+  } catch (e) {}
+
+  userPendingReactions.delete(userId);
+  await processWareact(chatId, pending.channelLink, userId, chargeId);
 });
 
 // ============ ACC STATS COMMAND ========= //
@@ -12397,6 +12537,9 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
 
     let accountsList = `*📊 Generated Accounts Statistics*\n\n`;
     accountsList += `👥 Total Accounts: \`${accounts.length}\`\n`;
+    let mainBalanceText;
+    try { mainBalanceText = String(await fetchMainBalance()); } catch (e) { mainBalanceText = "unavailable"; }
+    accountsList += `🏦 Main Account Balance: \`${mainBalanceText}\`\n`;
     accountsList += `💎 Total Generated Coins: \`${totalCoins}\`\n\n`;
     accountsList += `*Generated Accounts:*\n\n`;
 
@@ -12446,11 +12589,17 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
   );
 
   try {
+    const mainClaim = await claimMainAccount();
+    const mainLine = mainClaim.success
+      ? `🏦 Main account: +${mainClaim.coinsClaimed} coins`
+      : `🏦 Main account: ${String(mainClaim.error || "failed").replace(/[*_`\[\]]/g, "").slice(0, 120)}`;
+
     const accounts = await getGeneratedAccounts();
 
     let totalClaimed = 0;
     let successCount = 0;
     let failedCount = 0;
+    let firstFailReason = "";
 
     for (const account of accounts) {
       const claimResult = await claimCoinsFromAccount(
@@ -12469,6 +12618,7 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
         console.log(`✅ ${account.username}: +${claimed} coins`);
       } else {
         failedCount++;
+        if (!firstFailReason) firstFailReason = String(claimResult.error || "").replace(/[*_`\[\]]/g, "").slice(0, 120);
         console.log(`❌ ${account.username}: ${claimResult.error}`);
       }
 
@@ -12484,7 +12634,9 @@ EsTeams.onText(/^\/claimall$/, async (msg) => {
 
 ✅ Successful: ${successCount}
 
-❌ Failed: ${failedCount}
+❌ Failed: ${failedCount}${failedCount && firstFailReason ? `\n\n⚠️ Reason: ${firstFailReason}` : ""}
+
+${mainLine}
 
 💰 Coins Claimed This Run: ${totalClaimed}
 
