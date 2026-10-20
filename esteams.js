@@ -361,6 +361,9 @@ const TTT_FILE = './ES_TEAMS-MEDIA/ttt.json';
 const botImageUrl = 'https://files.catbox.moe/3jibot.jpg';
 // EmmyHenz V4 site. Override with EMMYHENZ_BASE_URL if the owner moves the domain again.
 const SITE_BASE = (process.env.EMMYHENZ_BASE_URL || 'https://host.emmyhenztech.xyz').replace(/\/+$/, '');
+const BUILD_ID = '2026-10-20-wapoll-1'; // shown at startup and at the bottom of /accstats
+console.log(`🚀 ES TEAMS build ${BUILD_ID}`);
+
 // Website accounts come from the env vars EMMYHENZ_TOKEN, EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ...
 // (each is the 'eh_tok' value of one Google/GitHub sign-in). See the EMMYHENZ ACCOUNTS section below.
 const BOT_USERNAME = "es_teams_bot";
@@ -552,6 +555,7 @@ function loadEmmyAccounts(env = process.env) {
       token: f.token,
       balance: null,   // last known coin balance
       nextAt: 0,       // time (ms) this account may react again; 0 = free now
+      voteNextAt: 0,   // same, for poll votes (the site keeps a separate timer)
       invalid: false,  // true when the site rejected the token (expired / logged out)
       error: '',       // last problem (never contains the token)
       busy: false,     // true while a react request is running on this account
@@ -573,13 +577,14 @@ function fmtWait(ms) {
 async function refreshAccount(acc, force = false) {
   if (!force && acc.checkedAt && Date.now() - acc.checkedAt < STATUS_TTL) return acc;
   const opts = { headers: { 'x-auth-token': acc.token }, timeout: 20000 };
-  const [me, st] = await Promise.allSettled([
+  const [me, st, vs] = await Promise.allSettled([
     axios.get(`${SITE_BASE}/api/me`, opts),
-    axios.get(`${SITE_BASE}/api/channel-react/status`, opts)
+    axios.get(`${SITE_BASE}/api/channel-react/status`, opts),
+    axios.get(`${SITE_BASE}/api/channel-vote/status`, opts)
   ]);
   acc.checkedAt = Date.now();
 
-  if ([me, st].some(r => r.status === 'rejected' && r.reason?.response?.status === 401)) {
+  if ([me, st, vs].some(r => r.status === 'rejected' && r.reason?.response?.status === 401)) {
     acc.invalid = true;
     acc.error = 'token expired or logged out';
     return acc;
@@ -598,6 +603,11 @@ async function refreshAccount(acc, force = false) {
     const t = st.value.data.nextAt ? Date.parse(st.value.data.nextAt) : 0;
     acc.nextAt = t > Date.now() ? t : 0;
   }
+
+  if (vs.status === 'fulfilled' && vs.value.data?.success) {
+    const t = vs.value.data.nextAt ? Date.parse(vs.value.data.nextAt) : 0;
+    acc.voteNextAt = t > Date.now() ? t : 0;
+  }
   return acc;
 }
 
@@ -612,8 +622,9 @@ function sumBalances() {
   return emmyAccounts.reduce((sum, a) => sum + ((!a.invalid && Number.isFinite(a.balance)) ? a.balance : 0), 0);
 }
 
-function queueMessage() {
-  const waits = emmyAccounts.filter(a => !a.invalid && a.nextAt > Date.now()).map(a => a.nextAt - Date.now());
+function queueMessage(kind = 'react') {
+  const key = kind === 'vote' ? 'voteNextAt' : 'nextAt';
+  const waits = emmyAccounts.filter(a => !a.invalid && a[key] > Date.now()).map(a => a[key] - Date.now());
   return waits.length ? `${REACT_QUEUE_MSG} Next slot in about ${fmtWait(Math.min(...waits))}.` : REACT_QUEUE_MSG;
 }
 
@@ -625,19 +636,32 @@ async function getReactAvailability() {
   return { configured: true, usable: usable.length, free: usable.filter(isAccountFree).length };
 }
 
+// Same as above, for poll votes (/wapoll).
+const isAccountFreeForVote = (a) => !a.invalid && !a.busy && !(a.voteNextAt && a.voteNextAt > Date.now());
+async function getVoteAvailability() {
+  if (!emmyAccounts.length) return { configured: false, usable: 0, free: 0 };
+  await refreshAllAccounts();
+  const usable = emmyAccounts.filter(a => !a.invalid);
+  return { configured: true, usable: usable.length, free: usable.filter(isAccountFreeForVote).length };
+}
+
 // Startup check: prints only OK / the reason, never a token.
 (async () => {
   if (!emmyAccounts.length) {
     console.log('ℹ️ No EMMYHENZ_TOKEN set - add EMMYHENZ_TOKEN (and EMMYHENZ_TOKEN1, EMMYHENZ_TOKEN2, ... for more accounts).');
     return;
   }
-  await refreshAllAccounts(true);
-  for (const a of emmyAccounts) {
-    console.log(a.invalid || a.balance === null
-      ? `❌ EmmyHenz ${a.label}: ${a.error || 'could not read account'}`
-      : `✅ EmmyHenz ${a.label} token accepted (coins: ${a.balance})`);
+  try {
+    await refreshAllAccounts(true);
+    for (const a of emmyAccounts) {
+      console.log(a.invalid || a.balance === null
+        ? `❌ EmmyHenz ${a.label}: ${a.error || 'could not read account'}`
+        : `✅ EmmyHenz ${a.label} token accepted (coins: ${a.balance})`);
+    }
+    if (emmyAccounts.some(a => !a.invalid && a.balance !== null)) await saveTotalCoins(sumBalances());
+  } catch (err) {
+    console.log('⚠️ EmmyHenz startup check failed:', err.message); // never stops the bot from starting
   }
-  if (emmyAccounts.some(a => !a.invalid && a.balance !== null)) await saveTotalCoins(sumBalances());
 })();
 
 //========== CHANNEL REACT FUNCTION (USES ANY FREE EMMYHENZ ACCOUNT) ==========//
@@ -714,6 +738,107 @@ async function sendChannelReact(link, emoji = null) {
 
   if (!hardFailure) return { success: false, queue: true, message: queueMessage() };
   return { success: false, message: `❌ Could not send reactions: ${lastReason}` };
+}
+
+//========== POLL VOTES (USES ANY FREE EMMYHENZ ACCOUNT) ==========//
+// Reads a poll from a channel post link: POST /api/channel-poll/info { link }
+async function fetchPollInfo(link) {
+  if (!emmyAccounts.length) return { success: false, error: 'No EmmyHenz account is set up' };
+  for (const acc of emmyAccounts) {
+    if (acc.invalid) continue;
+    try {
+      const res = await axios.post(`${SITE_BASE}/api/channel-poll/info`, { link }, {
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': acc.token },
+        timeout: 30000
+      });
+      const d = res.data;
+      if (!d || typeof d !== 'object') return { success: false, error: 'Unexpected response from the site' };
+      if (!d.success) return { success: false, error: cleanReason(d.error || 'Failed') };
+      if (!d.isPoll) return { success: true, isPoll: false };
+      const options = Array.isArray(d.options) ? d.options.map(o => String(o)) : [];
+      if (!options.length) return { success: false, error: 'This poll has no options' };
+      return { success: true, isPoll: true, question: String(d.question || 'Poll'), channelName: String(d.channelName || ''), options };
+    } catch (err) {
+      if (err.response?.status === 401) { acc.invalid = true; acc.error = 'token expired or logged out'; continue; }
+      const d = err.response?.data;
+      return { success: false, error: cleanReason((d && d.error) || describeApiError(err)) };
+    }
+  }
+  return { success: false, error: 'Bot session expired - admin must update the EmmyHenz token' };
+}
+
+// Sends the votes: POST /api/channel-poll/vote { link, option (0-based number) } from the first free account.
+async function sendPollVote(link, optionIndex) {
+  if (!emmyAccounts.length) {
+    return { success: false, message: "❌ No EmmyHenz account is set up. Admin: add EMMYHENZ_TOKEN." };
+  }
+
+  await refreshAllAccounts();
+
+  if (!emmyAccounts.some(a => !a.invalid)) {
+    return { success: false, message: "❌ Could not send the vote: Bot session expired - admin must update the EmmyHenz token" };
+  }
+
+  const payload = { link, option: Number(optionIndex) };
+  let lastReason = '';
+  let hardFailure = false;
+
+  for (const acc of emmyAccounts) {
+    if (!isAccountFreeForVote(acc)) continue;
+    acc.busy = true;
+    try {
+      const res = await axios.post(`${SITE_BASE}/api/channel-poll/vote`, payload, {
+        headers: { "Content-Type": "application/json", "x-auth-token": acc.token },
+        timeout: 30000
+      });
+      const d = res.data;
+
+      if (!d || typeof d !== 'object' || d.success !== true) {
+        if (d && d.cooldown) {
+          acc.voteNextAt = (d.nextAt && Date.parse(d.nextAt)) || Date.now() + 60 * 60 * 1000;
+        } else {
+          hardFailure = true;
+          lastReason = cleanReason((d && d.error) || 'The vote was not accepted by the site');
+        }
+        continue;
+      }
+
+      acc.voteNextAt = d.nextAt ? (Date.parse(d.nextAt) || 0) : 0;
+      if (acc.voteNextAt <= Date.now()) acc.voteNextAt = d.premium ? 0 : Date.now() + 60 * 60 * 1000;
+      if (Number.isFinite(Number(d.coinsLeft))) acc.balance = Number(d.coinsLeft);
+      acc.checkedAt = Date.now();
+
+      const sent = Number(d.votesSent) || 0;
+      const failed = Number(d.votesFailed) || 0;
+      return {
+        success: true,
+        message: `✅ Done! ${sent.toLocaleString()} vote${sent === 1 ? '' : 's'} sent${failed ? ` (${failed} failed)` : ''}`,
+        votesSent: sent,
+        option: String(d.option || '').slice(0, 100),
+        coinsLeft: sumBalances(), // total coins across all accounts
+        account: acc.label
+      };
+    } catch (err) {
+      const d = err.response?.data;
+      if (err.response?.status === 401) {
+        acc.invalid = true;
+        acc.error = 'token expired or logged out';
+        hardFailure = true;
+        lastReason = 'Bot session expired - admin must update the EmmyHenz token';
+      } else if (d && typeof d === 'object' && d.cooldown) {
+        acc.voteNextAt = (d.nextAt && Date.parse(d.nextAt)) || Date.now() + 60 * 60 * 1000;
+      } else {
+        hardFailure = true;
+        lastReason = cleanReason((d && d.error) || describeApiError(err));
+      }
+      console.log(`⚠️ ${acc.label}: ${describeApiError(err)}`);
+    } finally {
+      acc.busy = false;
+    }
+  }
+
+  if (!hardFailure) return { success: false, queue: true, message: queueMessage('vote') };
+  return { success: false, message: `❌ Could not send the vote: ${lastReason}` };
 }
 
 //========== TOTAL COINS (ALL ACCOUNTS) - SAVED IN FIRESTORE ==========//
@@ -797,6 +922,35 @@ async function refundWareactStars(userId, chargeId) {
   } catch (err) {
     console.error('❌ Stars refund failed:', err.response?.data?.description || err.code || 'request error');
     return false;
+  }
+}
+
+//========== WAPOLL COOLDOWN FUNCTIONS ==========//
+const WAPOLL_COOLDOWN = 24 * 60 * 60 * 1000; // 1 free poll vote per user every 24 hours
+const WAPOLL_STARS = 15;                      // Telegram Stars for each extra vote inside the 24h window
+const WAPOLL_SESSION_TTL = 10 * 60 * 1000;    // a poll message stays clickable for 10 minutes
+const waPollSessions = new Map(); // short id -> { userId, chatId, link, question, channelName, options, messageId, createdAt }
+const waPollPending = new Map();  // userId -> chosen option waiting for the Stars payment
+const waPollInFlight = new Set(); // users whose vote is being sent right now
+
+async function checkWapollCooldown(userId) {
+  try {
+    const snapshot = await getDoc(doc(db, "wapollCooldowns", String(userId)));
+    if (!snapshot.exists()) return { canUse: true };
+    const elapsed = Date.now() - Number(snapshot.data().lastUsed || 0);
+    if (elapsed >= WAPOLL_COOLDOWN) return { canUse: true };
+    return { canUse: false, timeLeft: WAPOLL_COOLDOWN - elapsed };
+  } catch (err) {
+    console.error("❌ Error checking wapoll cooldown:", err.message);
+    return { canUse: true };
+  }
+}
+
+async function saveWapollTime(userId) {
+  try {
+    await setDoc(doc(db, "wapollCooldowns", String(userId)), { lastUsed: Date.now() });
+  } catch (err) {
+    console.error("❌ Error saving wapoll time:", err.message);
   }
 }
 
@@ -12283,6 +12437,299 @@ EsTeams.on("successful_payment", async (msg) => {
   await processWareact(chatId, pending.channelLink, userId, chargeId);
 });
 
+//================= WAPOLL COMMAND (POLL VOTES) =================//
+const waPlain = (s, n = 100) => String(s || '').slice(0, n);                      // for plain-text messages
+const waMd = (s, n = 100) => String(s || '').slice(0, n).replace(/([*_`\[])/g, '\\$1'); // for Markdown captions
+const waNewId = () => Math.random().toString(36).slice(2, 8).padEnd(6, '0');
+const WA_KEYBOARD_LINK = [[{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]];
+
+function waPurgeExpired() {
+  const now = Date.now();
+  for (const [sid, sess] of waPollSessions) if (now - sess.createdAt > WAPOLL_SESSION_TTL) waPollSessions.delete(sid);
+  for (const [uid, p] of waPollPending) if (now - p.createdAt > 15 * 60 * 1000) waPollPending.delete(uid);
+}
+
+EsTeams.onText(/^\/wapoll(?:@\w+)?(?:\s+(.+))?$/, async (msg, match) => {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+  const link = match[1] ? match[1].trim() : '';
+
+  if (LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId)) {
+    return EsTeams.sendMessage(chatId, "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\n\nKindly check back later...", {
+      parse_mode: "Markdown",
+      reply_markup: { inline_keyboard: WA_KEYBOARD_LINK }
+    });
+  }
+
+  if (!link) {
+    return EsTeams.sendMessage(chatId, "❌ *Invalid Input*\n\nUsage: `/wapoll <poll_post_link>`\n\nExample:\n`/wapoll https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29/5696`", { parse_mode: "Markdown" });
+  }
+
+  if (!/whatsapp\.com\/channel\/[A-Za-z0-9_-]+\/\d+/i.test(link)) {
+    return EsTeams.sendMessage(chatId, "❌ *Invalid channel post link*\n\nSend the link of the specific poll post, e.g.\n`/wapoll https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29/5696`", { parse_mode: "Markdown" });
+  }
+
+  if (waPollInFlight.has(userId)) {
+    return EsTeams.sendMessage(chatId, "⏳ Your previous poll vote is still processing. Please wait for it to finish.");
+  }
+
+  // Is any EmmyHenz account free to vote right now? (each account: one vote per hour)
+  const availability = await getVoteAvailability();
+  if (!availability.configured || availability.usable === 0) {
+    console.log('⚠️ No active EmmyHenz account (check the EMMYHENZ_TOKEN values).');
+    return EsTeams.sendMessage(chatId, "⚠️ Poll service is temporarily unavailable. Please try again later.");
+  }
+  if (availability.free === 0) {
+    return EsTeams.sendMessage(chatId, queueMessage('vote'));
+  }
+
+  const checking = await EsTeams.sendMessage(chatId, "🔎 Checking the poll...");
+  const info = await fetchPollInfo(link);
+  try { await EsTeams.deleteMessage(chatId, checking.message_id); } catch (e) {}
+
+  if (!info.success) {
+    return EsTeams.sendMessage(chatId, `❌ Could not read the poll: ${info.error}`);
+  }
+  if (!info.isPoll) {
+    return EsTeams.sendMessage(chatId, "❌ This post is not a poll.\n\nTo react to a post use /wareact <link>.");
+  }
+
+  // One open poll per user: a new /wapoll replaces the old poll message.
+  waPurgeExpired();
+  for (const [sid, sess] of waPollSessions) {
+    if (sess.userId === userId) {
+      waPollSessions.delete(sid);
+      try { await EsTeams.deleteMessage(sess.chatId, sess.messageId); } catch (e) {}
+    }
+  }
+
+  const sid = waNewId();
+  const options = info.options.slice(0, 12);
+  const keyboard = options.map((opt, i) => [{ text: `${i + 1}. ${opt}`.slice(0, 60), callback_data: `wapollo_${sid}_${i}` }]);
+  keyboard.push([{ text: "✖️ Cancel", callback_data: `wapollx_${sid}` }]);
+
+  const sent = await EsTeams.sendMessage(
+    chatId,
+    `📊 ${info.question}${info.channelName ? `\n📢 ${info.channelName}` : ''}\n\nChoose the option to vote for 👇`,
+    { reply_markup: { inline_keyboard: keyboard } }
+  );
+
+  waPollSessions.set(sid, {
+    userId, chatId, link,
+    question: info.question, channelName: info.channelName, options,
+    messageId: sent.message_id, createdAt: Date.now()
+  });
+});
+
+// Sends the vote (free use, or after Stars payment) and shows the result.
+async function processWapoll(chatId, userId, sel, paidChargeId = null) {
+  if (waPollInFlight.has(userId)) {
+    let note = "";
+    if (paidChargeId) {
+      note = (await refundWareactStars(userId, paidChargeId))
+        ? ` Your ${WAPOLL_STARS} Stars were refunded.`
+        : " Please contact the admin about your Stars.";
+    }
+    return EsTeams.sendMessage(chatId, `⏳ Your previous poll vote is still processing. Please wait for it to finish.${note}`).catch(() => {});
+  }
+
+  waPollInFlight.add(userId);
+  try {
+    const loading = await EsTeams.sendMessage(chatId, `⏳ Sending your vote...\n🗳️ ${waPlain(sel.optionText)}`);
+
+    let result;
+    try {
+      result = await sendPollVote(sel.link, sel.optionIndex);
+    } catch (err) {
+      console.error('Wapoll error:', err.message);
+      result = { success: false, message: `❌ Could not send the vote: ${waPlain(err.message, 120)}` };
+    }
+
+    try { await EsTeams.deleteMessage(chatId, loading.message_id); } catch (e) {}
+
+    if (result.success) {
+      if (!paidChargeId && !CONFIG.OWNER_IDS.includes(userId)) {
+        await saveWapollTime(userId); // a paid vote must not restart the free 24h window
+      }
+
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: `*✅ 𝗣𝗢𝗟𝗟 𝗩𝗢𝗧𝗘 𝗦𝗨𝗖𝗖𝗘𝗦𝗦*
+
+🗳️ *Option:*
+${waMd(result.option || sel.optionText)}
+
+💎 *Coins Left:*
+${result.coinsLeft || 0}
+
+📌 *Status:*
+${result.message}
+
+_𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗧𝗘𝗖𝗛_`,
+        parse_mode: "Markdown",
+        reply_markup: { inline_keyboard: WA_KEYBOARD_LINK }
+      });
+    } else {
+      let refundNote = "";
+      if (paidChargeId) {
+        refundNote = (await refundWareactStars(userId, paidChargeId))
+          ? `\n\n⭐ Your ${WAPOLL_STARS} Stars have been refunded.`
+          : `\n\n⚠️ Could not auto-refund your Stars. Please contact the admin.`;
+      }
+      await EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: `${result.queue ? '⏳ *𝗦𝗘𝗥𝗩𝗜𝗖𝗘 𝗕𝗨𝗦𝗬*' : '❌ *𝗩𝗢𝗧𝗘 𝗙𝗔𝗜𝗟𝗘𝗗*'}\n\n${result.message}${refundNote}`,
+        parse_mode: "Markdown",
+        reply_markup: { inline_keyboard: WA_KEYBOARD_LINK }
+      });
+    }
+  } catch (err) {
+    console.error('Wapoll command error:', err.message);
+    if (paidChargeId) {
+      const ok = await refundWareactStars(userId, paidChargeId);
+      EsTeams.sendMessage(chatId, ok ? `❌ Something went wrong. Your ${WAPOLL_STARS} Stars have been refunded.` : "❌ Something went wrong. Please contact the admin about your Stars.").catch(() => {});
+    } else {
+      EsTeams.sendMessage(chatId, "❌ Something went wrong. Please try again.").catch(() => {});
+    }
+  } finally {
+    waPollInFlight.delete(userId);
+  }
+}
+
+// A poll option was tapped (or the poll was cancelled).
+EsTeams.on("callback_query", async (query) => {
+  const data = query.data || '';
+  const pick = /^wapollo_([a-z0-9]{6})_(\d{1,2})$/.exec(data);
+  const cancel = /^wapollx_([a-z0-9]{6})$/.exec(data);
+  if (!pick && !cancel) return;
+
+  const userId = query.from.id;
+  const chatId = query.message.chat.id;
+  const answer = (text, alert = true) => EsTeams.answerCallbackQuery(query.id, text ? { text, show_alert: alert } : undefined).catch(() => {});
+
+  const sid = (pick || cancel)[1];
+  const sess = waPollSessions.get(sid);
+
+  if (!sess || Date.now() - sess.createdAt > WAPOLL_SESSION_TTL) {
+    waPollSessions.delete(sid);
+    try { await EsTeams.deleteMessage(chatId, query.message.message_id); } catch (e) {}
+    return answer("This poll expired. Send /wapoll <link> again.");
+  }
+  if (sess.userId !== userId) return answer("This poll belongs to another user.");
+
+  if (cancel) {
+    waPollSessions.delete(sid);
+    try { await EsTeams.deleteMessage(chatId, query.message.message_id); } catch (e) {}
+    return answer();
+  }
+
+  const optionIndex = Number(pick[2]);
+  if (!(optionIndex >= 0 && optionIndex < sess.options.length)) return answer("Invalid option.");
+  if (waPollInFlight.has(userId)) return answer("Your previous vote is still processing. Please wait.");
+
+  // Check the accounts again: nobody pays (or uses their free vote) while the service is busy.
+  const availability = await getVoteAvailability();
+  if (!availability.configured || availability.usable === 0) return answer("Poll service is temporarily unavailable. Please try again later.");
+  if (availability.free === 0) return answer(queueMessage('vote'));
+
+  await answer(null);
+
+  // Delete the poll message, then continue with a new message.
+  waPollSessions.delete(sid);
+  try { await EsTeams.deleteMessage(chatId, query.message.message_id); } catch (e) {}
+
+  const sel = { link: sess.link, optionIndex, optionText: sess.options[optionIndex], question: sess.question };
+
+  if (!CONFIG.OWNER_IDS.includes(userId)) {
+    const cooldown = await checkWapollCooldown(userId);
+    if (!cooldown.canUse) {
+      const hours = Math.floor(cooldown.timeLeft / (60 * 60 * 1000));
+      const minutes = Math.floor((cooldown.timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+
+      const paymentMsg = await EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗣𝗢𝗟𝗟 𝗩𝗢𝗧𝗘𝗦*
+
+Your daily free poll vote has been used.
+
+🗳️ *Option:* ${waMd(sel.optionText)}
+⏳ Next free vote in: *${hours}h ${minutes}m*
+
+Pay *${WAPOLL_STARS}* Stars to send this vote now.`,
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: `⭐ Pay ${WAPOLL_STARS} Stars`, callback_data: `wapollpay_${userId}` }],
+            ...WA_KEYBOARD_LINK
+          ]
+        }
+      });
+
+      waPollPending.set(userId, { ...sel, chatId, paymentMsgId: paymentMsg.message_id, createdAt: Date.now() });
+      return;
+    }
+  }
+
+  await processWapoll(chatId, userId, sel, null);
+});
+
+// "Pay Stars" button.
+EsTeams.on("callback_query", async (query) => {
+  const data = query.data || '';
+  if (!data.startsWith("wapollpay_")) return;
+
+  const userId = query.from.id;
+  const chatId = query.message.chat.id;
+  const answer = (text) => EsTeams.answerCallbackQuery(query.id, text ? { text, show_alert: true } : undefined).catch(() => {});
+
+  if (data !== `wapollpay_${userId}`) return answer("This payment button belongs to another user.");
+
+  // No saved vote (e.g. the bot restarted): do not take payment for nothing.
+  if (!waPollPending.has(userId)) return answer("Session expired. Send /wapoll <link> again.");
+
+  // Do not take money while every account is busy.
+  const availability = await getVoteAvailability();
+  if (availability.configured && availability.usable > 0 && availability.free === 0) return answer(queueMessage('vote'));
+
+  try {
+    await EsTeams.sendInvoice(
+      chatId,
+      "⭐ 𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗣𝗢𝗟𝗟 𝗩𝗢𝗧𝗘𝗦",
+      "Send a poll vote using Telegram Stars.",
+      `wapoll_${userId}_${Date.now()}`,
+      "",
+      "XTR",
+      [{ label: "ES TEAMS POLL VOTE", amount: WAPOLL_STARS }]
+    );
+    await answer();
+  } catch (err) {
+    console.log(err.message);
+    EsTeams.sendMessage(chatId, "❌ Failed to create Stars payment.").catch(() => {});
+  }
+});
+
+// Stars payment received: send the vote (refund if it cannot be delivered).
+EsTeams.on("successful_payment", async (msg) => {
+  const sp = msg.successful_payment;
+  if (!sp || !String(sp.invoice_payload || "").startsWith("wapoll_")) return;
+
+  const userId = msg.from.id;
+  const chatId = msg.chat.id;
+  const chargeId = sp.telegram_payment_charge_id;
+  const pending = waPollPending.get(userId);
+
+  if (!pending) {
+    const ok = await refundWareactStars(userId, chargeId);
+    return EsTeams.sendMessage(
+      chatId,
+      ok
+        ? "⚠️ Your session expired, so your Stars were refunded. Please send /wapoll <link> again."
+        : "⚠️ Your session expired. Please contact the admin for a refund."
+    ).catch(() => {});
+  }
+
+  waPollPending.delete(userId);
+  try { await EsTeams.deleteMessage(chatId, pending.paymentMsgId); } catch (e) {}
+  await processWapoll(chatId, userId, pending, chargeId);
+});
+
 // ============ ACC STATS COMMAND ========= //
 EsTeams.onText(/^\/accstats$/, async (msg) => {
   const chatId = msg.chat.id;
@@ -12311,6 +12758,7 @@ EsTeams.onText(/^\/accstats$/, async (msg) => {
       text += `${icon} ${a.label} — ${coins} — ${free}\n`;
     }
     text += `\n💎 *Total Coins:* \`${total}\`${stale ? " _(last saved)_" : ""}`;
+    text += `\n\n🛠 Build: \`${BUILD_ID}\``;
 
     await EsTeams.sendMessage(chatId, text, { parse_mode: "Markdown" });
   } catch (err) {
