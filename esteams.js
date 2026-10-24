@@ -17523,12 +17523,12 @@ async function applyGlobalBroadcastPin(msg, action) {
     );
 }
 
-EsTeams.onText(/^\/gpin$/i, async (msg) => {
+EsTeams.onText(/^\/gpin(?:@[\w_]+)?$/i, async (msg) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(msg.chat.id);
     return applyGlobalBroadcastPin(msg, 'pin');
 });
 
-EsTeams.onText(/^\/gunpin$/i, async (msg) => {
+EsTeams.onText(/^\/gunpin(?:@[\w_]+)?$/i, async (msg) => {
     if (isLockedFor(msg.from.id)) return newCmdLocked(msg.chat.id);
     return applyGlobalBroadcastPin(msg, 'unpin');
 });
@@ -17558,7 +17558,7 @@ function sendFeatureNotice(chatId, caption) {
 }
 
 // Bot API 10.3: private/ephemeral reply visible only to one member of a group.
-EsTeams.onText(/^\/ephemeral(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+EsTeams.onText(/^\/ephemeral(?:@[\w_]+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     const text = match[1]?.trim();
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
@@ -17588,7 +17588,7 @@ EsTeams.onText(/^\/ephemeral(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 });
 
 // Bot API 10.2/10.3: Rich Message using HTML rich formatting.
-EsTeams.onText(/^\/rich(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+EsTeams.onText(/^\/rich(?:@[\w_]+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     const text = match[1]?.trim();
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
@@ -17614,7 +17614,7 @@ EsTeams.onText(/^\/rich(?:\s+([\s\S]+))?$/i, async (msg, match) => {
 });
 
 // Bot API 10.2: progressive draft preview followed by a persistent message.
-EsTeams.onText(/^\/draft(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+EsTeams.onText(/^\/draft(?:@[\w_]+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
     const chatId = msg.chat.id;
     const text = match[1]?.trim();
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
