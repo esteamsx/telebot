@@ -181,16 +181,14 @@ const ALLOWED_UPDATES = [
     'shipping_query', 'pre_checkout_query', 'purchased_paid_media',
     'poll', 'poll_answer',
     'my_chat_member', 'chat_member', 'chat_join_request',
-    'chat_boost', 'removed_chat_boost',
-    'subscription', 'stopped_message_generation'
+    'chat_boost', 'removed_chat_boost'
 ];
 
-const botClients = tokens.map(token => new TelegramBot(token, {
+const EsTeams = tokens.map(token => new TelegramBot(token, {
     polling: {
         params: { allowed_updates: JSON.stringify(ALLOWED_UPDATES) }
     }
 }));
-const EsTeams = botClients[0];
 const FLUTTERWAVE_SECRET_KEY = process.env.FLUTTERWAVE_SECRET_KEY;
 const startTime = Date.now();
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
@@ -201,7 +199,7 @@ const groupId = -1002408064092;
 let LOCK_BOT = false;
 
 //============= BOT ERROR HANDLER ==============//
-botClients.forEach(bot => {
+EsTeams.forEach(bot => {
   bot.on('polling_error', (err) => {
     if (err.code === 'ETELEGRAM' && err.message.includes('409')) {
       setTimeout(() => process.exit(0), 1000);
@@ -222,12 +220,9 @@ process.on('uncaughtException', (err) => {
 });
 
 //============= NATIVE TELEGRAM COMMAND MENU ==============//
-botClients.forEach(bot => {
+EsTeams.forEach(bot => {
   const publicCommands = [
     { command: 'start', description: 'Open the ES TEAMS V1 main menu' },
-    { command: 'ephemeral', description: 'Send a private group reply' },
-    { command: 'rich', description: 'Send a Rich Message' },
-    { command: 'draft', description: 'Stream a temporary message draft' },
     { command: 'ping', description: 'Check if the bot is alive' },
     { command: 'wareact', description: 'React to a WhatsApp channel post' },
     { command: 'wapoll', description: 'Vote on a WhatsApp channel poll' },
@@ -345,8 +340,6 @@ botClients.forEach(bot => {
     { command: 'backup', description: 'Backup bot data' },
     { command: 'lockbot', description: 'Lock the bot' },
     { command: 'unlockbot', description: 'Unlock the bot' },
-    { command: 'gpin', description: 'Pin a broadcast for all users' },
-    { command: 'gunpin', description: 'Unpin a broadcast for all users' },
     { command: 'addowner', description: 'Add a bot owner' },
     { command: 'delowner', description: 'Remove a bot owner' },
     { command: 'listowner', description: 'List bot owners' },
@@ -1407,7 +1400,7 @@ async function sendCryptoIndex(channelId, groupId) {
       changeText = `${btcChange.toFixed(2)}%`;
     }
 
-    const sentMessage = await EsTeams.sendPhoto(channelId, botImageUrl, {
+    const sentMessage = await EsTeams[0].sendPhoto(channelId, botImageUrl, {
       caption:
         `*📊𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗖𝗥𝗬𝗣𝗧𝗢 𝗙 & 𝗚 𝗜𝗡𝗗𝗘𝗫*\n\n` +
         `*🧭 Index Value:* ${indexValue}\n` +
@@ -1426,7 +1419,7 @@ async function sendCryptoIndex(channelId, groupId) {
     console.log("✅ Daily Crypto Index sent successfully to channel");
 
     if (groupId) {
-      await EsTeams.forwardMessage(
+      await EsTeams[0].forwardMessage(
         groupId,             
         channelId,           
         sentMessage.message_id 
@@ -1554,7 +1547,7 @@ async function generatePriceImage(priceString) {
   try {
     console.log('🚀 BTC Alert starting...');
 
-    await EsTeams.sendPhoto(adminId, botImageUrl, {
+    await EsTeams[0].sendPhoto(adminId, botImageUrl, {
       caption: "📡 𝗕𝗧𝗖 𝗔𝗟𝗘𝗥𝗧\n\nInitializing BTC Price Tracker...",
       reply_markup: { inline_keyboard: waButton },
     });
@@ -1593,7 +1586,7 @@ async function generatePriceImage(priceString) {
           const dynamicImageBuffer = await generatePriceImage(formattedPrice);
           const photoToSend = dynamicImageBuffer || botImageUrl;
 
-          const sentMsg = await EsTeams.sendPhoto(channelId, photoToSend, {
+          const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
             caption: `${arrow}  $<b>${formattedPrice}</b> @esteams_btc`,
             parse_mode: "HTML",
             reply_markup: { inline_keyboard: waButton },
@@ -1797,8 +1790,6 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐝𝐞𝐥𝐨𝐰𝐧𝐞𝐫 ◁️❄️🕷️
 ┃ /𝐮𝐧𝐥𝐨𝐜𝐤𝐛𝐨𝐭 ◁️❄️🕷️
 ┃ /𝐛𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭 ◁️❄️🕷️
-┃ /𝐠𝐩𝐢𝐧 ◁️❄️🕷️
-┃ /𝐠𝐮𝐧𝐩𝐢𝐧 ◁️❄️🕷️
 ┃ /𝐥𝐢𝐬𝐭𝐨𝐰𝐧𝐞𝐫 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
@@ -1818,9 +1809,6 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐛𝐢𝐳𝐚𝐬𝐬𝐢𝐬𝐭𝐚𝐧𝐭 ◁️❄️🕷️
 ┃ /𝐛𝐢𝐳𝐩𝐫𝐨𝐟𝐢𝐥𝐞 ◁️❄️🕷️
 ┃ /𝐛𝐢𝐳𝐬𝐭𝐚𝐭𝐮𝐬 ◁️❄️🕷️
-┃ /𝐞𝐩𝐡𝐞𝐦𝐞𝐫𝐚𝐥 ◁️❄️🕷️
-┃ /𝐫𝐢𝐜𝐡 ◁️❄️🕷️
-┃ /𝐝𝐫𝐚𝐟𝐭 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     mediaMenu: `
@@ -1994,7 +1982,7 @@ vtuMenu: `
 ╰━━━━━━━━━━━━━━━━━━━━━╯`
 });
 
-botClients.forEach((EsTeams, esteams) => {
+EsTeams.forEach((EsTeams, esteams) => {
 // Start command
 EsTeams.onText(/\/start/, async (msg) => { 
   const chatId = msg.chat.id;
@@ -5223,10 +5211,6 @@ EsTeams.on('text', async (msg) => {
     delete paymentReceipts[userId];
 });
 
-const BROADCAST_PINS_FILE = './ES_TEAMS-MEDIA/broadcast_pins.json';
-if (!fs.existsSync(BROADCAST_PINS_FILE)) fs.writeFileSync(BROADCAST_PINS_FILE, '[]');
-let broadcastPinRecords = loadJsonFile(BROADCAST_PINS_FILE);
-
 //BROADCAST COMMAND
 EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
   const chatId = msg.chat.id;
@@ -5236,7 +5220,7 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, '🚫 *Access Denied!*', { parse_mode: 'Markdown' });
   }
 
-  const originalText = match[1]?.trim() || '';
+  const originalText = match[1]?.trim();
   let media = null;
   let mediaType = null;
   if (msg.reply_to_message) {
@@ -5286,7 +5270,6 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
 
   let successCount = 0;
   let failureCount = 0;
-  const broadcastMessages = {};
   const totalTargets = targets.length;
   let lastUpdate = Date.now();
   const startTime = Date.now();
@@ -5304,53 +5287,51 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
 
   for (const [index, targetId] of targets.entries()) {
     try {
-      let sentMessage;
       if (media) {
         switch (mediaType) {
           case 'photo':
-            sentMessage = await EsTeams.sendPhoto(targetId, media, {
+            await EsTeams.sendPhoto(targetId, media, {
               caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧*\n\n${formattedText || ''}${footerText}`,
               parse_mode: 'Markdown',
               ...inlineKeyboard,
             });
             break;
           case 'video':
-            sentMessage = await EsTeams.sendVideo(targetId, media, {
+            await EsTeams.sendVideo(targetId, media, {
               caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧*\n\n${formattedText || ''}${footerText}`,
               parse_mode: 'Markdown',
               ...inlineKeyboard,
             });
             break;
           case 'document':
-            sentMessage = await EsTeams.sendDocument(targetId, media, {
+            await EsTeams.sendDocument(targetId, media, {
               caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧*\n\n${formattedText || ''}${footerText}`,
               parse_mode: 'Markdown',
               ...inlineKeyboard,
             });
             break;
           case 'audio':
-            sentMessage = await EsTeams.sendAudio(targetId, media, {
+            await EsTeams.sendAudio(targetId, media, {
               caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧*\n\n${formattedText || ''}${footerText}`,
               parse_mode: 'Markdown',
               ...inlineKeyboard,
             });
             break;
           default:
-            sentMessage = await EsTeams.sendPhoto(targetId, botImageUrl, {
+            await EsTeams.sendPhoto(targetId, botImageUrl, {
               caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧*\n\nText: ${formattedText || 'N/A'}${footerText}`,
               parse_mode: 'Markdown',
               ...inlineKeyboard,
             });
         }
       } else {
-        sentMessage = await EsTeams.sendPhoto(targetId, botImageUrl, {
+        await EsTeams.sendPhoto(targetId, botImageUrl, {
           caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩1 𝗕𝗥𝗢𝗔𝗗𝗖𝗔𝗦𝗧*\n\nText: ${formattedText || 'N/A'}${footerText}`,
           parse_mode: 'Markdown',
           ...inlineKeyboard,
         });
       }
       successCount++;
-      if (sentMessage?.message_id) broadcastMessages[String(targetId)] = sentMessage.message_id;
     } catch (error) {
       console.error(`❌ Failed to send to ${targetId}:`, error.message);
       failureCount++;
@@ -5391,18 +5372,6 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
   } catch (e) {}
 
   console.log(`✅ Broadcast complete: ${successCount}/${totalTargets} delivered successfully.`);
-  const ownerMessageId = broadcastMessages[String(userId)];
-  if (ownerMessageId) {
-    broadcastPinRecords.push({
-      sourceMessageId: ownerMessageId,
-      createdAt: new Date().toISOString(),
-      messages: broadcastMessages
-    });
-    broadcastPinRecords = broadcastPinRecords.slice(-20);
-    saveJsonFile(BROADCAST_PINS_FILE, broadcastPinRecords);
-  } else {
-    console.warn('Broadcast completed without an owner copy; /gpin and /gunpin cannot identify this broadcast.');
-  }
 });
 
 // =============== POLL COMMAND =============//
@@ -17443,250 +17412,4 @@ EsTeams.onText(/^\/wacheck(?:\s+(\S+))?$/, async (msg, match) => {
         return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
     }
 });
-});
-
-
-// Helpers for the new feature dispatcher. The legacy command handlers live
-// inside the bot-client loop, while these handlers are registered globally.
-const featureWaChannelBtn = {
-    inline_keyboard: [
-        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
-    ]
-};
-
-function isLockedForFeature(userId) {
-    return LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId);
-}
-
-function newFeatureLocked(chatId) {
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption: "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\\n\\nKindly Check back later ...",
-        parse_mode: "Markdown",
-        reply_markup: featureWaChannelBtn
-    }).catch(() => EsTeams.sendMessage(chatId, "❌ ES TEAMS V1 IS LOCKED\\n\\nKindly check back later.", {
-        reply_markup: featureWaChannelBtn
-    }));
-}
-
-async function telegramRawApiFeature(method, payload) {
-    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-    return res.json();
-}
-
-//======================================================================
-// TELEGRAM BOT API 10.2 / 10.3 FEATURES
-// Uses the raw Bot API so these features work even when the installed
-// node-telegram-bot-api wrapper does not expose the newest methods yet.
-//======================================================================
-function findBroadcastPinRecord(sourceMessageId) {
-    return [...broadcastPinRecords].reverse()
-        .find(record => String(record.sourceMessageId) === String(sourceMessageId));
-}
-
-async function applyGlobalBroadcastPin(msg, action) {
-    const chatId = msg.chat.id;
-    if (!CONFIG.OWNER_IDS.includes(msg.from.id)) {
-        return sendFeatureNotice(chatId, '🚫 *This is an owner-only command.*');
-    }
-    const target = msg.reply_to_message;
-    if (!target) {
-        return sendFeatureNotice(chatId,
-            action === 'pin'
-                ? '📌 *Reply to your broadcast copy, then send `/gpin`.*'
-                : '📌 *Reply to your broadcast copy, then send `/gunpin`.*'
-        );
-    }
-    const record = findBroadcastPinRecord(target.message_id);
-    if (!record) {
-        return sendFeatureNotice(chatId,
-            '⚠️ *No saved user-message map was found for that broadcast.*\n\n' +
-            'Run a new `/broadcast` first, make sure your own chat is included, then reply to your copy.'
-        );
-    }
-    let successCount = 0;
-    let alreadyCount = 0;
-    let failureCount = 0;
-    for (const [targetChatId, messageId] of Object.entries(record.messages || {})) {
-        try {
-            let pinnedMessageId = null;
-            try {
-                const chatInfo = await EsTeams.getChat(targetChatId);
-                pinnedMessageId = chatInfo?.pinned_message?.message_id ?? null;
-            } catch {}
-            if ((action === 'pin' && String(pinnedMessageId) === String(messageId)) ||
-                (action === 'unpin' && pinnedMessageId !== null && String(pinnedMessageId) !== String(messageId))) {
-                alreadyCount++;
-                continue;
-            }
-            if (action === 'pin') {
-                await EsTeams.pinChatMessage(targetChatId, messageId, { disable_notification: true });
-            } else {
-                await EsTeams.unpinChatMessage(targetChatId, messageId);
-            }
-            successCount++;
-        } catch (err) {
-            const description = String(err?.message || '').toLowerCase();
-            const alreadyInState =
-                (action === 'pin' && description.includes('already pinned')) ||
-                (action === 'unpin' && (
-                    description.includes('not pinned') ||
-                    description.includes('message to unpin not found') ||
-                    description.includes('message not found')
-                ));
-            if (alreadyInState) {
-                alreadyCount++;
-            } else {
-                failureCount++;
-                console.error(`GLOBAL ${action.toUpperCase()} ERROR for ${targetChatId}:`, err.message);
-            }
-        }
-    }
-    return sendFeatureNotice(chatId,
-        `${action === 'pin' ? '📌' : '📍'} *Global broadcast ${action === 'pin' ? 'pin' : 'unpin'} complete.*\n\n` +
-        `👥 *Processed:* ${successCount + alreadyCount + failureCount}\n` +
-        `✅ *Successful:* ${successCount}\n` +
-        `ℹ️ *Already in requested state:* ${alreadyCount}\n` +
-        `❌ *Failed:* ${failureCount}`
-    );
-}
-
-function escapeHtmlText(value = '') {
-    return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
-
-async function telegramFeatureCall(method, payload) {
-    const result = await telegramRawApiFeature(method, payload);
-    if (!result || !result.ok) {
-        throw new Error(result?.description || `${method} failed`);
-    }
-    return result.result;
-}
-
-async function sendFeatureNotice(chatId, caption) {
-    try {
-        return await EsTeams.sendPhoto(chatId, botImageUrl, {
-            caption,
-            parse_mode: 'Markdown',
-            reply_markup: featureWaChannelBtn
-        });
-    } catch (photoError) {
-        try {
-            return await EsTeams.sendMessage(chatId, caption, {
-                reply_markup: featureWaChannelBtn
-            });
-        } catch (messageError) {
-            console.error('FEATURE NOTICE ERROR:', photoError.message, messageError.message);
-            return null;
-        }
-    }
-}
-
-async function handleNewTelegramCommand(msg, command, text = '') {
-    const chatId = msg.chat.id;
-    if (isLockedForFeature(msg.from.id)) return newFeatureLocked(chatId);
-
-    if (command === 'gpin' || command === 'gunpin') {
-        return applyGlobalBroadcastPin(msg, command === 'gpin' ? 'pin' : 'unpin');
-    }
-
-    if (command === 'ephemeral') {
-        if (!text) return sendFeatureNotice(chatId, 'Usage: /ephemeral <message>\n\nIn a group, this sends a private response visible only to you.');
-        if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
-            return sendFeatureNotice(chatId, 'Ephemeral replies are intended for group and supergroup chats.');
-        }
-        try {
-            await telegramFeatureCall('sendMessage', {
-                chat_id: chatId,
-                text,
-                ephemeral_message_parameters: { receiver_user_id: msg.from.id }
-            });
-        } catch (err) {
-            console.error('EPHEMERAL ERROR:', err.message);
-            await sendFeatureNotice(chatId, `Unable to send an ephemeral reply. The bot may need administrator permission.\n\n${err.message}`).catch(() => {});
-        }
-        return;
-    }
-
-    if (command === 'rich') {
-        if (!text) return sendFeatureNotice(chatId, 'Usage: /rich <message>\n\nExample: /rich Welcome to ES TEAMS');
-        try {
-            await telegramFeatureCall('sendRichMessage', {
-                chat_id: chatId,
-                rich_message: { html: `<b>ES TEAMS Rich Message</b>\n\n${escapeHtmlText(text)}` },
-                reply_markup: featureWaChannelBtn
-            });
-        } catch (err) {
-            console.error('RICH MESSAGE ERROR:', err.message);
-            await sendFeatureNotice(chatId, `ES TEAMS Rich Message\n\n${text}`).catch(() => {});
-        }
-        return;
-    }
-
-    if (command === 'draft') {
-        if (!text) return sendFeatureNotice(chatId, 'Usage: /draft <message>\n\nDraft streaming is available in private chats.');
-        if (msg.chat.type !== 'private') return sendFeatureNotice(chatId, 'Message drafts can only be streamed in private chats.');
-        const draftId = Math.floor(Math.random() * 2147483646) + 1;
-        try {
-            const chunks = [];
-            for (let i = 1; i <= text.length; i += Math.max(1, Math.ceil(text.length / 8))) chunks.push(text.slice(0, i));
-            for (const chunk of chunks) {
-                await telegramFeatureCall('sendMessageDraft', {
-                    chat_id: chatId,
-                    draft_id: draftId,
-                    text: chunk,
-                    can_stop: true,
-                    keep_on_stop: true
-                });
-                await new Promise(resolve => setTimeout(resolve, 120));
-            }
-            await EsTeams.sendMessage(chatId, text, { reply_markup: featureWaChannelBtn });
-        } catch (err) {
-            console.error('MESSAGE DRAFT ERROR:', err.message);
-            await EsTeams.sendMessage(chatId, text, { reply_markup: featureWaChannelBtn }).catch(() => {});
-        }
-    }
-}
-
-EsTeams.on('message', async (msg) => {
-    const commandMatch = String(msg.text || '').match(/^\/(gpin|gunpin|ephemeral|rich|draft)(?:@[\w_]+)?(?:\s+([\s\S]+))?\s*$/i);
-    if (!commandMatch) return;
-    try {
-        await handleNewTelegramCommand(msg, commandMatch[1].toLowerCase(), commandMatch[2]?.trim() || '');
-    } catch (err) {
-        console.error('NEW TELEGRAM COMMAND ERROR:', err);
-        await EsTeams.sendMessage(
-            msg.chat.id,
-            `⚠️ Command error: ${String(err?.message || err).slice(0, 300)}`,
-            { reply_markup: featureWaChannelBtn }
-        ).catch(() => {});
-    }
-});
-
-// Bot API 10.3: user pressed the stop button on a message draft.
-EsTeams.on('stopped_message_generation', async (update) => {
-    try {
-        const chatId = update?.chat?.id || update?.message?.chat?.id;
-        if (chatId) {
-            await EsTeams.sendMessage(chatId, 'Generation stopped.', { reply_markup: featureWaChannelBtn });
-        }
-    } catch (err) {
-        console.error('STOPPED GENERATION ERROR:', err.message);
-    }
-});
-
-// Bot API 10.2: subscription status updates.
-EsTeams.on('subscription', (update) => {
-    try {
-        console.log('Telegram subscription update:', JSON.stringify(update));
-    } catch (err) {
-        console.error('SUBSCRIPTION UPDATE ERROR:', err.message);
-    }
 });
