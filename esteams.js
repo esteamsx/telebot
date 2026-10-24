@@ -228,8 +228,6 @@ botClients.forEach(bot => {
     { command: 'ephemeral', description: 'Send a private group reply' },
     { command: 'rich', description: 'Send a Rich Message' },
     { command: 'draft', description: 'Stream a temporary message draft' },
-    { command: 'gpin', description: 'Pin a replied message in this group' },
-    { command: 'gunpin', description: 'Unpin a replied message in this group' },
     { command: 'ping', description: 'Check if the bot is alive' },
     { command: 'wareact', description: 'React to a WhatsApp channel post' },
     { command: 'wapoll', description: 'Vote on a WhatsApp channel poll' },
@@ -347,6 +345,8 @@ botClients.forEach(bot => {
     { command: 'backup', description: 'Backup bot data' },
     { command: 'lockbot', description: 'Lock the bot' },
     { command: 'unlockbot', description: 'Unlock the bot' },
+    { command: 'gpin', description: 'Pin a broadcast for all users' },
+    { command: 'gunpin', description: 'Unpin a broadcast for all users' },
     { command: 'addowner', description: 'Add a bot owner' },
     { command: 'delowner', description: 'Remove a bot owner' },
     { command: 'listowner', description: 'List bot owners' },
@@ -1797,6 +1797,8 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐝𝐞𝐥𝐨𝐰𝐧𝐞𝐫 ◁️❄️🕷️
 ┃ /𝐮𝐧𝐥𝐨𝐜𝐤𝐛𝐨𝐭 ◁️❄️🕷️
 ┃ /𝐛𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭 ◁️❄️🕷️
+┃ /𝐠𝐩𝐢𝐧 ◁️❄️🕷️
+┃ /𝐠𝐮𝐧𝐩𝐢𝐧 ◁️❄️🕷️
 ┃ /𝐥𝐢𝐬𝐭𝐨𝐰𝐧𝐞𝐫 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
@@ -1905,8 +1907,6 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐫𝐞𝐨𝐩𝐞𝐧𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
 ┃ /𝐝𝐞𝐥𝐞𝐭𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
 ┃ /𝐫𝐞𝐧𝐚𝐦𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
-┃ /𝐠𝐩𝐢𝐧 ◁️❄️🕷️
-┃ /𝐠𝐮𝐧𝐩𝐢𝐧 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
 mailMenu: `
@@ -5223,6 +5223,10 @@ EsTeams.on('text', async (msg) => {
     delete paymentReceipts[userId];
 });
 
+const BROADCAST_PINS_FILE = './ES_TEAMS-MEDIA/broadcast_pins.json';
+if (!fs.existsSync(BROADCAST_PINS_FILE)) fs.writeFileSync(BROADCAST_PINS_FILE, '[]');
+let broadcastPinRecords = loadJsonFile(BROADCAST_PINS_FILE);
+
 //BROADCAST COMMAND
 EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
   const chatId = msg.chat.id;
@@ -5232,9 +5236,7 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
     return EsTeams.sendMessage(chatId, '🚫 *Access Denied!*', { parse_mode: 'Markdown' });
   }
 
-  let originalText = match[1]?.trim() || '';
-  const pinAfterSend = /^(?:pin|--pin)\b/i.test(originalText);
-  if (pinAfterSend) originalText = originalText.replace(/^(?:pin|--pin)\s*/i, '').trim();
+  const originalText = match[1]?.trim() || '';
   let media = null;
   let mediaType = null;
   if (msg.reply_to_message) {
@@ -5260,9 +5262,7 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
       '➤ Reply to a media message (photo, video, document, audio) with the command:\n' +
       '`/broadcast Your caption here`\n\n' +
       '➤ Or just send a text message with the command:\n' +
-      '`/broadcast Your announcement here`\n\n' +
-      '➤ Add `pin` after `/broadcast` to pin the delivered message in each chat:\n' +
-      '`/broadcast pin Your announcement here`',
+      '`/broadcast Your announcement here`',
       { parse_mode: 'Markdown' }
     );
   }
@@ -5286,8 +5286,7 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
 
   let successCount = 0;
   let failureCount = 0;
-  let pinnedCount = 0;
-  let pinFailureCount = 0;
+  const broadcastMessages = {};
   const totalTargets = targets.length;
   let lastUpdate = Date.now();
   const startTime = Date.now();
@@ -5351,17 +5350,7 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
         });
       }
       successCount++;
-      if (pinAfterSend && sentMessage?.message_id) {
-        try {
-          await EsTeams.pinChatMessage(targetId, sentMessage.message_id, {
-            disable_notification: true
-          });
-          pinnedCount++;
-        } catch (pinError) {
-          pinFailureCount++;
-          console.error(`⚠️ Broadcast delivered but pin failed for ${targetId}:`, pinError.message);
-        }
-      }
+      if (sentMessage?.message_id) broadcastMessages[String(targetId)] = sentMessage.message_id;
     } catch (error) {
       console.error(`❌ Failed to send to ${targetId}:`, error.message);
       failureCount++;
@@ -5395,7 +5384,6 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
       `👥 *Targets:* ${totalTargets}\n` +
       `✅ *Successfully Sent:* ${successCount}\n` +
       `❌ *Failures:* ${failureCount}\n` +
-      (pinAfterSend ? `📌 *Pinned:* ${pinnedCount}\n⚠️ *Pin Failures:* ${pinFailureCount}\n` : '') +
       `🕒 *Total Time:* ${totalTime} seconds\n\n` +
       (failureCount > 0 ? '⚠ _Some targets could not be reached._' : '✨ _Broadcast was perfect!_'),
       { parse_mode: 'Markdown' }
@@ -5403,6 +5391,18 @@ EsTeams.onText(/\/broadcast(?:\s+(.+))?/, async (msg, match) => {
   } catch (e) {}
 
   console.log(`✅ Broadcast complete: ${successCount}/${totalTargets} delivered successfully.`);
+  const ownerMessageId = broadcastMessages[String(userId)];
+  if (ownerMessageId) {
+    broadcastPinRecords.push({
+      sourceMessageId: ownerMessageId,
+      createdAt: new Date().toISOString(),
+      messages: broadcastMessages
+    });
+    broadcastPinRecords = broadcastPinRecords.slice(-20);
+    saveJsonFile(BROADCAST_PINS_FILE, broadcastPinRecords);
+  } else {
+    console.warn('Broadcast completed without an owner copy; /gpin and /gunpin cannot identify this broadcast.');
+  }
 });
 
 // =============== POLL COMMAND =============//
@@ -17451,59 +17451,62 @@ EsTeams.onText(/^\/wacheck(?:\s+(\S+))?$/, async (msg, match) => {
 // Uses the raw Bot API so these features work even when the installed
 // node-telegram-bot-api wrapper does not expose the newest methods yet.
 //======================================================================
-async function requireGroupAdmin(msg) {
+function findBroadcastPinRecord(sourceMessageId) {
+    return [...broadcastPinRecords].reverse()
+        .find(record => String(record.sourceMessageId) === String(sourceMessageId));
+}
+
+async function applyGlobalBroadcastPin(msg, action) {
     const chatId = msg.chat.id;
-    if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
-        await sendFeatureNotice(chatId, '⚠️ *This command only works inside a group or supergroup.*');
-        return false;
+    if (!CONFIG.OWNER_IDS.includes(msg.from.id)) {
+        return sendFeatureNotice(chatId, '🚫 *This is an owner-only command.*');
     }
-    if (!(await isGroupAdmin(chatId, msg.from.id))) {
-        await sendFeatureNotice(chatId, '🚫 *Only group administrators can use this command.*');
-        return false;
+    const target = msg.reply_to_message;
+    if (!target) {
+        return sendFeatureNotice(chatId,
+            action === 'pin'
+                ? '📌 *Reply to your broadcast copy, then send `/gpin`.*'
+                : '📌 *Reply to your broadcast copy, then send `/gunpin`.*'
+        );
     }
-    return true;
+    const record = findBroadcastPinRecord(target.message_id);
+    if (!record) {
+        return sendFeatureNotice(chatId,
+            '⚠️ *No saved user-message map was found for that broadcast.*\n\n' +
+            'Run a new `/broadcast` first, make sure your own chat is included, then reply to your copy.'
+        );
+    }
+    let successCount = 0;
+    let failureCount = 0;
+    for (const [targetChatId, messageId] of Object.entries(record.messages || {})) {
+        try {
+            if (action === 'pin') {
+                await EsTeams.pinChatMessage(targetChatId, messageId, { disable_notification: true });
+            } else {
+                await EsTeams.unpinChatMessage(targetChatId, messageId);
+            }
+            successCount++;
+        } catch (err) {
+            failureCount++;
+            console.error(`GLOBAL ${action.toUpperCase()} ERROR for ${targetChatId}:`, err.message);
+        }
+    }
+    return sendFeatureNotice(chatId,
+        `${action === 'pin' ? '📌' : '📍'} *Global broadcast ${action === 'pin' ? 'pin' : 'unpin'} complete.*\n\n` +
+        `👥 *Processed:* ${successCount + failureCount}\n` +
+        `✅ *Successful:* ${successCount}\n` +
+        `❌ *Failed:* ${failureCount}`
+    );
 }
 
 EsTeams.onText(/^\/gpin$/i, async (msg) => {
-    const chatId = msg.chat.id;
-    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    if (!(await requireGroupAdmin(msg))) return;
-    const target = msg.reply_to_message;
-    if (!target) {
-        return sendFeatureNotice(chatId,
-            '📌 *Reply to the message you want to pin, then send `/gpin`.*'
-        );
-    }
-    try {
-        await EsTeams.pinChatMessage(chatId, target.message_id, { disable_notification: false });
-        return sendFeatureNotice(chatId, '✅ *The replied message has been pinned for the group.*');
-    } catch (err) {
-        console.error('GPIN ERROR:', err.message);
-        return sendFeatureNotice(chatId,
-            `❌ *Unable to pin that message.*\n\n${err.message}`
-        );
-    }
+    if (isLockedFor(msg.from.id)) return newCmdLocked(msg.chat.id);
+    return applyGlobalBroadcastPin(msg, 'pin');
 });
 
 EsTeams.onText(/^\/gunpin$/i, async (msg) => {
-    const chatId = msg.chat.id;
-    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    if (!(await requireGroupAdmin(msg))) return;
-    const target = msg.reply_to_message;
-    if (!target) {
-        return sendFeatureNotice(chatId,
-            '📌 *Reply to the pinned message, then send `/gunpin`.*'
-        );
-    }
-    try {
-        await EsTeams.unpinChatMessage(chatId, target.message_id);
-        return sendFeatureNotice(chatId, '✅ *The replied message has been unpinned.*');
-    } catch (err) {
-        console.error('GUNPIN ERROR:', err.message);
-        return sendFeatureNotice(chatId,
-            `❌ *Unable to unpin that message.*\n\n${err.message}`
-        );
-    }
+    if (isLockedFor(msg.from.id)) return newCmdLocked(msg.chat.id);
+    return applyGlobalBroadcastPin(msg, 'unpin');
 });
 
 function escapeHtmlText(value = '') {
