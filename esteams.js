@@ -17446,6 +17446,37 @@ EsTeams.onText(/^\/wacheck(?:\s+(\S+))?$/, async (msg, match) => {
 });
 
 
+// Helpers for the new feature dispatcher. The legacy command handlers live
+// inside the bot-client loop, while these handlers are registered globally.
+const featureWaChannelBtn = {
+    inline_keyboard: [
+        [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
+    ]
+};
+
+function isLockedForFeature(userId) {
+    return LOCK_BOT && !CONFIG.OWNER_IDS.includes(userId);
+}
+
+function newFeatureLocked(chatId) {
+    return EsTeams.sendPhoto(chatId, botImageUrl, {
+        caption: "❌ *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗦 𝗟𝗢𝗖𝗞𝗘𝗗*\\n\\nKindly Check back later ...",
+        parse_mode: "Markdown",
+        reply_markup: featureWaChannelBtn
+    }).catch(() => EsTeams.sendMessage(chatId, "❌ ES TEAMS V1 IS LOCKED\\n\\nKindly check back later.", {
+        reply_markup: featureWaChannelBtn
+    }));
+}
+
+async function telegramRawApiFeature(method, payload) {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    return res.json();
+}
+
 //======================================================================
 // TELEGRAM BOT API 10.2 / 10.3 FEATURES
 // Uses the raw Bot API so these features work even when the installed
@@ -17532,7 +17563,7 @@ function escapeHtmlText(value = '') {
 }
 
 async function telegramFeatureCall(method, payload) {
-    const result = await telegramRawApi(method, payload);
+    const result = await telegramRawApiFeature(method, payload);
     if (!result || !result.ok) {
         throw new Error(result?.description || `${method} failed`);
     }
@@ -17544,12 +17575,12 @@ async function sendFeatureNotice(chatId, caption) {
         return await EsTeams.sendPhoto(chatId, botImageUrl, {
             caption,
             parse_mode: 'Markdown',
-            reply_markup: waChannelBtn
+            reply_markup: featureWaChannelBtn
         });
     } catch (photoError) {
         try {
             return await EsTeams.sendMessage(chatId, caption, {
-                reply_markup: waChannelBtn
+                reply_markup: featureWaChannelBtn
             });
         } catch (messageError) {
             console.error('FEATURE NOTICE ERROR:', photoError.message, messageError.message);
@@ -17560,7 +17591,7 @@ async function sendFeatureNotice(chatId, caption) {
 
 async function handleNewTelegramCommand(msg, command, text = '') {
     const chatId = msg.chat.id;
-    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (isLockedForFeature(msg.from.id)) return newFeatureLocked(chatId);
 
     if (command === 'gpin' || command === 'gunpin') {
         return applyGlobalBroadcastPin(msg, command === 'gpin' ? 'pin' : 'unpin');
@@ -17590,7 +17621,7 @@ async function handleNewTelegramCommand(msg, command, text = '') {
             await telegramFeatureCall('sendRichMessage', {
                 chat_id: chatId,
                 rich_message: { html: `<b>ES TEAMS Rich Message</b>\n\n${escapeHtmlText(text)}` },
-                reply_markup: waChannelBtn
+                reply_markup: featureWaChannelBtn
             });
         } catch (err) {
             console.error('RICH MESSAGE ERROR:', err.message);
@@ -17616,10 +17647,10 @@ async function handleNewTelegramCommand(msg, command, text = '') {
                 });
                 await new Promise(resolve => setTimeout(resolve, 120));
             }
-            await EsTeams.sendMessage(chatId, text, { reply_markup: waChannelBtn });
+            await EsTeams.sendMessage(chatId, text, { reply_markup: featureWaChannelBtn });
         } catch (err) {
             console.error('MESSAGE DRAFT ERROR:', err.message);
-            await EsTeams.sendMessage(chatId, text, { reply_markup: waChannelBtn }).catch(() => {});
+            await EsTeams.sendMessage(chatId, text, { reply_markup: featureWaChannelBtn }).catch(() => {});
         }
     }
 }
@@ -17634,7 +17665,7 @@ EsTeams.on('message', async (msg) => {
         await EsTeams.sendMessage(
             msg.chat.id,
             `⚠️ Command error: ${String(err?.message || err).slice(0, 300)}`,
-            { reply_markup: waChannelBtn }
+            { reply_markup: featureWaChannelBtn }
         ).catch(() => {});
     }
 });
@@ -17644,7 +17675,7 @@ EsTeams.on('stopped_message_generation', async (update) => {
     try {
         const chatId = update?.chat?.id || update?.message?.chat?.id;
         if (chatId) {
-            await EsTeams.sendMessage(chatId, 'Generation stopped.', { reply_markup: waChannelBtn });
+            await EsTeams.sendMessage(chatId, 'Generation stopped.', { reply_markup: featureWaChannelBtn });
         }
     } catch (err) {
         console.error('STOPPED GENERATION ERROR:', err.message);
