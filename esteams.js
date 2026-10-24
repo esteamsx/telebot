@@ -17477,9 +17477,20 @@ async function applyGlobalBroadcastPin(msg, action) {
         );
     }
     let successCount = 0;
+    let alreadyCount = 0;
     let failureCount = 0;
     for (const [targetChatId, messageId] of Object.entries(record.messages || {})) {
         try {
+            let pinnedMessageId = null;
+            try {
+                const chatInfo = await EsTeams.getChat(targetChatId);
+                pinnedMessageId = chatInfo?.pinned_message?.message_id ?? null;
+            } catch {}
+            if ((action === 'pin' && String(pinnedMessageId) === String(messageId)) ||
+                (action === 'unpin' && pinnedMessageId !== null && String(pinnedMessageId) !== String(messageId))) {
+                alreadyCount++;
+                continue;
+            }
             if (action === 'pin') {
                 await EsTeams.pinChatMessage(targetChatId, messageId, { disable_notification: true });
             } else {
@@ -17487,14 +17498,27 @@ async function applyGlobalBroadcastPin(msg, action) {
             }
             successCount++;
         } catch (err) {
-            failureCount++;
-            console.error(`GLOBAL ${action.toUpperCase()} ERROR for ${targetChatId}:`, err.message);
+            const description = String(err?.message || '').toLowerCase();
+            const alreadyInState =
+                (action === 'pin' && description.includes('already pinned')) ||
+                (action === 'unpin' && (
+                    description.includes('not pinned') ||
+                    description.includes('message to unpin not found') ||
+                    description.includes('message not found')
+                ));
+            if (alreadyInState) {
+                alreadyCount++;
+            } else {
+                failureCount++;
+                console.error(`GLOBAL ${action.toUpperCase()} ERROR for ${targetChatId}:`, err.message);
+            }
         }
     }
     return sendFeatureNotice(chatId,
         `${action === 'pin' ? '📌' : '📍'} *Global broadcast ${action === 'pin' ? 'pin' : 'unpin'} complete.*\n\n` +
-        `👥 *Processed:* ${successCount + failureCount}\n` +
+        `👥 *Processed:* ${successCount + alreadyCount + failureCount}\n` +
         `✅ *Successful:* ${successCount}\n` +
+        `ℹ️ *Already in requested state:* ${alreadyCount}\n` +
         `❌ *Failed:* ${failureCount}`
     );
 }
