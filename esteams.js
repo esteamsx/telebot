@@ -17523,16 +17523,6 @@ async function applyGlobalBroadcastPin(msg, action) {
     );
 }
 
-EsTeams.onText(/^\/gpin(?:@[\w_]+)?$/i, async (msg) => {
-    if (isLockedFor(msg.from.id)) return newCmdLocked(msg.chat.id);
-    return applyGlobalBroadcastPin(msg, 'pin');
-});
-
-EsTeams.onText(/^\/gunpin(?:@[\w_]+)?$/i, async (msg) => {
-    if (isLockedFor(msg.from.id)) return newCmdLocked(msg.chat.id);
-    return applyGlobalBroadcastPin(msg, 'unpin');
-});
-
 function escapeHtmlText(value = '') {
     return String(value)
         .replace(/&/g, '&amp;')
@@ -17554,101 +17544,86 @@ function sendFeatureNotice(chatId, caption) {
         caption,
         parse_mode: 'Markdown',
         reply_markup: waChannelBtn
-    });
+    }).catch(() => EsTeams.sendMessage(chatId, caption, {
+        parse_mode: 'Markdown',
+        reply_markup: waChannelBtn
+    }));
 }
 
-// Bot API 10.3: private/ephemeral reply visible only to one member of a group.
-EsTeams.onText(/^\/ephemeral(?:@[\w_]+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+async function handleNewTelegramCommand(msg, command, text = '') {
     const chatId = msg.chat.id;
-    const text = match[1]?.trim();
     if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    if (!text) {
-        return sendFeatureNotice(chatId,
-            'Usage: /ephemeral <message>\n\nIn a group, this sends a private response visible only to you.',
-            { reply_markup: waChannelBtn }
-        );
-    }
-    if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
-        return sendFeatureNotice(chatId, 'Ephemeral replies are intended for group and supergroup chats.', {
-            reply_markup: waChannelBtn
-        });
-    }
-    try {
-        await telegramFeatureCall('sendMessage', {
-            chat_id: chatId,
-            text,
-            ephemeral_message_parameters: { receiver_user_id: msg.from.id }
-        });
-    } catch (err) {
-        console.error('EPHEMERAL ERROR:', err.message);
-        await sendFeatureNotice(chatId,
-            `Unable to send an ephemeral reply. The bot may need administrator permission.\n\n${err.message}`,
-        ).catch(() => {});
-    }
-});
 
-// Bot API 10.2/10.3: Rich Message using HTML rich formatting.
-EsTeams.onText(/^\/rich(?:@[\w_]+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const text = match[1]?.trim();
-    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    if (!text) {
-        return sendFeatureNotice(chatId,
-            'Usage: /rich <message>\n\nExample: /rich Welcome to ES TEAMS',
-            { reply_markup: waChannelBtn }
-        );
+    if (command === 'gpin' || command === 'gunpin') {
+        return applyGlobalBroadcastPin(msg, command === 'gpin' ? 'pin' : 'unpin');
     }
-    try {
-        await telegramFeatureCall('sendRichMessage', {
-            chat_id: chatId,
-            rich_message: {
-                html: `<b>ES TEAMS Rich Message</b>\n\n${escapeHtmlText(text)}`
-            },
-            reply_markup: waChannelBtn
-        });
-    } catch (err) {
-        console.error('RICH MESSAGE ERROR:', err.message);
-        // Keep the command useful on older Bot API servers or wrappers.
-        await sendFeatureNotice(chatId, `ES TEAMS Rich Message\n\n${text}`).catch(() => {});
-    }
-});
 
-// Bot API 10.2: progressive draft preview followed by a persistent message.
-EsTeams.onText(/^\/draft(?:@[\w_]+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
-    const chatId = msg.chat.id;
-    const text = match[1]?.trim();
-    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
-    if (!text) {
-        return sendFeatureNotice(chatId,
-            'Usage: /draft <message>\n\nDraft streaming is available in private chats.',
-            { reply_markup: waChannelBtn }
-        );
-    }
-    if (msg.chat.type !== 'private') {
-        return sendFeatureNotice(chatId, 'Message drafts can only be streamed in private chats.', {
-            reply_markup: waChannelBtn
-        });
-    }
-    const draftId = Math.floor(Math.random() * 2147483646) + 1;
-    try {
-        const chunks = [];
-        for (let i = 1; i <= text.length; i += Math.max(1, Math.ceil(text.length / 8))) {
-            chunks.push(text.slice(0, i));
+    if (command === 'ephemeral') {
+        if (!text) return sendFeatureNotice(chatId, 'Usage: /ephemeral <message>\n\nIn a group, this sends a private response visible only to you.');
+        if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
+            return sendFeatureNotice(chatId, 'Ephemeral replies are intended for group and supergroup chats.');
         }
-        for (const chunk of chunks) {
-            await telegramFeatureCall('sendMessageDraft', {
+        try {
+            await telegramFeatureCall('sendMessage', {
                 chat_id: chatId,
-                draft_id: draftId,
-                text: chunk,
-                can_stop: true,
-                keep_on_stop: true
+                text,
+                ephemeral_message_parameters: { receiver_user_id: msg.from.id }
             });
-            await new Promise(resolve => setTimeout(resolve, 120));
+        } catch (err) {
+            console.error('EPHEMERAL ERROR:', err.message);
+            await sendFeatureNotice(chatId, `Unable to send an ephemeral reply. The bot may need administrator permission.\n\n${err.message}`).catch(() => {});
         }
-        await EsTeams.sendMessage(chatId, text, { reply_markup: waChannelBtn });
+        return;
+    }
+
+    if (command === 'rich') {
+        if (!text) return sendFeatureNotice(chatId, 'Usage: /rich <message>\n\nExample: /rich Welcome to ES TEAMS');
+        try {
+            await telegramFeatureCall('sendRichMessage', {
+                chat_id: chatId,
+                rich_message: { html: `<b>ES TEAMS Rich Message</b>\n\n${escapeHtmlText(text)}` },
+                reply_markup: waChannelBtn
+            });
+        } catch (err) {
+            console.error('RICH MESSAGE ERROR:', err.message);
+            await sendFeatureNotice(chatId, `ES TEAMS Rich Message\n\n${text}`).catch(() => {});
+        }
+        return;
+    }
+
+    if (command === 'draft') {
+        if (!text) return sendFeatureNotice(chatId, 'Usage: /draft <message>\n\nDraft streaming is available in private chats.');
+        if (msg.chat.type !== 'private') return sendFeatureNotice(chatId, 'Message drafts can only be streamed in private chats.');
+        const draftId = Math.floor(Math.random() * 2147483646) + 1;
+        try {
+            const chunks = [];
+            for (let i = 1; i <= text.length; i += Math.max(1, Math.ceil(text.length / 8))) chunks.push(text.slice(0, i));
+            for (const chunk of chunks) {
+                await telegramFeatureCall('sendMessageDraft', {
+                    chat_id: chatId,
+                    draft_id: draftId,
+                    text: chunk,
+                    can_stop: true,
+                    keep_on_stop: true
+                });
+                await new Promise(resolve => setTimeout(resolve, 120));
+            }
+            await EsTeams.sendMessage(chatId, text, { reply_markup: waChannelBtn });
+        } catch (err) {
+            console.error('MESSAGE DRAFT ERROR:', err.message);
+            await EsTeams.sendMessage(chatId, text, { reply_markup: waChannelBtn }).catch(() => {});
+        }
+    }
+}
+
+EsTeams.on('message', async (msg) => {
+    const commandMatch = String(msg.text || '').match(/^\/(gpin|gunpin|ephemeral|rich|draft)(?:@[\w_]+)?(?:\s+([\s\S]+))?\s*$/i);
+    if (!commandMatch) return;
+    try {
+        await handleNewTelegramCommand(msg, commandMatch[1].toLowerCase(), commandMatch[2]?.trim() || '');
     } catch (err) {
-        console.error('MESSAGE DRAFT ERROR:', err.message);
-        await EsTeams.sendMessage(chatId, text, { reply_markup: waChannelBtn }).catch(() => {});
+        console.error('NEW TELEGRAM COMMAND ERROR:', err);
+        await EsTeams.sendMessage(msg.chat.id, '⚠️ The command failed unexpectedly. Please try again.').catch(() => {});
     }
 });
 
