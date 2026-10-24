@@ -17539,15 +17539,23 @@ async function telegramFeatureCall(method, payload) {
     return result.result;
 }
 
-function sendFeatureNotice(chatId, caption) {
-    return EsTeams.sendPhoto(chatId, botImageUrl, {
-        caption,
-        parse_mode: 'Markdown',
-        reply_markup: waChannelBtn
-    }).catch(() => EsTeams.sendMessage(chatId, caption, {
-        parse_mode: 'Markdown',
-        reply_markup: waChannelBtn
-    }));
+async function sendFeatureNotice(chatId, caption) {
+    try {
+        return await EsTeams.sendPhoto(chatId, botImageUrl, {
+            caption,
+            parse_mode: 'Markdown',
+            reply_markup: waChannelBtn
+        });
+    } catch (photoError) {
+        try {
+            return await EsTeams.sendMessage(chatId, caption, {
+                reply_markup: waChannelBtn
+            });
+        } catch (messageError) {
+            console.error('FEATURE NOTICE ERROR:', photoError.message, messageError.message);
+            return null;
+        }
+    }
 }
 
 async function handleNewTelegramCommand(msg, command, text = '') {
@@ -17623,7 +17631,11 @@ EsTeams.on('message', async (msg) => {
         await handleNewTelegramCommand(msg, commandMatch[1].toLowerCase(), commandMatch[2]?.trim() || '');
     } catch (err) {
         console.error('NEW TELEGRAM COMMAND ERROR:', err);
-        await EsTeams.sendMessage(msg.chat.id, '⚠️ The command failed unexpectedly. Please try again.').catch(() => {});
+        await EsTeams.sendMessage(
+            msg.chat.id,
+            `⚠️ Command error: ${String(err?.message || err).slice(0, 300)}`,
+            { reply_markup: waChannelBtn }
+        ).catch(() => {});
     }
 });
 
