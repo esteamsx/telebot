@@ -185,11 +185,12 @@ const ALLOWED_UPDATES = [
     'subscription', 'stopped_message_generation'
 ];
 
-const EsTeams = tokens.map(token => new TelegramBot(token, {
+const botClients = tokens.map(token => new TelegramBot(token, {
     polling: {
         params: { allowed_updates: JSON.stringify(ALLOWED_UPDATES) }
     }
 }));
+const EsTeams = botClients[0];
 const FLUTTERWAVE_SECRET_KEY = process.env.FLUTTERWAVE_SECRET_KEY;
 const startTime = Date.now();
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
@@ -200,7 +201,7 @@ const groupId = -1002408064092;
 let LOCK_BOT = false;
 
 //============= BOT ERROR HANDLER ==============//
-EsTeams.forEach(bot => {
+botClients.forEach(bot => {
   bot.on('polling_error', (err) => {
     if (err.code === 'ETELEGRAM' && err.message.includes('409')) {
       setTimeout(() => process.exit(0), 1000);
@@ -221,12 +222,14 @@ process.on('uncaughtException', (err) => {
 });
 
 //============= NATIVE TELEGRAM COMMAND MENU ==============//
-EsTeams.forEach(bot => {
+botClients.forEach(bot => {
   const publicCommands = [
     { command: 'start', description: 'Open the ES TEAMS V1 main menu' },
     { command: 'ephemeral', description: 'Send a private group reply' },
     { command: 'rich', description: 'Send a Rich Message' },
     { command: 'draft', description: 'Stream a temporary message draft' },
+    { command: 'gpin', description: 'Pin a replied message in this group' },
+    { command: 'gunpin', description: 'Unpin a replied message in this group' },
     { command: 'ping', description: 'Check if the bot is alive' },
     { command: 'wareact', description: 'React to a WhatsApp channel post' },
     { command: 'wapoll', description: 'Vote on a WhatsApp channel poll' },
@@ -1404,7 +1407,7 @@ async function sendCryptoIndex(channelId, groupId) {
       changeText = `${btcChange.toFixed(2)}%`;
     }
 
-    const sentMessage = await EsTeams[0].sendPhoto(channelId, botImageUrl, {
+    const sentMessage = await EsTeams.sendPhoto(channelId, botImageUrl, {
       caption:
         `*📊𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗖𝗥𝗬𝗣𝗧𝗢 𝗙 & 𝗚 𝗜𝗡𝗗𝗘𝗫*\n\n` +
         `*🧭 Index Value:* ${indexValue}\n` +
@@ -1423,7 +1426,7 @@ async function sendCryptoIndex(channelId, groupId) {
     console.log("✅ Daily Crypto Index sent successfully to channel");
 
     if (groupId) {
-      await EsTeams[0].forwardMessage(
+      await EsTeams.forwardMessage(
         groupId,             
         channelId,           
         sentMessage.message_id 
@@ -1551,7 +1554,7 @@ async function generatePriceImage(priceString) {
   try {
     console.log('🚀 BTC Alert starting...');
 
-    await EsTeams[0].sendPhoto(adminId, botImageUrl, {
+    await EsTeams.sendPhoto(adminId, botImageUrl, {
       caption: "📡 𝗕𝗧𝗖 𝗔𝗟𝗘𝗥𝗧\n\nInitializing BTC Price Tracker...",
       reply_markup: { inline_keyboard: waButton },
     });
@@ -1590,7 +1593,7 @@ async function generatePriceImage(priceString) {
           const dynamicImageBuffer = await generatePriceImage(formattedPrice);
           const photoToSend = dynamicImageBuffer || botImageUrl;
 
-          const sentMsg = await EsTeams[0].sendPhoto(channelId, photoToSend, {
+          const sentMsg = await EsTeams.sendPhoto(channelId, photoToSend, {
             caption: `${arrow}  $<b>${formattedPrice}</b> @esteams_btc`,
             parse_mode: "HTML",
             reply_markup: { inline_keyboard: waButton },
@@ -1902,6 +1905,8 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐫𝐞𝐨𝐩𝐞𝐧𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
 ┃ /𝐝𝐞𝐥𝐞𝐭𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
 ┃ /𝐫𝐞𝐧𝐚𝐦𝐞𝐭𝐨𝐩𝐢𝐜 ◁️❄️🕷️
+┃ /𝐠𝐩𝐢𝐧 ◁️❄️🕷️
+┃ /𝐠𝐮𝐧𝐩𝐢𝐧 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
 mailMenu: `
@@ -17446,6 +17451,61 @@ EsTeams.onText(/^\/wacheck(?:\s+(\S+))?$/, async (msg, match) => {
 // Uses the raw Bot API so these features work even when the installed
 // node-telegram-bot-api wrapper does not expose the newest methods yet.
 //======================================================================
+async function requireGroupAdmin(msg) {
+    const chatId = msg.chat.id;
+    if (msg.chat.type !== 'group' && msg.chat.type !== 'supergroup') {
+        await sendFeatureNotice(chatId, '⚠️ *This command only works inside a group or supergroup.*');
+        return false;
+    }
+    if (!(await isGroupAdmin(chatId, msg.from.id))) {
+        await sendFeatureNotice(chatId, '🚫 *Only group administrators can use this command.*');
+        return false;
+    }
+    return true;
+}
+
+EsTeams.onText(/^\/gpin$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!(await requireGroupAdmin(msg))) return;
+    const target = msg.reply_to_message;
+    if (!target) {
+        return sendFeatureNotice(chatId,
+            '📌 *Reply to the message you want to pin, then send `/gpin`.*'
+        );
+    }
+    try {
+        await EsTeams.pinChatMessage(chatId, target.message_id, { disable_notification: false });
+        return sendFeatureNotice(chatId, '✅ *The replied message has been pinned for the group.*');
+    } catch (err) {
+        console.error('GPIN ERROR:', err.message);
+        return sendFeatureNotice(chatId,
+            `❌ *Unable to pin that message.*\n\n${err.message}`
+        );
+    }
+});
+
+EsTeams.onText(/^\/gunpin$/i, async (msg) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    if (!(await requireGroupAdmin(msg))) return;
+    const target = msg.reply_to_message;
+    if (!target) {
+        return sendFeatureNotice(chatId,
+            '📌 *Reply to the pinned message, then send `/gunpin`.*'
+        );
+    }
+    try {
+        await EsTeams.unpinChatMessage(chatId, target.message_id);
+        return sendFeatureNotice(chatId, '✅ *The replied message has been unpinned.*');
+    } catch (err) {
+        console.error('GUNPIN ERROR:', err.message);
+        return sendFeatureNotice(chatId,
+            `❌ *Unable to unpin that message.*\n\n${err.message}`
+        );
+    }
+});
+
 function escapeHtmlText(value = '') {
     return String(value)
         .replace(/&/g, '&amp;')
