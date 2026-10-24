@@ -1994,7 +1994,7 @@ vtuMenu: `
 ╰━━━━━━━━━━━━━━━━━━━━━╯`
 });
 
-EsTeams.forEach((EsTeams, esteams) => {
+botClients.forEach((EsTeams, esteams) => {
 // Start command
 EsTeams.onText(/\/start/, async (msg) => { 
   const chatId = msg.chat.id;
