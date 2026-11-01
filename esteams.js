@@ -1037,8 +1037,8 @@ async function getTotalCoins(force = false) {
 }
 
 //========== WAREACT COOLDOWN FUNCTIONS ==========//
-const WAREACT_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
-const WAREACT_STARS = 15; // Telegram Stars charged for each extra use inside the 24h window
+const WAREACT_COOLDOWN = 72 * 60 * 60 * 1000; // 72 hours
+const WAREACT_STARS = 15; // Telegram Stars charged for each extra use inside the 72h window
 
 async function checkWareactCooldown(userId) {
   try {
@@ -1089,8 +1089,8 @@ async function refundWareactStars(userId, chargeId) {
 }
 
 //========== WAPOLL COOLDOWN FUNCTIONS ==========//
-const WAPOLL_COOLDOWN = 24 * 60 * 60 * 1000; // 1 free poll vote per user every 24 hours
-const WAPOLL_STARS = 15;                      // Telegram Stars for each extra vote inside the 24h window
+const WAPOLL_COOLDOWN = 72 * 60 * 60 * 1000; // 1 free poll vote per user every 72 hours
+const WAPOLL_STARS = 15;                      // Telegram Stars for each extra vote inside the 72h window
 const WAPOLL_SESSION_TTL = 10 * 60 * 1000;    // a poll message stays clickable for 10 minutes
 const waPollSessions = new Map(); // short id -> { userId, chatId, link, question, channelName, options, messageId, createdAt }
 const waPollPending = new Map();  // userId -> chosen option waiting for the Stars payment
