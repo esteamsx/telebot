@@ -34,6 +34,7 @@ import ffmpegPath from "ffmpeg-static";
 import util from "util";
 import { exec as execCallback } from "child_process";
 import http from 'http';
+import { pipeline } from "node:stream/promises";
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 const app = express();
@@ -43,6 +44,9 @@ const ES_TEAMS_API_BASE = "https://esteamstv.devs.surf";
 const ES_TEAMS_API_KEY = process.env.ES_TEAMS_API_KEY;
 
 async function esApiGet(endpoint, params = {}) {
+    if (!ES_TEAMS_API_KEY) {
+        throw Object.assign(new Error("ES_TEAMS_API_KEY is not set."), { code: "ES_TEAMS_API_KEY_MISSING" });
+    }
     const query = new URLSearchParams(
         Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ""))
     ).toString();
@@ -51,11 +55,31 @@ async function esApiGet(endpoint, params = {}) {
     const contentType = res.headers.get("content-type") || "";
     if (contentType.includes("application/json")) {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || `ES TEAMS API responded ${res.status}`);
+        if (!res.ok) {
+            throw Object.assign(new Error(data.error || `ES TEAMS API responded ${res.status}`), { status: res.status, source: "es-teams-api" });
+        }
         return data;
     }
-    if (!res.ok) throw new Error(`ES TEAMS API responded ${res.status}`);
+    if (!res.ok) {
+        throw Object.assign(new Error(`ES TEAMS API responded ${res.status}`), { status: res.status, source: "es-teams-api" });
+    }
     return Buffer.from(await res.arrayBuffer());
+}
+
+function esApiFailureMessage(error, fallback) {
+    if (error?.code === "ES_TEAMS_API_KEY_MISSING") {
+        return `${fallback} Set ES_TEAMS_API_KEY on the bot host to an active Developer API key.`;
+    }
+    const status = Number(error?.status || error?.response?.status);
+    if (error?.source === "es-teams-api" && status === 401) {
+        return `${fallback} The Developer API rejected ES_TEAMS_API_KEY (HTTP 401). Check that it is an active Developer API key.`;
+    }
+    if (error?.source === "es-teams-api" && status === 429) {
+        return `${fallback} The Developer API rate or usage limit was reached (HTTP 429).`;
+    }
+    const detail = String(error?.message || "").replace(/[\r\n]+/g, " ").slice(0, 160);
+    if (status) return `${fallback} (HTTP ${status})${detail ? `: ${detail}` : ""}`;
+    return detail ? `${fallback} ${detail}` : fallback;
 }
 
 async function esApiPost(endpoint, body = {}) {
@@ -13242,7 +13266,8 @@ if (stats.size < 50000) {
     throw new Error("Downloaded file is invalid.");
 };
 
-      await EsTeams.sendAudio(chatId, filePath, {
+      try {
+        await EsTeams.sendAudio(chatId, filePath, {
         caption: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ",
         title: title,
         performer: "єѕ τєαмѕ τєϲн",
@@ -13251,14 +13276,19 @@ if (stats.size < 50000) {
             [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
           ]
         }
-      });
+        });
+      } catch (uploadError) {
+        console.error("Telegram MP3 upload failed:", uploadError.message);
+        await EsTeams.sendMessage(chatId, "The MP3 is ready, but Telegram could not accept the upload. Use this direct download link instead; it expires in about 6 hours.", {
+          reply_markup: { inline_keyboard: [[{ text: "Download MP3", url: download }]] }
+        });
+      }
 
       fs.unlinkSync(filePath);
       } catch (err) {
         if (typingInterval) clearInterval(typingInterval);
         console.error("playSong error:", err.message);
-        EsTeams.sendMessage(chatId, "⚠️ *Unable to fetch this song right now. Please try again.*", {
-          parse_mode: "Markdown",
+        EsTeams.sendMessage(chatId, esApiFailureMessage(err, "⚠️ Unable to fetch this song right now."), {
           reply_markup: {
             inline_keyboard: [
               [{ text: "📢 𝗪𝗛𝗔𝗧𝗦𝗔𝗣𝗣 𝗖𝗛𝗔𝗡𝗡𝗘𝗟", url: "https://whatsapp.com/channel/0029VatAyCwFy72JdZXFPm29", style: "primary" }]
@@ -13421,10 +13451,23 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
         async function downloadVideo() {
             const searchMessage = await EsTeams.sendMessage(chatId, "🔄 *Searching for your video. Please Wait...*", { parse_mode: "Markdown" });
 
-            const data = await esApiGet("/api/v1/dev/mp4", { query }).catch(() => null);
+            let data;
+            try {
+                data = await esApiGet("/api/v1/dev/mp4", { query });
+            } catch (apiError) {
+                console.error("MP4 API lookup failed:", apiError.status || "", apiError.message);
+                await EsTeams.editMessageText(esApiFailureMessage(apiError, "Could not fetch video details."), {
+                    chat_id: chatId,
+                    message_id: searchMessage.message_id
+                });
+                return;
+            }
 
             if (!data || !data.download_url) {
-                return EsTeams.sendMessage(chatId, "🚫 *Error fetching video details from API.* Please try again later.", { parse_mode: "Markdown" });
+                return EsTeams.editMessageText("The MP4 API did not return a download link.", {
+                    chat_id: chatId,
+                    message_id: searchMessage.message_id
+                });
             }
 
             const { title, thumbnail } = data;
@@ -13440,18 +13483,17 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
             const filePath = `./ES_TEAMS-MEDIA/video/${uniqueId}.mp4`;
 
             try {
-                // Fetch download source directly into ArrayBuffer format
+                // Stream the MP4 to disk so large downloads do not need to fit in memory.
                 const videoRes = await axios.get(download_url, {
-                    responseType: 'arraybuffer',
+                    responseType: 'stream',
                     timeout: 240000, // Boosted to 4 minutes to support bigger files safely
+                    maxRedirects: 10,
                     headers: {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
                         "Accept": "*/*"
                     }
                 });
-
-                // Write video bytes down securely to storage
-                fs.writeFileSync(filePath, Buffer.from(videoRes.data));
+                await pipeline(videoRes.data, fs.createWriteStream(filePath));
 
                 const stats = fs.statSync(filePath);
                 if (stats.size < 50000) { // If asset size is abnormally small, abort operation
@@ -13474,8 +13516,15 @@ EsTeams.onText(/\/video(?:\s(.+))?/, async (msg, match) => {
                     }
                 }).catch(() => null);
 
-                // Send the completely verified video asset payload downstream
-                await EsTeams.sendVideo(chatId, filePath, { caption: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ" });
+                // Keep the signed download usable if Telegram rejects the MP4 upload.
+                try {
+                    await EsTeams.sendVideo(chatId, filePath, { caption: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ ᴛᴇᴄʜ" });
+                } catch (uploadError) {
+                    console.error("Telegram MP4 upload failed:", uploadError.message);
+                    await EsTeams.sendMessage(chatId, "The MP4 is ready, but Telegram could not accept the upload. Use this direct download link instead; it expires in about 6 hours.", {
+                        reply_markup: { inline_keyboard: [[{ text: "Download MP4", url: download_url }]] }
+                    });
+                }
 
             } catch (dlError) {
                 const status = dlError.response ? dlError.response.status : null;
