@@ -1849,6 +1849,14 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐭𝐰𝐢𝐭𝐭𝐞𝐫 ◁️❄️
 ┃ /𝐟𝐚𝐜𝐞𝐛𝐨𝐨𝐤 ◁️❄️🕷️
 ┃ /𝐢𝐧𝐬𝐭𝐚𝐠𝐫𝐚𝐦 ◁️❄️🕷️
+┃ /𝐬𝐨𝐮𝐧𝐝𝐜𝐥𝐨𝐮𝐝 ◁️❄️🕷️
+┃ /𝐩𝐢𝐧𝐭𝐞𝐫𝐞𝐬𝐭 ◁️❄️🕷️
+┃ /𝐲𝐭𝐦𝐩𝟑 ◁️❄️🕷️
+┃ /𝐜𝐚𝐩𝐜𝐮𝐭 ◁️❄️🕷️
+┃ /𝐦𝐨𝐯𝐢𝐞 ◁️❄️🕷️
+┃ /𝐲𝐭𝐬𝐞𝐚𝐫𝐜𝐡 ◁️❄️🕷️
+┃ /𝐭𝐢𝐤𝐭𝐨𝐤𝐬𝐞𝐚𝐫𝐜𝐡 ◁️❄️🕷️
+┃ /𝐩𝐢𝐧𝐭𝐞𝐫𝐞𝐬𝐭𝐬𝐞𝐚𝐫𝐜𝐡 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     toolsMenu: `
@@ -1895,6 +1903,13 @@ const getMessages = (currentDate, currentTime) => ({
 ┃ /𝐫𝐞𝐚𝐜𝐭 ◁️❄️🕷️
 ┃ /𝐬𝐩𝐨𝐢𝐥𝐞𝐫 ◁️❄️🕷️
 ┃ /𝐞𝐟𝐟𝐞𝐜𝐭 ◁️❄️🕷️
+┃ /𝐰𝐞𝐛𝐬𝐞𝐚𝐫𝐜𝐡 ◁️❄️🕷️
+┃ /𝐢𝐦𝐚𝐠𝐞𝐬𝐞𝐚𝐫𝐜𝐡 ◁️❄️🕷️
+┃ /𝐠𝐢𝐭𝐡𝐮𝐛𝐬𝐞𝐚𝐫𝐜𝐡 ◁️❄️🕷️
+┃ /𝐟𝐨𝐫𝐞𝐜𝐚𝐬𝐭 ◁️❄️🕷️
+┃ /𝐭𝐭𝐬 ◁️❄️🕷️
+┃ /𝐲𝐭𝐬𝐮𝐦𝐦𝐚𝐫𝐲 ◁️❄️🕷️
+┃ /𝐩𝐚𝐬𝐭𝐪𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
     groupMenu: `
@@ -1953,6 +1968,7 @@ stalkMenu: `
 ┃ /𝐭𝐭𝐬𝐭𝐚𝐥𝐤 ◁️❄️🕷️
 ┃ /𝐠𝐢𝐭𝐬𝐭𝐚𝐥𝐤 ◁️❄️🕷️
 ┃ /𝐰𝐚𝐜𝐡𝐚𝐧𝐧𝐞𝐥 ◁️❄️🕷️
+┃ /𝐲𝐭𝐜𝐡𝐚𝐧𝐧𝐞𝐥 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
 canvaMenu: `
@@ -1960,6 +1976,7 @@ canvaMenu: `
 ┃ /𝐥𝐨𝐠𝐨 ◁️❄️🕷️
 ┃ /𝐥𝐨𝐠𝐨𝟐 ◁️❄️🕷️
 ┃ /𝐣𝐚𝐢𝐥 ◁️❄️🕷️
+┃ /𝐜𝐚𝐩𝐭𝐢𝐨𝐧 ◁️❄️🕷️
 ╰━━━━━━━━━━━━━━━━━━━━━╯`,
 
 scrapeMenu: `
@@ -17461,4 +17478,679 @@ EsTeams.onText(/^\/wacheck(?:\s+(\S+))?$/, async (msg, match) => {
         return EsTeams.sendMessage(chatId, `❌ ${err.message}`, { reply_markup: waChannelBtn });
     }
 });
+
+const ESX_FOOTER = "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴇꜱ ᴛᴇᴀᴍꜱ";
+const ESX_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36";
+
+function esxClip(text, max) {
+    const value = String(text || "");
+    if (value.length <= max) return value;
+    const cut = value.slice(0, max - 1);
+    const lastBreak = cut.lastIndexOf("\n");
+    return (lastBreak > max * 0.5 ? cut.slice(0, lastBreak) : cut) + "…";
+}
+
+function esxPlain(text) {
+    return String(text || "").replace(/\\([_*`\[])/g, "$1").replace(/\*/g, "");
+}
+
+function esxText(value, max = 300) {
+    return escapeMarkdown(esxClip(String(value === null || value === undefined ? "" : value).replace(/\s+/g, " ").trim(), max));
+}
+
+function esxPick(item, keys) {
+    if (!item || typeof item !== "object") return "";
+    for (const key of keys) {
+        const value = item[key];
+        if ((typeof value === "string" && value.trim()) || typeof value === "number") return String(value).trim();
+    }
+    return "";
+}
+
+function esxDeepPick(node, keys) {
+    let level = [node];
+    for (let depth = 0; depth < 4 && level.length; depth += 1) {
+        const next = [];
+        for (const item of level) {
+            if (!item || typeof item !== "object") continue;
+            if (Array.isArray(item)) { item.slice(0, 10).forEach((child) => next.push(child)); continue; }
+            const hit = esxPick(item, keys);
+            if (hit) return hit;
+            Object.values(item).forEach((child) => { if (child && typeof child === "object") next.push(child); });
+        }
+        level = next;
+    }
+    return "";
+}
+
+function esxFindArray(node, depth = 0) {
+    if (Array.isArray(node)) return node;
+    if (!node || typeof node !== "object" || depth > 3) return [];
+    for (const key of ["results", "items", "data", "videos", "list", "matches", "forecast", "days", "questions", "repos", "result"]) {
+        if (Array.isArray(node[key])) return node[key];
+    }
+    for (const value of Object.values(node)) {
+        const found = esxFindArray(value, depth + 1);
+        if (found.length) return found;
+    }
+    return [];
+}
+
+function esxDeepUrl(node, wantRe, allowImages = false) {
+    const found = [];
+    const walk = (value, key, depth) => {
+        if (depth > 5 || value === null || value === undefined) return;
+        if (typeof value === "string") { if (/^https?:\/\//i.test(value)) found.push([key, value]); return; }
+        if (Array.isArray(value)) { value.slice(0, 20).forEach((child) => walk(child, key, depth + 1)); return; }
+        if (typeof value === "object") Object.entries(value).forEach(([childKey, child]) => walk(child, childKey, depth + 1));
+    };
+    walk(node, "", 0);
+    const usable = allowImages ? found : found.filter(([key, url]) => !/thumb|cover|poster|avatar|image|icon|logo|preview/i.test(key) && !/\.(jpe?g|png|webp|gif)(\?|$)/i.test(url));
+    const hit = usable.find(([key, url]) => wantRe.test(key) || wantRe.test(url));
+    return (hit || usable[0] || [])[1] || "";
+}
+
+function esxFlat(node, max = 12) {
+    const lines = [];
+    const walk = (value, prefix, depth) => {
+        if (lines.length >= max || value === null || value === undefined) return;
+        if (Array.isArray(value)) {
+            if (value.length && value.every((entry) => typeof entry !== "object")) {
+                lines.push(`▫️ *${esxText(prefix.replace(/[_-]+/g, " "), 40)}:* ${esxText(value.slice(0, 6).join(", "), 120)}`);
+            }
+            return;
+        }
+        if (typeof value === "object") {
+            if (depth > 1) return;
+            Object.entries(value).forEach(([key, child]) => walk(child, prefix ? `${prefix} ${key}` : key, depth + 1));
+            return;
+        }
+        if (/^https?:\/\//i.test(String(value))) return;
+        lines.push(`▫️ *${esxText(prefix.replace(/[_-]+/g, " "), 40)}:* ${esxText(value, 160)}`);
+    };
+    walk(node, "", 0);
+    return lines.slice(0, max);
+}
+
+function esxDuration(seconds) {
+    const total = Math.round(Number(seconds));
+    if (!Number.isFinite(total) || total <= 0) return "";
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return h ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}` : `${m}:${String(s).padStart(2, "0")}`;
+}
+
+async function esxCard(chatId, caption, photo, buttons) {
+    const reply_markup = { inline_keyboard: [...(buttons || []), ...waChannelBtn.inline_keyboard] };
+    const text = esxClip(caption, 1000);
+    const attempts = [
+        [photo || botImageUrl, { caption: text, parse_mode: "Markdown", reply_markup }],
+        [botImageUrl, { caption: text, parse_mode: "Markdown", reply_markup }],
+        [botImageUrl, { caption: esxPlain(text), reply_markup }]
+    ];
+    let lastError;
+    for (const [image, options] of attempts) {
+        try { return await EsTeams.sendPhoto(chatId, image, options); }
+        catch (err) { lastError = err; }
+    }
+    throw lastError;
+}
+
+function esxUsage(chatId, title, usage) {
+    return esxCard(chatId, `❌ *𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗙𝗼𝗿𝗺𝗮𝘁*\n\n🎯 *${title}*\n📥 Please use \`${usage}\``).catch(() => {});
+}
+
+function esxFail(chatId, title, error, fallback) {
+    return esxCard(chatId, `❌ *${title}*\n\n${esxText(esApiFailureMessage(error, fallback), 500)}`).catch(() => {});
+}
+
+async function esxSendLong(chatId, text) {
+    const chunks = [];
+    let rest = String(text || "").trim();
+    while (rest.length > 3500) {
+        let cut = rest.lastIndexOf("\n", 3500);
+        if (cut < 1500) cut = 3500;
+        chunks.push(rest.slice(0, cut));
+        rest = rest.slice(cut).trim();
+    }
+    if (rest) chunks.push(rest);
+    for (let i = 0; i < chunks.length; i += 1) {
+        const last = i === chunks.length - 1;
+        await EsTeams.sendMessage(chatId, chunks[i], last ? { reply_markup: waChannelBtn } : {});
+    }
+}
+
+async function esxSendFile(chatId, filePath, kind, options = {}) {
+    const size = fs.statSync(filePath).size;
+    if (size < 1000) throw new Error("Downloaded file is invalid.");
+    if (size > 49 * 1024 * 1024) throw new Error("File is larger than Telegram allows bots to upload.");
+    const extra = { caption: ESX_FOOTER, reply_markup: waChannelBtn };
+    if (kind === "audio") {
+        return EsTeams.sendAudio(chatId, filePath, { ...extra, title: options.title || "ES TEAMS", performer: "єѕ τєαмѕ τєϲн" });
+    }
+    if (kind === "video") return EsTeams.sendVideo(chatId, filePath, extra);
+    try { return await EsTeams.sendPhoto(chatId, filePath, extra); }
+    catch (photoError) { return EsTeams.sendDocument(chatId, filePath, extra); }
+}
+
+async function esxDeliver(chatId, url, kind, options = {}) {
+    const dir = `./ES_TEAMS-MEDIA/${kind === "audio" ? "audio" : kind === "video" ? "video" : "image"}`;
+    fs.mkdirSync(dir, { recursive: true });
+    const filePath = `${dir}/esx_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${kind === "audio" ? "mp3" : kind === "video" ? "mp4" : "jpg"}`;
+    try {
+        const response = await axios({ url, method: "GET", responseType: "stream", timeout: 180000, maxRedirects: 10, headers: { "User-Agent": ESX_UA, "Accept": "*/*" } });
+        const writer = fs.createWriteStream(filePath);
+        response.data.pipe(writer);
+        await new Promise((resolve, reject) => {
+            writer.on("finish", resolve);
+            writer.on("error", reject);
+            response.data.on("error", reject);
+        });
+        await esxSendFile(chatId, filePath, kind, options);
+    } catch (uploadError) {
+        console.error("ES API file delivery failed:", uploadError.message);
+        await EsTeams.sendMessage(chatId, "The file is ready, but Telegram could not accept the upload. Use this direct download link instead; it expires in about 6 hours.", {
+            reply_markup: { inline_keyboard: [[{ text: "📥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗", url, style: "primary" }], ...waChannelBtn.inline_keyboard] }
+        });
+    } finally {
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+}
+
+async function esxRunDownload(msg, match, spec) {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = (match[1] || "").trim();
+    if (!input) return esxUsage(chatId, spec.usageTitle, spec.usage);
+    const wait = await EsTeams.sendMessage(chatId, spec.waitText, { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet(spec.endpoint, spec.params(input));
+        const found = spec.extract(data);
+        if (!found || !found.url) throw new Error(spec.missing);
+        await esxCard(chatId, `*${spec.header}*\n\n${found.lines.join("\n")}\n📥 *${spec.progress}*\n\n${ESX_FOOTER}`, found.thumb);
+        await esxDeliver(chatId, found.url, found.kind, { title: found.title });
+    } catch (error) {
+        console.error(`${spec.endpoint} error:`, error.message);
+        await esxFail(chatId, spec.failTitle, error, spec.failFallback);
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+}
+
+async function esxRunSearch(msg, match, spec) {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = (match[1] || "").trim();
+    if (!input) return esxUsage(chatId, spec.usageTitle, spec.usage);
+    const wait = await EsTeams.sendMessage(chatId, spec.waitText, { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet(spec.endpoint, { [spec.param]: input });
+        const items = esxFindArray(data.results !== undefined ? data.results : data)
+            .map((item) => (typeof item === "string" ? { url: item, title: item } : item))
+            .filter((item) => item && typeof item === "object");
+        const lines = items.slice(0, 5).map((item, index) => {
+            const parts = [`*${index + 1}.* ${esxText(esxPick(item, spec.title) || "Untitled", 90)}`];
+            const meta = (spec.meta || []).map(([icon, keys]) => {
+                const value = esxPick(item, keys);
+                return value ? `${icon} ${esxText(value, 40)}` : "";
+            }).filter(Boolean);
+            if (meta.length) parts.push(meta.join("  "));
+            const description = spec.desc ? esxPick(item, spec.desc) : "";
+            if (description) parts.push(`_${esxText(description, 90)}_`);
+            const link = spec.link(item);
+            if (link) parts.push(escapeMarkdown(link));
+            return parts.join("\n");
+        });
+        const body = lines.length ? lines.join("\n\n") : (esxFlat(data.results !== undefined ? data.results : data, 6).join("\n") || "No results found.");
+        const photo = spec.photo && items.length ? spec.photo(items[0]) : undefined;
+        await esxCard(chatId, `*${spec.header}*\n\n🔎 *Query:* _${esxText(input, 80)}_\n📊 *Results:* _${items.length}_\n\n${body}\n\n${ESX_FOOTER}`, photo);
+    } catch (error) {
+        console.error(`${spec.endpoint} error:`, error.message);
+        await esxFail(chatId, spec.failTitle, error, spec.failFallback);
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+}
+
+const esxAnyLink = (item) => {
+    const direct = esxPick(item, ["url", "link", "href", "html_url", "videoUrl", "video_url", "share_url", "webpage_url", "pin_url"]);
+    return /^https?:\/\//i.test(direct) ? direct : "";
+};
+
+const esxImageLink = (item) => {
+    const direct = esxPick(item, ["image", "imageUrl", "image_url", "original", "url", "src", "link", "thumbnail"]);
+    return /^https?:\/\//i.test(direct) ? direct : "";
+};
+
+const esxYoutubeLink = (item) => {
+    const direct = esxAnyLink(item);
+    if (direct) return direct;
+    const id = esxPick(item, ["videoId", "video_id", "id", "vid"]);
+    return /^[\w-]{11}$/.test(id) ? `https://www.youtube.com/watch?v=${id}` : "";
+};
+
+EsTeams.onText(/^\/spotify(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunDownload(msg, match, {
+    usageTitle: "𝗦𝗣𝗢𝗧𝗜𝗙𝗬 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    usage: "/spotify <LINK OR SONG NAME>",
+    waitText: "🔄 *Fetching your track...*",
+    endpoint: "/api/v1/dev/spotify",
+    params: (input) => ({ url: input }),
+    missing: "Unable to fetch this track.",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗦𝗣𝗢𝗧𝗜𝗙𝗬 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    progress: "Downloading your song...",
+    failTitle: "𝗦𝗣𝗢𝗧𝗜𝗙𝗬 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to fetch this track right now.",
+    extract: (data) => ({
+        url: data.download_url,
+        kind: "audio",
+        title: data.title,
+        thumb: data.thumbnail,
+        lines: [`🎶 *Title:* _${esxText(data.title || "Unknown")}_`, `🎤 *Artist:* _${esxText(data.artist || "Unknown")}_`]
+    })
+}));
+
+EsTeams.onText(/^\/soundcloud(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunDownload(msg, match, {
+    usageTitle: "𝗦𝗢𝗨𝗡𝗗𝗖𝗟𝗢𝗨𝗗 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    usage: "/soundcloud <TRACK LINK>",
+    waitText: "🔄 *Fetching your track...*",
+    endpoint: "/api/v1/dev/soundcloud",
+    params: (input) => ({ url: input }),
+    missing: "Unable to fetch this track.",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗦𝗢𝗨𝗡𝗗𝗖𝗟𝗢𝗨𝗗 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    progress: "Downloading your song...",
+    failTitle: "𝗦𝗢𝗨𝗡𝗗𝗖𝗟𝗢𝗨𝗗 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to fetch this track right now.",
+    extract: (data) => ({
+        url: data.download_url,
+        kind: "audio",
+        title: data.title,
+        thumb: data.thumbnail,
+        lines: [`🎶 *Title:* _${esxText(data.title || "Unknown")}_`, `🎤 *Artist:* _${esxText(data.artist || "Unknown")}_`]
+    })
+}));
+
+EsTeams.onText(/^\/pinterest(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunDownload(msg, match, {
+    usageTitle: "𝗣𝗜𝗡𝗧𝗘𝗥𝗘𝗦𝗧 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    usage: "/pinterest <PIN LINK>",
+    waitText: "🔄 *Fetching your pin...*",
+    endpoint: "/api/v1/dev/pinterest",
+    params: (input) => ({ url: input }),
+    missing: "Unable to fetch this pin.",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗣𝗜𝗡𝗧𝗘𝗥𝗘𝗦𝗧 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    progress: "Downloading your media...",
+    failTitle: "𝗣𝗜𝗡𝗧𝗘𝗥𝗘𝗦𝗧 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to fetch this pin right now.",
+    extract: (data) => ({
+        url: data.download_url,
+        kind: data.type === "video" ? "video" : "photo",
+        title: data.title,
+        lines: [`📌 *Title:* _${esxText(data.title || "Pinterest media")}_`, `🗂 *Type:* _${esxText(data.type || "image")}_`]
+    })
+}));
+
+EsTeams.onText(/^\/ytmp3(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunDownload(msg, match, {
+    usageTitle: "𝗬𝗧 𝗠𝗣𝟯 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    usage: "/ytmp3 <YOUTUBE LINK>",
+    waitText: "🔄 *Fetching your audio...*",
+    endpoint: "/api/v1/dev/ytdl",
+    params: (input) => ({ url: input, format: "mp3" }),
+    missing: "Unable to fetch this audio.",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗬𝗧 𝗠𝗣𝟯 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    progress: "Downloading your audio...",
+    failTitle: "𝗬𝗧 𝗠𝗣𝟯 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to fetch this audio right now.",
+    extract: (data) => ({
+        url: data.download_url,
+        kind: "audio",
+        title: data.title,
+        thumb: data.thumbnail,
+        lines: [`🎶 *Title:* _${esxText(data.title || "Unknown")}_`, `⏱ *Duration:* _${esxText(esxDuration(data.duration) || "Unknown")}_`]
+    })
+}));
+
+EsTeams.onText(/^\/capcut(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunDownload(msg, match, {
+    usageTitle: "𝗖𝗔𝗣𝗖𝗨𝗧 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    usage: "/capcut <TEMPLATE LINK>",
+    waitText: "🔄 *Fetching your template...*",
+    endpoint: "/api/v1/dev/capcut",
+    params: (input) => ({ url: input }),
+    missing: "Unable to find a video for this template.",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗖𝗔𝗣𝗖𝗨𝗧 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥",
+    progress: "Downloading your video...",
+    failTitle: "𝗖𝗔𝗣𝗖𝗨𝗧 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to fetch this template right now.",
+    extract: (data) => ({
+        url: esxDeepUrl(data, /video|download|nowm|\.mp4/i),
+        kind: "video",
+        title: esxDeepPick(data, ["title", "name", "desc", "description"]),
+        thumb: esxDeepUrl(data, /cover|thumb|poster|image/i, true) || undefined,
+        lines: [`🎞 *Title:* _${esxText(esxDeepPick(data, ["title", "name", "desc", "description"]) || "CapCut template")}_`]
+    })
+}));
+
+EsTeams.onText(/^\/movie(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = (match[1] || "").trim();
+    if (!input) return esxUsage(chatId, "𝗠𝗢𝗩𝗜𝗘 𝗜𝗡𝗙𝗢", "/movie <MOVIE NAME>");
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Searching for your movie...*", { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet("/api/v1/dev/movie", { query: input });
+        if (!data || !data.title) throw new Error("Could not find that movie.");
+        const genres = Array.isArray(data.genres) ? data.genres.map((genre) => (typeof genre === "object" ? genre.name : genre)).filter(Boolean).join(", ") : "";
+        const lines = [
+            `🎬 *Title:* _${esxText(data.title, 100)}_`,
+            data.rating !== null && data.rating !== undefined ? `⭐ *Rating:* _${esxText(Number(data.rating).toFixed(1))}/10_` : "",
+            data.releaseDate ? `📅 *Release:* _${esxText(data.releaseDate)}_` : "",
+            data.runtimeMinutes ? `⏱ *Runtime:* _${esxText(data.runtimeMinutes)} min_` : "",
+            genres ? `🎭 *Genres:* _${esxText(genres, 80)}_` : "",
+            data.overview ? `\n📝 ${esxText(data.overview, 380)}` : ""
+        ].filter(Boolean);
+        await esxCard(chatId, `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗠𝗢𝗩𝗜𝗘 𝗜𝗡𝗙𝗢*\n\n${lines.join("\n")}\n\n${ESX_FOOTER}`, data.poster || data.backdrop || undefined);
+    } catch (error) {
+        console.error("movie error:", error.message);
+        await esxFail(chatId, "𝗠𝗢𝗩𝗜𝗘 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to find that movie right now.");
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/ytsearch(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunSearch(msg, match, {
+    usageTitle: "𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗦𝗘𝗔𝗥𝗖𝗛",
+    usage: "/ytsearch <SEARCH WORDS>",
+    waitText: "🔎 *Searching YouTube...*",
+    endpoint: "/api/v1/dev/ytsearch",
+    param: "query",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗦𝗘𝗔𝗥𝗖𝗛",
+    failTitle: "𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to search YouTube right now.",
+    title: ["title", "name"],
+    meta: [["👤", ["channel", "author", "uploader", "channelTitle"]], ["⏱", ["duration", "timestamp", "length"]]],
+    link: esxYoutubeLink,
+    photo: (item) => esxPick(item, ["thumbnail", "thumb", "image"]) || undefined
+}));
+
+EsTeams.onText(/^\/tiktoksearch(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunSearch(msg, match, {
+    usageTitle: "𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛",
+    usage: "/tiktoksearch <SEARCH WORDS>",
+    waitText: "🔎 *Searching TikTok...*",
+    endpoint: "/api/v1/dev/tiktoksearch",
+    param: "query",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛",
+    failTitle: "𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to search TikTok right now.",
+    title: ["title", "desc", "description", "caption"],
+    meta: [["👤", ["author", "nickname", "username", "uniqueId"]], ["▶️", ["plays", "play_count", "views"]]],
+    link: esxAnyLink
+}));
+
+EsTeams.onText(/^\/pinterestsearch(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunSearch(msg, match, {
+    usageTitle: "𝗣𝗜𝗡𝗧𝗘𝗥𝗘𝗦𝗧 𝗦𝗘𝗔𝗥𝗖𝗛",
+    usage: "/pinterestsearch <SEARCH WORDS>",
+    waitText: "🔎 *Searching Pinterest...*",
+    endpoint: "/api/v1/dev/pinterestsearch",
+    param: "query",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗣𝗜𝗡𝗧𝗘𝗥𝗘𝗦𝗧 𝗦𝗘𝗔𝗥𝗖𝗛",
+    failTitle: "𝗣𝗜𝗡𝗧𝗘𝗥𝗘𝗦𝗧 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to search Pinterest right now.",
+    title: ["title", "grid_title", "description", "name"],
+    meta: [["👤", ["pinner", "author", "username", "owner"]]],
+    link: (item) => esxAnyLink(item) || esxImageLink(item),
+    photo: (item) => esxImageLink(item) || undefined
+}));
+
+EsTeams.onText(/^\/websearch(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunSearch(msg, match, {
+    usageTitle: "𝗪𝗘𝗕 𝗦𝗘𝗔𝗥𝗖𝗛",
+    usage: "/websearch <SEARCH WORDS>",
+    waitText: "🔎 *Searching the web...*",
+    endpoint: "/api/v1/dev/websearch",
+    param: "query",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗪𝗘𝗕 𝗦𝗘𝗔𝗥𝗖𝗛",
+    failTitle: "𝗪𝗘𝗕 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to search the web right now.",
+    title: ["title", "name", "headline"],
+    desc: ["snippet", "description", "desc", "text", "summary"],
+    link: esxAnyLink
+}));
+
+EsTeams.onText(/^\/imagesearch(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunSearch(msg, match, {
+    usageTitle: "𝗜𝗠𝗔𝗚𝗘 𝗦𝗘𝗔𝗥𝗖𝗛",
+    usage: "/imagesearch <SEARCH WORDS>",
+    waitText: "🔎 *Searching images...*",
+    endpoint: "/api/v1/dev/imagesearch",
+    param: "query",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗜𝗠𝗔𝗚𝗘 𝗦𝗘𝗔𝗥𝗖𝗛",
+    failTitle: "𝗜𝗠𝗔𝗚𝗘 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to search images right now.",
+    title: ["title", "name", "alt", "description"],
+    link: esxImageLink,
+    photo: (item) => esxImageLink(item) || undefined
+}));
+
+EsTeams.onText(/^\/githubsearch(?:@\w+)?(?:\s+([\s\S]+))?$/i, (msg, match) => esxRunSearch(msg, match, {
+    usageTitle: "𝗚𝗜𝗧𝗛𝗨𝗕 𝗦𝗘𝗔𝗥𝗖𝗛",
+    usage: "/githubsearch <SEARCH WORDS>",
+    waitText: "🔎 *Searching GitHub...*",
+    endpoint: "/api/v1/dev/githubsearch",
+    param: "query",
+    header: "𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗚𝗜𝗧𝗛𝗨𝗕 𝗦𝗘𝗔𝗥𝗖𝗛",
+    failTitle: "𝗚𝗜𝗧𝗛𝗨𝗕 𝗦𝗘𝗔𝗥𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗",
+    failFallback: "Unable to search GitHub right now.",
+    title: ["full_name", "fullName", "name", "repo"],
+    meta: [["⭐", ["stargazers_count", "stars", "stargazers"]], ["💻", ["language"]]],
+    desc: ["description", "desc"],
+    link: esxAnyLink
+}));
+
+EsTeams.onText(/^\/forecast(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const city = (match[1] || "").trim();
+    if (!city) return esxUsage(chatId, "𝟭𝟬 𝗗𝗔𝗬 𝗙𝗢𝗥𝗘𝗖𝗔𝗦𝗧", "/forecast <CITY>");
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Fetching your forecast...*", { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet("/api/v1/dev/forecast", { city });
+        const days = esxFindArray(data.forecast !== undefined ? data.forecast : data).filter((day) => day && typeof day === "object");
+        const dayLines = days.slice(0, 7).map((day) => {
+            const label = esxPick(day, ["date", "day", "dayName", "Date", "dayOfWeek"]) || "Day";
+            const detail = Object.entries(day)
+                .filter(([key, value]) => key !== "date" && key !== "day" && (typeof value === "string" || typeof value === "number") && !/^https?:\/\//i.test(String(value)))
+                .slice(0, 4)
+                .map(([key, value]) => `${key.replace(/[_-]+/g, " ")} ${value}`)
+                .join(" • ");
+            return `📅 *${esxText(label, 30)}*\n${esxText(detail, 110)}`;
+        });
+        const body = dayLines.length ? dayLines.join("\n\n") : (esxFlat(data.forecast !== undefined ? data.forecast : data, 8).join("\n") || "No forecast available.");
+        await esxCard(chatId, `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗙𝗢𝗥𝗘𝗖𝗔𝗦𝗧 𝗗𝗜𝗦𝗣𝗟𝗔𝗬*\n\n🏙 *City:* _${esxText(data.city || city, 60)}_\n\n${body}\n\n${ESX_FOOTER}`);
+    } catch (error) {
+        console.error("forecast error:", error.message);
+        await esxFail(chatId, "𝗙𝗢𝗥𝗘𝗖𝗔𝗦𝗧 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to fetch that forecast right now.");
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/tts(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = (match[1] || "").trim();
+    if (!input) return esxUsage(chatId, "𝗧𝗘𝗫𝗧 𝗧𝗢 𝗦𝗣𝗘𝗘𝗖𝗛", "/tts <TEXT> | <VOICE>");
+    const [text, voice] = input.split(/\s+\|\s+/);
+    if (text.length > 1000) return esxFail(chatId, "𝗧𝗘𝗫𝗧 𝗧𝗢 𝗦𝗣𝗘𝗘𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗", new Error("Text is too long (1000 character limit)."), "Unable to speak that text.");
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Generating your audio...*", { parse_mode: "Markdown" }).catch(() => null);
+    let filePath = "";
+    try {
+        const data = await esApiGet("/api/v1/dev/tts", { text, voice });
+        const caption = `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗧𝗘𝗫𝗧 𝗧𝗢 𝗦𝗣𝗘𝗘𝗖𝗛*\n\n🗣 *Voice:* _${esxText(data.voice || voice || "default", 40)}_\n📥 *Sending your audio...*\n\n${ESX_FOOTER}`;
+        if (data.download_url) {
+            await esxCard(chatId, caption);
+            await esxDeliver(chatId, data.download_url, "audio", { title: "Text to Speech" });
+            return;
+        }
+        const findBase64 = (node, depth = 0) => {
+            if (typeof node === "string") {
+                const clean = node.replace(/^data:[^,]+,/, "").replace(/\s+/g, "");
+                return clean.length > 400 && /^[A-Za-z0-9+/=]+$/.test(clean) ? clean : "";
+            }
+            if (!node || typeof node !== "object" || depth > 4) return "";
+            for (const value of Object.values(node)) {
+                const found = findBase64(value, depth + 1);
+                if (found) return found;
+            }
+            return "";
+        };
+        const encoded = findBase64(data.result);
+        if (!encoded) throw new Error("No audio was returned for that text.");
+        fs.mkdirSync("./ES_TEAMS-MEDIA/audio", { recursive: true });
+        filePath = `./ES_TEAMS-MEDIA/audio/esx_tts_${Date.now()}.mp3`;
+        fs.writeFileSync(filePath, Buffer.from(encoded, "base64"));
+        await esxCard(chatId, caption);
+        await esxSendFile(chatId, filePath, "audio", { title: "Text to Speech" });
+    } catch (error) {
+        console.error("tts error:", error.message);
+        await esxFail(chatId, "𝗧𝗘𝗫𝗧 𝗧𝗢 𝗦𝗣𝗘𝗘𝗖𝗛 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to generate that audio right now.");
+    } finally {
+        if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/ytsummary(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = (match[1] || "").trim();
+    if (!input) return esxUsage(chatId, "𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗦𝗨𝗠𝗠𝗔𝗥𝗬", "/ytsummary <YOUTUBE LINK>");
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Summarizing your video...*", { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet("/api/v1/dev/ytsummary", { url: input });
+        const result = data.result;
+        const summary = typeof result === "string" ? result : esxDeepPick(result, ["summary", "text", "content", "answer", "description"]);
+        const title = data.title || esxDeepPick(result, ["title", "videoTitle", "name"]);
+        const head = `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗦𝗨𝗠𝗠𝗔𝗥𝗬*\n\n🎬 *Title:* _${esxText(title || "Unknown", 100)}_\n\n`;
+        if (!summary) {
+            await esxCard(chatId, `${head}${esxFlat(result, 8).join("\n") || "No summary was returned for this video."}\n\n${ESX_FOOTER}`);
+            return;
+        }
+        const shown = esxClip(summary, 520);
+        await esxCard(chatId, `${head}📝 ${esxText(shown, 520)}\n\n${ESX_FOOTER}`);
+        if (summary.length > 520) await esxSendLong(chatId, summary);
+    } catch (error) {
+        console.error("ytsummary error:", error.message);
+        await esxFail(chatId, "𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗦𝗨𝗠𝗠𝗔𝗥𝗬 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to summarize that video right now.");
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/pastquestions(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const [exam, subject, year, pageToken] = (match[1] || "").trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const params = {};
+    if (exam) params.exam = exam;
+    if (subject) params.subject = subject;
+    if (year) params.year = year;
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Fetching past questions...*", { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet("/api/v1/dev/pastquestions", params);
+        const items = esxFindArray(data.result).filter((item) => item !== null && item !== undefined);
+        const base = `/pastquestions${exam ? ` ${exam}` : ""}${subject ? ` ${subject}` : ""}${year ? ` ${year}` : ""}`;
+        if (data.step !== "questions") {
+            const names = items.map((item) => (typeof item === "object" ? esxPick(item, ["slug", "id", "value", "name", "subject", "year"]) : String(item))).filter(Boolean);
+            const next = data.step === "exams" ? "/pastquestions <EXAM>" : data.step === "subjects" ? `${base} <SUBJECT>` : `${base} <YEAR>`;
+            const listing = names.length ? names.map((name) => `▫️ \`${name}\``).join("\n") : (esxFlat(data.result, 10).join("\n") || "Nothing found.");
+            await esxCard(chatId, `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗣𝗔𝗦𝗧 𝗤𝗨𝗘𝗦𝗧𝗜𝗢𝗡𝗦*\n\n📚 *Step:* _${esxText(data.step || "list")}_\n\n${listing}\n\n➡️ *Next:* \`${next}\`\n\n${ESX_FOOTER}`);
+            return;
+        }
+        const perPage = 5;
+        const page = Math.max(1, parseInt(pageToken, 10) || 1);
+        const totalPages = Math.max(1, Math.ceil(items.length / perPage));
+        const slice = items.slice((page - 1) * perPage, page * perPage);
+        if (!slice.length) throw new Error("No questions found for that page.");
+        await esxCard(chatId, `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗣𝗔𝗦𝗧 𝗤𝗨𝗘𝗦𝗧𝗜𝗢𝗡𝗦*\n\n🎓 *Exam:* _${esxText(data.exam || exam)}_\n📘 *Subject:* _${esxText(data.subject || subject)}_\n📅 *Year:* _${esxText(data.year || year)}_\n📄 *Page:* _${page}/${totalPages}_\n\n${ESX_FOOTER}`);
+        const letters = ["A", "B", "C", "D", "E"];
+        const blocks = slice.map((item, index) => {
+            const number = (page - 1) * perPage + index + 1;
+            const question = typeof item === "object" ? esxPick(item, ["question", "text", "body", "title"]) : String(item);
+            let options = [];
+            if (item && Array.isArray(item.options)) {
+                options = item.options.map((option, optionIndex) => (typeof option === "object" ? `${esxPick(option, ["label", "key", "id"]) || letters[optionIndex]}. ${esxPick(option, ["text", "value", "option"])}` : `${letters[optionIndex]}. ${option}`));
+            } else if (item && item.options && typeof item.options === "object") {
+                options = Object.entries(item.options).map(([key, value]) => `${String(key).toUpperCase()}. ${value}`);
+            }
+            const answer = typeof item === "object" ? esxPick(item, ["answer", "correct", "correctAnswer", "correct_answer", "right"]) : "";
+            return `Q${number}. ${question}${options.length ? `\n${options.join("\n")}` : ""}${answer ? `\n✅ Answer: ${answer}` : ""}`;
+        });
+        const footer = page < totalPages ? `\n\n➡️ Next page: ${base} ${page + 1}` : "";
+        await esxSendLong(chatId, `${blocks.join("\n\n")}${footer}`);
+    } catch (error) {
+        console.error("pastquestions error:", error.message);
+        await esxFail(chatId, "𝗣𝗔𝗦𝗧 𝗤𝗨𝗘𝗦𝗧𝗜𝗢𝗡𝗦 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to fetch past questions right now.");
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/ytchannel(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const input = (match[1] || "").trim();
+    if (!input) return esxUsage(chatId, "𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗦𝗧𝗔𝗟𝗞𝗘𝗥", "/ytchannel <@HANDLE OR LINK>");
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Fetching channel info...*", { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const data = await esApiGet("/api/v1/dev/ytchannel", { channel: input });
+        const info = data.result;
+        const fields = [
+            ["📺", "Channel", ["title", "name", "channelName", "channel_title"]],
+            ["👥", "Subscribers", ["subscribers", "subscriberCount", "subscriber_count", "subs"]],
+            ["👁", "Views", ["views", "viewCount", "view_count", "totalViews"]],
+            ["🎞", "Videos", ["videos", "videoCount", "video_count"]],
+            ["📅", "Joined", ["joined", "joinedDate", "publishedAt", "created"]],
+            ["🌍", "Country", ["country"]]
+        ];
+        const lines = fields.map(([icon, label, keys]) => {
+            const value = esxDeepPick(info, keys);
+            return value ? `${icon} *${label}:* _${esxText(value, 80)}_` : "";
+        }).filter(Boolean);
+        const about = esxDeepPick(info, ["description", "about", "bio"]);
+        if (about) lines.push(`\n📝 ${esxText(about, 220)}`);
+        const link = esxDeepUrl(info, /channel|url|link|youtube/i);
+        const body = lines.length ? lines.join("\n") : (esxFlat(info, 10).join("\n") || "Channel not found.");
+        await esxCard(chatId, `👀 *𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗦𝗧𝗔𝗟𝗞𝗘𝗥*\n\n${body}${link ? `\n\n🔗 ${escapeMarkdown(link)}` : ""}\n\n${ESX_FOOTER}`, esxDeepUrl(info, /avatar|profile|logo|thumb|image/i, true) || undefined);
+    } catch (error) {
+        console.error("ytchannel error:", error.message);
+        await esxFail(chatId, "𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗟𝗢𝗢𝗞𝗨𝗣 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to fetch that channel right now.");
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
+EsTeams.onText(/^\/caption(?:@\w+)?(?:\s+([\s\S]+))?$/i, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (isLockedFor(msg.from.id)) return newCmdLocked(chatId);
+    const text = (match[1] || "").trim();
+    const reply = msg.reply_to_message;
+    if (!text || !reply || !reply.photo) return esxUsage(chatId, "𝗖𝗔𝗣𝗧𝗜𝗢𝗡 𝗠𝗘𝗠𝗘", "Reply to an image with /caption <TEXT>");
+    const wait = await EsTeams.sendMessage(chatId, "🔄 *Building your caption image...*", { parse_mode: "Markdown" }).catch(() => null);
+    try {
+        const fileId = reply.photo[reply.photo.length - 1].file_id;
+        const fileLink = await EsTeams.getFileLink(fileId);
+        const buffer = await esApiGet("/api/v1/dev/caption", { image: fileLink, text });
+        if (!Buffer.isBuffer(buffer)) throw new Error("Unable to build the caption image.");
+        const options = {
+            caption: `*𝗘𝗦 𝗧𝗘𝗔𝗠𝗦 𝗩𝟭 𝗖𝗔𝗣𝗧𝗜𝗢𝗡 𝗠𝗘𝗠𝗘*\n\n🖼 *Caption:* _${esxText(text, 120)}_\n\n${ESX_FOOTER}`,
+            parse_mode: "Markdown",
+            reply_markup: waChannelBtn
+        };
+        try { await EsTeams.sendPhoto(chatId, buffer, options, { filename: "caption.png", contentType: "image/png" }); }
+        catch (photoError) { await EsTeams.sendDocument(chatId, buffer, options, { filename: "caption.png", contentType: "image/png" }); }
+    } catch (error) {
+        console.error("caption error:", error.message);
+        await esxFail(chatId, "𝗖𝗔𝗣𝗧𝗜𝗢𝗡 𝗙𝗔𝗜𝗟𝗘𝗗", error, "Unable to build that caption image right now.");
+    } finally {
+        if (wait) EsTeams.deleteMessage(chatId, wait.message_id).catch(() => {});
+    }
+});
+
 });
